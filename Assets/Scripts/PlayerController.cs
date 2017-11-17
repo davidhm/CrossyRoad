@@ -15,6 +15,13 @@ public class PlayerController : MonoBehaviour {
 	}
 
     private void computeTransform() {
-        
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            transform.Translate(0, 0, 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            transform.Translate(0, 0, -1);
+        }
     }
 }
