@@ -20,6 +20,16 @@ public class PlayerController : MonoBehaviour {
         updatePosition();
 	}
 
+    public bool isMoving()
+    {
+        return moving;
+    }
+
+    public Vector3 getNewPosition()
+    {
+        return newPosition;
+    }
+
     private void processInput() {
         if (!moving && Input.GetKeyDown(KeyCode.UpArrow))
         {
