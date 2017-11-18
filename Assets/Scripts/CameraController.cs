@@ -9,6 +9,7 @@ public class CameraController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         posicio = transform.position - player.transform.position;
+        transform.LookAt(player.transform.position + playerLookAtOffset);
 	}
 	
 	// Update is called once per frame
