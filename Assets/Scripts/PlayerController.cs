@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-    enum playerState { Moving, Idle, Dead};
+    public enum playerState { Moving, Idle, Dead};
     private playerState currentState;
     private Vector3 newPosition;
     private Vector3 movingDirection;
@@ -26,6 +26,11 @@ public class PlayerController : MonoBehaviour {
     {
         currentState = playerState.Dead;
         levelManager.GetComponent<LevelManager>().treatPlayerCollision();
+    }
+
+    public void setPlayerState(playerState newState)
+    {
+        currentState = newState;
     }
 
     public bool isMoving()
