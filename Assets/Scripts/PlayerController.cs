@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-    private bool moving;
+    enum playerState { Moving, Idle, Dead};
+    private playerState currentState;
     private Vector3 newPosition;
     private Vector3 movingDirection;
     public float unitsPerSecond;
+    public GameObject levelManager;
 	// Use this for initialization
 	void Start () {
-        moving = false;
+        currentState = playerState.Idle;
         newPosition = transform.position;
 	}
 	
@@ -20,9 +22,15 @@ public class PlayerController : MonoBehaviour {
         updatePosition();
 	}
 
+    void OnTriggerEnter(Collider other)
+    {
+        currentState = playerState.Dead;
+        levelManager.GetComponent<LevelManager>().treatPlayerCollision();
+    }
+
     public bool isMoving()
     {
-        return moving;
+        return currentState == playerState.Moving;
     }
 
     public Vector3 getNewPosition()
@@ -31,23 +39,23 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void processInput() {
-        if (!moving && Input.GetKeyDown(KeyCode.UpArrow))
+        if (currentState == playerState.Idle && Input.GetKeyDown(KeyCode.UpArrow))
         {
             ++newPosition.z;
-            moving = true;
+            currentState = playerState.Moving;
             movingDirection = new Vector3(0, 0, 1);  
         }
-        else if (!moving && Input.GetKeyDown(KeyCode.DownArrow))
+        else if (currentState == playerState.Idle && Input.GetKeyDown(KeyCode.DownArrow))
         {
             --newPosition.z;
-            moving = true;
+            currentState = playerState.Moving;
             movingDirection = new Vector3(0, 0, -1);
         }
     }
 
     private void updatePosition()
     {
-        if (moving)
+        if (currentState == playerState.Moving)
         {
             Vector3 updatedPosition = transform.position + movingDirection * unitsPerSecond * Time.deltaTime;
             if (movingDirection == new Vector3(0,0,1))
@@ -55,7 +63,7 @@ public class PlayerController : MonoBehaviour {
                 if (updatedPosition.z >= newPosition.z)
                 {
                     transform.position = newPosition;
-                    moving = false;
+                    currentState = playerState.Idle;
                 }
                 else
                     transform.position = updatedPosition;
@@ -65,7 +73,7 @@ public class PlayerController : MonoBehaviour {
                 if (updatedPosition.z <= newPosition.z)
                 {
                     transform.position = newPosition;
-                    moving = false;
+                    currentState = playerState.Idle;
                 }
                 else
                     transform.position = updatedPosition;

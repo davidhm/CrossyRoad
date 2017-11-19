@@ -19,8 +19,9 @@ public class CameraController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void LateUpdate () {
-        computeState();
-        computeMovement();   
+        transform.position = player.transform.position - relatiuAPlayer;
+        /*computeState();
+        computeMovement();   */
 	}
     
     void computeState()
