@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 0572770773c72984497ba6ce602d2fbf
+timeCreated: 1511292804
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - carPrefab: {fileID: 1364316440736318, guid: 1df3b060ba5116541aa1c025ea835adc,
+      type: 2}
+  - truckPrefab: {fileID: 1707955449329638, guid: ce3868f96c9b72641ab22e6e0159bdc2,
+      type: 2}
+  - treePrefab: {fileID: 1329693175543538, guid: 18a0b0efdca83414f923622f039ee27d,
+      type: 2}
+  - grassPrefab: {fileID: 1330230353037966, guid: be823366ff69233418ea99094a761850,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
