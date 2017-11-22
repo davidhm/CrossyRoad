@@ -10,8 +10,8 @@ public sealed class LevelManager : MonoBehaviour {
     // Use this for initialization
     void Awake()
     {
-        generator.GetComponent<LevelGenerator>().setLevelManager(this);
-        generator.GetComponent<LevelGenerator>().generateInitialArea();
+        /*generator.GetComponent<LevelGenerator>().setLevelManager(this);
+        generator.GetComponent<LevelGenerator>().generateInitialArea();*/
     }
 
     public void treatPlayerCollision()
