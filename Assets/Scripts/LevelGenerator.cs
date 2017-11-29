@@ -5,7 +5,7 @@ class LevelGenerator : MonoBehaviour {
     public GameObject carPrefab, truckPrefab,treePrefab,grassPrefab;
     private LevelManager levelManager;
     private Vector3 leftBoundary, rightBoundary;
-    private static Vector3 lateralHalfSide;
+    private static float halfCube;
     private static Vector3 unitCube;
     void Start()
     {
@@ -20,24 +20,25 @@ class LevelGenerator : MonoBehaviour {
     public void setUnitCube(Vector3 unitCube)
     {
         LevelGenerator.unitCube = unitCube;
-        LevelGenerator.lateralHalfSide = new Vector3(unitCube.x / 2.0f, 0, 0);
+        halfCube = unitCube.z / 2.0f;
     }
 
     public void generateInitialArea()
     {
         leftBoundary = levelManager.GetComponent<LevelManager>().getPlayerPosition();
-        leftBoundary -= 9*lateralHalfSide;
+        leftBoundary.x -= 9*halfCube;
         rightBoundary = levelManager.GetComponent<LevelManager>().getPlayerPosition();
-        rightBoundary += 9*lateralHalfSide;
+        rightBoundary.x += 9*halfCube;
         generateInitialGrass();
     }
     private void generateInitialGrass()
     {
-        for (float i = -2*lateralHalfSide.z; i <= 3*lateralHalfSide.z; i += lateralHalfSide.z)
+        Vector3 aux = new Vector3(halfCube, 0, 0);
+        for (float i = -4*halfCube; i <= 6*halfCube; i += 2*halfCube)
         {
             Vector3 offset = new Vector3(0, 0, i);
-            for (Vector3 j = (leftBoundary - 6*lateralHalfSide) + lateralHalfSide; 
-                j.x <= ((rightBoundary + 6*lateralHalfSide) - lateralHalfSide).x; j += 2* lateralHalfSide)
+            for (Vector3 j = (leftBoundary - 6*aux) + aux; 
+                j.x <= ((rightBoundary + 6*aux) - aux).x; j += 2* aux)
             {
                 Vector3 grassCoordinates = j + offset;
                 grassCoordinates.y = grassPrefab.transform.localScale.y / 2.0f;
