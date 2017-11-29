@@ -6,12 +6,14 @@ public sealed class LevelManager : MonoBehaviour {
 
     public GameObject mainMenu, player;
     public GameObject generator;
+    public Vector3 unitCube;
 
     // Use this for initialization
     void Awake()
     {
-        /*generator.GetComponent<LevelGenerator>().setLevelManager(this);
-        generator.GetComponent<LevelGenerator>().generateInitialArea();*/
+        generator.GetComponent<LevelGenerator>().setLevelManager(this);
+        generator.GetComponent<LevelGenerator>().setUnitCube(unitCube);
+        generator.GetComponent<LevelGenerator>().generateInitialArea();
     }
 
     public void treatPlayerCollision()
