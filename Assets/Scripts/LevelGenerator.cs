@@ -29,9 +29,9 @@ class LevelGenerator : MonoBehaviour {
         leftBoundary.x -= 9*halfCube;
         rightBoundary = levelManager.GetComponent<LevelManager>().getPlayerPosition();
         rightBoundary.x += 9*halfCube;
-        generateInitialGrass();
+        generateInitialObjects();
     }
-    private void generateInitialGrass()
+    private void generateInitialObjects()
     {
         Vector3 aux = new Vector3(halfCube, 0, 0);
         for (float i = -4*halfCube; i <= 6*halfCube; i += 2*halfCube)
@@ -53,9 +53,5 @@ class LevelGenerator : MonoBehaviour {
             }
             
         }
-    }
-    private void generateInitialTrees()
-    {
-
     }
 }
