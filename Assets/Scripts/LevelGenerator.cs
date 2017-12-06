@@ -9,6 +9,7 @@ class LevelGenerator : MonoBehaviour {
     private static Vector3 unitCube;
     void Start()
     {
+        Row.leftmostBorder = leftBoundary.x - halfCube;
 
     }
 
@@ -30,6 +31,7 @@ class LevelGenerator : MonoBehaviour {
         rightBoundary = levelManager.GetComponent<LevelManager>().getPlayerPosition();
         rightBoundary.x += 9*halfCube;
         generateInitialObjects();
+        generateInitialRows();
     }
     private void generateInitialObjects()
     {
@@ -53,5 +55,10 @@ class LevelGenerator : MonoBehaviour {
             }
             
         }
+    }
+
+    private void generateInitialRows()
+    {
+
     }
 }
