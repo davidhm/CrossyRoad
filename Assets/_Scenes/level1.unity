@@ -206,6 +206,8 @@ MonoBehaviour:
   player: {fileID: 1734373943}
   generator: {fileID: 1323520413148426, guid: bc6dca135cc459d418d524d06cb602f8, type: 2}
   unitCube: {x: 40, y: 40, z: 40}
+  vehicleMaxSpeed: 200
+  vehicleMinSpeed: 80
 --- !u!4 &903993491
 Transform:
   m_ObjectHideFlags: 0
@@ -809,7 +811,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 26, y: 40, z: 38}
+  m_Size: {x: 26, y: 40, z: 35}
   m_Center: {x: 0, y: 20, z: 1}
 --- !u!33 &1734373946
 MeshFilter:

@@ -7,13 +7,15 @@ public sealed class LevelManager : MonoBehaviour {
     public GameObject mainMenu, player;
     public GameObject generator;
     public Vector3 unitCube;
-
+    public float vehicleMaxSpeed, vehicleMinSpeed;
     // Use this for initialization
     void Start()
     {
         generator.GetComponent<LevelGenerator>().setLevelManager(this);
-        generator.GetComponent<LevelGenerator>().setUnitCube(unitCube);
+        LevelGenerator.UnitCube = unitCube;
         generator.GetComponent<LevelGenerator>().generateInitialArea();
+        Row.VehicleMaxSpeed = vehicleMaxSpeed;
+        Row.VehicleMinSpeed = vehicleMinSpeed;
     }
 
     public void treatPlayerCollision()
@@ -30,20 +32,5 @@ public sealed class LevelManager : MonoBehaviour {
     public Vector3 getPlayerPosition()
     {
         return player.transform.position;
-    }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-    void LateUpdate()
-    {
-       /* if (player.GetComponent<PlayerController>().getNewPosition().z >= 1)
-        {
-            player.GetComponent<PlayerController>().setPlayerState(PlayerController.playerState.Dead);
-            mainMenu.transform.GetChild(1).GetComponent<Text>().text = "You win!";
-            mainMenu.SetActive(true);
-        }*/
     }
 }

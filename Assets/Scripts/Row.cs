@@ -6,14 +6,81 @@ public class Row : MonoBehaviour
     public static float leftmostBorder;
     public static uint rowWidthInUnitCubes;
     public static float rightmostBorder;
+    public static uint rowMarginInUnitCubes;
     private rowType currentType;
     private static Vector3 unitCube;
     private static float halfCube;
     private bool incomingFromLeft;
     private float truckProportion;
-    private float vehicleMaxSpeed,vehicleMinSpeed;
-    
-    public void setUnitCube(Vector3 unitCube)
+    private static float vehicleMaxSpeed,vehicleMinSpeed;
+    private float treeProportion;
+
+    public static float VehicleMaxSpeed
+    {
+        get
+        {
+            return vehicleMaxSpeed;
+        }
+
+        set
+        {
+            vehicleMaxSpeed = value;
+        }
+    }
+
+    public static float VehicleMinSpeed
+    {
+        get
+        {
+            return vehicleMinSpeed;
+        }
+
+        set
+        {
+            vehicleMinSpeed = value;
+        }
+    }
+
+    public bool IncomingFromLeft
+    {
+        get
+        {
+            return incomingFromLeft;
+        }
+
+        set
+        {
+            incomingFromLeft = value;
+        }
+    }
+
+    public float TruckProportion
+    {
+        get
+        {
+            return truckProportion;
+        }
+
+        set
+        {
+            truckProportion = value;
+        }
+    }
+
+    public rowType CurrentType
+    {
+        get
+        {
+            return currentType;
+        }
+
+        set
+        {
+            currentType = value;
+        }
+    }
+
+    public static void setUnitCube(Vector3 unitCube)
     {
         Row.unitCube = unitCube;
         halfCube = unitCube.z / 2.0f;
@@ -23,30 +90,9 @@ public class Row : MonoBehaviour
         if (transform.Find("Vehicle") == null)
             generateOneVehicle();
     }
-    public void setCurrentType(rowType type)
-    {
-        currentType = type;
-    }
-
-    public void setCurrentSense(bool incomingFromLeft)
-    {
-        this.incomingFromLeft = incomingFromLeft;
-    }
-
-    public void setTruckProportion(float truckProportion)
-    {
-        this.truckProportion = truckProportion;
-    }
-
-    public void setVehicleSpeedLimits(float minSpeed,float maxSpeed)
-    {
-        vehicleMinSpeed = minSpeed;
-        vehicleMaxSpeed = maxSpeed;
-    }
-
     public void generateInitialElements()
     {
-        if (currentType == rowType.Road)
+        if (CurrentType == rowType.Road)
         {
             generateInitialRow();
         }
@@ -54,8 +100,8 @@ public class Row : MonoBehaviour
     
     private void generateInitialRow()
     {
-        for (float j = leftmostBorder - 7*halfCube;
-            j <= 7*halfCube + rightmostBorder; j += 2*halfCube)
+        for (float j = leftmostBorder - 5*halfCube;
+            j <= 5*halfCube + rightmostBorder; j += 2*halfCube)
         {
             GameObject roadSlab = (GameObject) Instantiate(roadPrefab, transform);
             float slabY = roadSlab.GetComponent<Renderer>().bounds.extents.y;
@@ -75,17 +121,17 @@ public class Row : MonoBehaviour
             float carHeight = roadHeightOffset;
             float carLateralPosition, carWidthOffset;
             carWidthOffset = carPrefab.GetComponent<Renderer>().bounds.extents.x;
-            float carSpeed = Random.Range(vehicleMinSpeed, vehicleMaxSpeed);
-            if (incomingFromLeft)
+            float carSpeed = Random.Range(VehicleMinSpeed, VehicleMaxSpeed);
+            if (IncomingFromLeft)
             {
-                carLateralPosition = leftmostBorder + carWidthOffset;
+                carLateralPosition = leftmostBorder - 5*unitCube.x + carWidthOffset;
                 carInstance.GetComponent<VehicleController>().setSpeed(new Vector3(
                     -carSpeed,0,0));
                 carInstance.transform.Rotate(new Vector3(0, 180, 0));
             }
             else
             {
-                carLateralPosition = rightmostBorder - carWidthOffset;
+                carLateralPosition = rightmostBorder + 5*unitCube.x - carWidthOffset;
                 carInstance.GetComponent<VehicleController>().setSpeed(new Vector3(
                     -carSpeed, 0, 0));
             }

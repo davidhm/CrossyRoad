@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using System.Collections.Generic;
 
 class LevelGenerator : MonoBehaviour {
     public GameObject carPrefab, truckPrefab,treePrefab,grassPrefab,rowPrefab;
@@ -7,21 +7,47 @@ class LevelGenerator : MonoBehaviour {
     private Vector3 leftBoundary, rightBoundary;
     private static float halfCube;
     private static Vector3 unitCube;
-    private float lastRowZ;
+    private float nextRowZ;
+    private LinkedList<RowGroup> rows = new LinkedList<RowGroup>();
+    public static Vector3 UnitCube
+    {
+        get
+        {
+            return unitCube;
+        }
+
+        set
+        {
+            unitCube = value;
+            halfCube = value.z / 2.0f;
+        }
+    }
+
+    public GameObject getRowPrefab()
+    {
+        return rowPrefab;
+    }
+    void LateUpdate()
+    {
+        while (!rows.First.Value.isGroupVisible())
+        {
+            rows.RemoveFirst();
+        }
+        if (rows.Last.Value.isGroupVisible())
+        {
+            RowGroup newGroup = RowGroup.generateRowGroup(nextRowZ, rows.Last.Value.Type);
+            rows.AddLast(newGroup);
+            nextRowZ = newGroup.NextRowZ;
+        }
+    }
+
     public void setLevelManager(LevelManager manager)
     {
         levelManager = manager;
     }
 
-    public void setUnitCube(Vector3 unitCube)
-    {
-        LevelGenerator.unitCube = unitCube;
-        halfCube = unitCube.z / 2.0f;
-    }
-
     public void generateInitialArea()
     {
-
         leftBoundary = levelManager.GetComponent<LevelManager>().getPlayerPosition();
         leftBoundary.x -= 9*halfCube;
         rightBoundary = levelManager.GetComponent<LevelManager>().getPlayerPosition();
@@ -33,10 +59,12 @@ class LevelGenerator : MonoBehaviour {
 
     private void setUpRowVariables()
     {
-        rowPrefab.GetComponent<Row>().setUnitCube(unitCube);
+        Row.setUnitCube(UnitCube);
         Row.leftmostBorder = leftBoundary.x;
-        Row.rightmostBorder = leftBoundary.x + 9 * unitCube.x;
+        Row.rightmostBorder = leftBoundary.x + 9 * UnitCube.x;
         Row.rowWidthInUnitCubes = 9;
+        Row.rowMarginInUnitCubes = 3;
+        RowGroup.generator = this;
     }
     private void generateInitialObjects()
     {
@@ -65,12 +93,19 @@ class LevelGenerator : MonoBehaviour {
     private void generateInitialRows()
     {
         float rowOffset = levelManager.GetComponent<LevelManager>().getPlayerPosition().z;
-        rowOffset += 4 * unitCube.z;
-        lastRowZ = rowOffset;
-        GameObject currentRow = Instantiate(rowPrefab, new Vector3(0, 0, rowOffset),Quaternion.identity);
-        currentRow.GetComponent<Row>().setCurrentType(rowType.Road);
-        currentRow.GetComponent<Row>().setCurrentSense(true);
-        currentRow.GetComponent<Row>().setVehicleSpeedLimits(80, 240);
-        currentRow.GetComponent<Row>().generateInitialElements();
+        rowOffset += 4 * UnitCube.z;
+        nextRowZ = rowOffset;
+        RowGroup current = RowGroup.generateRowGroup(nextRowZ, rowType.Grass);
+        rows.AddLast(current);
+        nextRowZ = current.NextRowZ;
+        while (current.isGroupVisible())
+        {
+            current = RowGroup.generateRowGroup(nextRowZ, current.Type);
+            rows.AddLast(current);
+            nextRowZ = current.NextRowZ;
+        }
+        current = RowGroup.generateRowGroup(nextRowZ, rowType.Grass);
+        rows.AddLast(current);
+        nextRowZ = current.NextRowZ;
     }
 }
