@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
@@ -9,6 +7,7 @@ public class PlayerController : MonoBehaviour {
     private Vector3 newPosition;
     private Vector3 movingDirection;
     public float unitsPerSecond;
+    public float unit;
     public GameObject levelManager;
 	// Use this for initialization
 	void Start () {
@@ -46,13 +45,13 @@ public class PlayerController : MonoBehaviour {
     private void processInput() {
         if (currentState == playerState.Idle && Input.GetKeyDown(KeyCode.UpArrow))
         {
-            ++newPosition.z;
+            newPosition.z += unit;
             currentState = playerState.Moving;
             movingDirection = new Vector3(0, 0, 1);  
         }
         else if (currentState == playerState.Idle && Input.GetKeyDown(KeyCode.DownArrow))
         {
-            --newPosition.z;
+            newPosition.z -= unit;
             currentState = playerState.Moving;
             movingDirection = new Vector3(0, 0, -1);
         }
@@ -62,7 +61,7 @@ public class PlayerController : MonoBehaviour {
     {
         if (currentState == playerState.Moving)
         {
-            Vector3 updatedPosition = transform.position + movingDirection * unitsPerSecond * Time.deltaTime;
+            Vector3 updatedPosition = transform.position + movingDirection * unit * unitsPerSecond * Time.deltaTime;
             if (movingDirection == new Vector3(0,0,1))
             {
                 if (updatedPosition.z >= newPosition.z)
