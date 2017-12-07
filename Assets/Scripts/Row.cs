@@ -80,7 +80,8 @@ public class Row : MonoBehaviour
             {
                 carLateralPosition = leftmostBorder + carWidthOffset;
                 carInstance.GetComponent<VehicleController>().setSpeed(new Vector3(
-                    carSpeed,0,0));
+                    -carSpeed,0,0));
+                carInstance.transform.Rotate(new Vector3(0, 180, 0));
             }
             else
             {
@@ -89,7 +90,7 @@ public class Row : MonoBehaviour
                     -carSpeed, 0, 0));
             }
             carInstance.transform.position = new Vector3(carLateralPosition, carHeight,
-                transform.position.z);
+                transform.position.z);            
         /*}
         else
         {

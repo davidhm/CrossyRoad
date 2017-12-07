@@ -7,6 +7,7 @@ class LevelGenerator : MonoBehaviour {
     private Vector3 leftBoundary, rightBoundary;
     private static float halfCube;
     private static Vector3 unitCube;
+    private float lastRowZ;
     public void setLevelManager(LevelManager manager)
     {
         levelManager = manager;
@@ -65,10 +66,11 @@ class LevelGenerator : MonoBehaviour {
     {
         float rowOffset = levelManager.GetComponent<LevelManager>().getPlayerPosition().z;
         rowOffset += 4 * unitCube.z;
-        GameObject testRow = Instantiate(rowPrefab, new Vector3(0, 0, rowOffset),Quaternion.identity);
-        testRow.GetComponent<Row>().setCurrentType(rowType.Road);
-        testRow.GetComponent<Row>().setCurrentSense(true);
-        testRow.GetComponent<Row>().setVehicleSpeedLimits(80, 240);
-        testRow.GetComponent<Row>().generateInitialElements();
+        lastRowZ = rowOffset;
+        GameObject currentRow = Instantiate(rowPrefab, new Vector3(0, 0, rowOffset),Quaternion.identity);
+        currentRow.GetComponent<Row>().setCurrentType(rowType.Road);
+        currentRow.GetComponent<Row>().setCurrentSense(true);
+        currentRow.GetComponent<Row>().setVehicleSpeedLimits(80, 240);
+        currentRow.GetComponent<Row>().generateInitialElements();
     }
 }
