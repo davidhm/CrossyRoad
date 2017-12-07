@@ -5,16 +5,17 @@ public class Row : MonoBehaviour
     public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab;
     public static float leftmostBorder;
     public static uint rowWidthInUnitCubes;
-    private static float rightmostBorder;
+    public static float rightmostBorder;
     private rowType currentType;
-    public static Vector3 unitCube;
+    private static Vector3 unitCube;
     private static float halfCube;
     private bool incomingFromLeft;
     private float truckProportion;
     private float vehicleMaxSpeed,vehicleMinSpeed;
-    void Start()
+    
+    public void setUnitCube(Vector3 unitCube)
     {
-        rightmostBorder = ((float)rowWidthInUnitCubes) * 2.0f * halfCube + leftmostBorder;
+        Row.unitCube = unitCube;
         halfCube = unitCube.z / 2.0f;
     }
 
@@ -59,7 +60,7 @@ public class Row : MonoBehaviour
             GameObject roadSlab = (GameObject) Instantiate(roadPrefab, transform);
             float slabY = roadSlab.GetComponent<Renderer>().bounds.extents.y;
             roadSlab.transform.position = new Vector3(j,slabY,
-                roadSlab.transform.position.z);
+                transform.position.z);
         }
         generateOneVehicle();
     } 
@@ -71,8 +72,7 @@ public class Row : MonoBehaviour
             GameObject carInstance = (GameObject)Instantiate(carPrefab, transform);
             carInstance.name = "Vehicle";
             float roadHeightOffset = roadPrefab.GetComponent<Renderer>().bounds.size.y;
-            float carHeightOffset = carPrefab.GetComponent<Renderer>().bounds.extents.y;
-            float carHeight = roadHeightOffset + carHeightOffset;
+            float carHeight = roadHeightOffset;
             float carLateralPosition, carWidthOffset;
             carWidthOffset = carPrefab.GetComponent<Renderer>().bounds.extents.x;
             float carSpeed = Random.Range(vehicleMinSpeed, vehicleMaxSpeed);
@@ -89,7 +89,7 @@ public class Row : MonoBehaviour
                     -carSpeed, 0, 0));
             }
             carInstance.transform.position = new Vector3(carLateralPosition, carHeight,
-                carInstance.transform.position.z);
+                transform.position.z);
         /*}
         else
         {

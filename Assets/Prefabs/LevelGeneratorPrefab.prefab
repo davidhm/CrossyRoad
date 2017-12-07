@@ -57,4 +57,4 @@ MonoBehaviour:
   treePrefab: {fileID: 1329693175543538, guid: 18a0b0efdca83414f923622f039ee27d, type: 2}
   grassPrefab: {fileID: 1330230353037966, guid: be823366ff69233418ea99094a761850,
     type: 2}
-  levelManager: {fileID: 0}
+  rowPrefab: {fileID: 1082984153060740, guid: 6ca4f38072e76fc4f91064e0398868d3, type: 2}

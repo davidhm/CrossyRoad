@@ -2,17 +2,11 @@
 
 
 class LevelGenerator : MonoBehaviour {
-    public GameObject carPrefab, truckPrefab,treePrefab,grassPrefab;
+    public GameObject carPrefab, truckPrefab,treePrefab,grassPrefab,rowPrefab;
     private LevelManager levelManager;
     private Vector3 leftBoundary, rightBoundary;
     private static float halfCube;
     private static Vector3 unitCube;
-    void Start()
-    {
-        Row.leftmostBorder = leftBoundary.x - halfCube;
-
-    }
-
     public void setLevelManager(LevelManager manager)
     {
         levelManager = manager;
@@ -26,12 +20,22 @@ class LevelGenerator : MonoBehaviour {
 
     public void generateInitialArea()
     {
+
         leftBoundary = levelManager.GetComponent<LevelManager>().getPlayerPosition();
         leftBoundary.x -= 9*halfCube;
         rightBoundary = levelManager.GetComponent<LevelManager>().getPlayerPosition();
         rightBoundary.x += 9*halfCube;
+        setUpRowVariables();
         generateInitialObjects();
         generateInitialRows();
+    }
+
+    private void setUpRowVariables()
+    {
+        rowPrefab.GetComponent<Row>().setUnitCube(unitCube);
+        Row.leftmostBorder = leftBoundary.x;
+        Row.rightmostBorder = leftBoundary.x + 9 * unitCube.x;
+        Row.rowWidthInUnitCubes = 9;
     }
     private void generateInitialObjects()
     {
@@ -59,6 +63,12 @@ class LevelGenerator : MonoBehaviour {
 
     private void generateInitialRows()
     {
-
+        float rowOffset = levelManager.GetComponent<LevelManager>().getPlayerPosition().z;
+        rowOffset += 4 * unitCube.z;
+        GameObject testRow = Instantiate(rowPrefab, new Vector3(0, 0, rowOffset),Quaternion.identity);
+        testRow.GetComponent<Row>().setCurrentType(rowType.Road);
+        testRow.GetComponent<Row>().setCurrentSense(true);
+        testRow.GetComponent<Row>().setVehicleSpeedLimits(80, 240);
+        testRow.GetComponent<Row>().generateInitialElements();
     }
 }

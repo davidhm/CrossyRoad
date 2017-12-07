@@ -9,7 +9,7 @@ public sealed class LevelManager : MonoBehaviour {
     public Vector3 unitCube;
 
     // Use this for initialization
-    void Awake()
+    void Start()
     {
         generator.GetComponent<LevelGenerator>().setLevelManager(this);
         generator.GetComponent<LevelGenerator>().setUnitCube(unitCube);
