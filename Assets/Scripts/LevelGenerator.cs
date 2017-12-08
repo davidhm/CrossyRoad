@@ -8,7 +8,9 @@ class LevelGenerator : MonoBehaviour {
     private static float halfCube;
     private static Vector3 unitCube;
     private float nextRowZ;
-    private LinkedList<RowGroup> rows = new LinkedList<RowGroup>();
+    private LinkedList<RowGroup> rows;
+    private GameObject initialArea;
+
     public static Vector3 UnitCube
     {
         get
@@ -29,16 +31,17 @@ class LevelGenerator : MonoBehaviour {
     }
     void LateUpdate()
     {
+        /*
         while (!rows.First.Value.isGroupVisible())
         {
             rows.RemoveFirst();
         }
         if (rows.Last.Value.isGroupVisible())
         {
-            RowGroup newGroup = RowGroup.generateRowGroup(nextRowZ, rows.Last.Value.Type);
+            RowGroup newGroup = RowGroup.generateRowGroup(nextRowZ, rows.Last.Value.Type,generateRandomNumberOfRows());
             rows.AddLast(newGroup);
             nextRowZ = newGroup.NextRowZ;
-        }
+        }*/
     }
 
     public void setLevelManager(LevelManager manager)
@@ -53,6 +56,8 @@ class LevelGenerator : MonoBehaviour {
         rightBoundary = levelManager.GetComponent<LevelManager>().getPlayerPosition();
         rightBoundary.x += 9*halfCube;
         setUpRowVariables();
+        initialArea = new GameObject("initialArea");
+        rows = new LinkedList<RowGroup>();
         generateInitialObjects();
         generateInitialRows();
     }
@@ -65,6 +70,8 @@ class LevelGenerator : MonoBehaviour {
         Row.rowWidthInUnitCubes = 9;
         Row.rowMarginInUnitCubes = 3;
         RowGroup.generator = this;
+        Row.VehicleMaxSpeed = levelManager.vehicleMaxSpeed;
+        Row.VehicleMinSpeed = levelManager.vehicleMinSpeed;
     }
     private void generateInitialObjects()
     {
@@ -77,13 +84,15 @@ class LevelGenerator : MonoBehaviour {
             {
                 Vector3 grassCoordinates = j + offset;
                 grassCoordinates.y = grassPrefab.transform.localScale.y / 2.0f;
-                Instantiate(grassPrefab, grassCoordinates, Quaternion.identity);
+                GameObject grass = (GameObject) Instantiate(grassPrefab, initialArea.transform);
+                grass.transform.position = grassCoordinates;
                 if (j.x < leftBoundary.x || j.x > rightBoundary.x)
                 {
                     Vector3 treeCoordinates = j + offset;
                     treeCoordinates.y = grassPrefab.transform.localScale.y;
                     treeCoordinates.y += treePrefab.transform.localScale.y / 2.0f;
-                    Instantiate(treePrefab, treeCoordinates, Quaternion.identity);
+                    GameObject tree = (GameObject) Instantiate(treePrefab, initialArea.transform);
+                    tree.transform.position = treeCoordinates;
                 }
             }
             
@@ -95,17 +104,34 @@ class LevelGenerator : MonoBehaviour {
         float rowOffset = levelManager.GetComponent<LevelManager>().getPlayerPosition().z;
         rowOffset += 4 * UnitCube.z;
         nextRowZ = rowOffset;
-        RowGroup current = RowGroup.generateRowGroup(nextRowZ, rowType.Grass);
+        RowGroup current = RowGroup.generateRowGroup(nextRowZ, rowType.Grass,generateRandomNumberOfRows());
         rows.AddLast(current);
         nextRowZ = current.NextRowZ;
-        while (current.isGroupVisible())
+        /*while (current.isGroupVisible())
         {
-            current = RowGroup.generateRowGroup(nextRowZ, current.Type);
+            current = RowGroup.generateRowGroup(nextRowZ, current.Type, generateRandomNumberOfRows());
             rows.AddLast(current);
             nextRowZ = current.NextRowZ;
-        }
-        current = RowGroup.generateRowGroup(nextRowZ, rowType.Grass);
+        }*/
+        current = RowGroup.generateRowGroup(nextRowZ, current.Type,generateRandomNumberOfRows());
         rows.AddLast(current);
         nextRowZ = current.NextRowZ;
+    }
+
+    private uint generateRandomNumberOfRows()
+    {
+        float randValue = Random.value;
+        if (randValue < 0.3)
+        {
+            return 1;
+        }
+        else if (randValue >= 0.3 && randValue < 0.6)
+        {
+            return 3;
+        }
+        else
+        {
+            return 5;
+        }
     }
 }

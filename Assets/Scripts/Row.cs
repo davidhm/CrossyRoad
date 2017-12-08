@@ -80,6 +80,19 @@ public class Row : MonoBehaviour
         }
     }
 
+    public float TreeProportion
+    {
+        get
+        {
+            return treeProportion;
+        }
+
+        set
+        {
+            treeProportion = value;
+        }
+    }
+
     public static void setUnitCube(Vector3 unitCube)
     {
         Row.unitCube = unitCube;
@@ -87,18 +100,40 @@ public class Row : MonoBehaviour
     }
 
     void LateUpdate() {
-        if (transform.Find("Vehicle") == null)
+        if (currentType == rowType.Road && transform.Find("Vehicle") == null)
             generateOneVehicle();
     }
     public void generateInitialElements()
     {
-        if (CurrentType == rowType.Road)
+        if (currentType == rowType.Road)
         {
-            generateInitialRow();
+            generateRoadRow();
+        }
+        else if (currentType == rowType.Grass)
+        {
+            generateGrassRow();
         }
     }
-    
-    private void generateInitialRow()
+
+    private void generateGrassRow()
+    {
+        for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
+            i <= rightmostBorder + rowMarginInUnitCubes*unitCube.x - halfCube;
+            i += unitCube.x)
+        {
+            GameObject grassSlab = (GameObject)Instantiate(grassPrefab, transform);
+            float grassHeight = grassPrefab.GetComponent<Renderer>().bounds.extents.y;
+            grassSlab.transform.position = new Vector3(i, grassHeight, transform.position.z);
+            if (i < leftmostBorder || i > rightmostBorder || Random.value < treeProportion)
+            {
+                GameObject tree = (GameObject)Instantiate(treePrefab, transform);
+                float treeHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                tree.transform.position = new Vector3(i, treeHeight, transform.position.z);
+            }
+        }
+    }
+
+    private void generateRoadRow()
     {
         for (float j = leftmostBorder - 5*halfCube;
             j <= 5*halfCube + rightmostBorder; j += 2*halfCube)
@@ -121,19 +156,19 @@ public class Row : MonoBehaviour
             float carHeight = roadHeightOffset;
             float carLateralPosition, carWidthOffset;
             carWidthOffset = carPrefab.GetComponent<Renderer>().bounds.extents.x;
-            float carSpeed = Random.Range(VehicleMinSpeed, VehicleMaxSpeed);
+            float carSpeed = Random.Range(vehicleMinSpeed, vehicleMaxSpeed);
             if (IncomingFromLeft)
             {
                 carLateralPosition = leftmostBorder - 5*unitCube.x + carWidthOffset;
-                carInstance.GetComponent<VehicleController>().setSpeed(new Vector3(
-                    -carSpeed,0,0));
+                carInstance.GetComponent<VehicleController>().Speed = new Vector3(
+                    -carSpeed,0,0);
                 carInstance.transform.Rotate(new Vector3(0, 180, 0));
             }
             else
             {
                 carLateralPosition = rightmostBorder + 5*unitCube.x - carWidthOffset;
-                carInstance.GetComponent<VehicleController>().setSpeed(new Vector3(
-                    -carSpeed, 0, 0));
+                carInstance.GetComponent<VehicleController>().Speed = new Vector3(
+                    -carSpeed, 0, 0);
             }
             carInstance.transform.position = new Vector3(carLateralPosition, carHeight,
                 transform.position.z);            

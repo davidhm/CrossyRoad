@@ -14,8 +14,6 @@ public sealed class LevelManager : MonoBehaviour {
         generator.GetComponent<LevelGenerator>().setLevelManager(this);
         LevelGenerator.UnitCube = unitCube;
         generator.GetComponent<LevelGenerator>().generateInitialArea();
-        Row.VehicleMaxSpeed = vehicleMaxSpeed;
-        Row.VehicleMinSpeed = vehicleMinSpeed;
     }
 
     public void treatPlayerCollision()

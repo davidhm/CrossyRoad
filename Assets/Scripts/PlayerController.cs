@@ -55,6 +55,18 @@ public class PlayerController : MonoBehaviour {
             currentState = playerState.Moving;
             movingDirection = new Vector3(0, 0, -1);
         }
+        else if (currentState == playerState.Idle && Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            newPosition.x += unit;
+            currentState = playerState.Moving;
+            movingDirection = new Vector3(1, 0, 0);
+        }
+        else if (currentState == playerState.Idle && Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            newPosition.x -= unit;
+            currentState = playerState.Moving;
+            movingDirection = new Vector3(-1, 0, 0);
+        }
     }
 
     private void updatePosition()
@@ -81,7 +93,27 @@ public class PlayerController : MonoBehaviour {
                 }
                 else
                     transform.position = updatedPosition;
-            }          
+            }
+            else if (movingDirection == new Vector3(1, 0, 0))
+            {
+                if (updatedPosition.x >= newPosition.x)
+                {
+                    transform.position = newPosition;
+                    currentState = playerState.Idle;
+                }
+                else
+                    transform.position = updatedPosition;
+            }
+            else if (movingDirection == new Vector3(-1, 0, 0))
+            {
+                if (updatedPosition.x <= newPosition.x)
+                {
+                    transform.position = newPosition;
+                    currentState = playerState.Idle;
+                }
+                else
+                    transform.position = updatedPosition;
+            }
         }
     }
 }

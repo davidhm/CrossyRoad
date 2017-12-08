@@ -4,11 +4,30 @@ public class VehicleController : MonoBehaviour {
 
     private bool overflowedRow;
     private Vector3 speed;
-	// Update is called once per frame
-	void Update () {
+
+    public Vector3 Speed
+    {
+        get
+        {
+            return speed;
+        }
+
+        set
+        {
+            speed = value;
+        }
+    }
+
+    // Update is called once per frame
+    void Update () {
         transform.Translate(speed * Time.deltaTime);
-        checkRowOverflow();
+        //checkRowOverflow();
 	}
+    
+    void OnBecameInvisible()
+    {
+        Destroy(gameObject);
+    }
 
     private void checkRowOverflow()
     {
@@ -21,10 +40,5 @@ public class VehicleController : MonoBehaviour {
         {
             Destroy(gameObject);
         }
-    }
-
-    public void setSpeed(Vector3 speed)
-    {
-        this.speed = speed;
     }
 }
