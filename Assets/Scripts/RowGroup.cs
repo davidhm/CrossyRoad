@@ -67,7 +67,7 @@ class RowGroup
 
     private void setRandomGrassParameters(Row grassRow)
     {
-        grassRow.TreeProportion = Random.Range(0,0.5f);
+        grassRow.TreeProportion = Random.Range(0,0.3f);
     }
 
     public float NextRowZ
@@ -102,6 +102,14 @@ class RowGroup
 
     public bool isGroupVisible()
     {
+        for (int i = 0; i < rowGroup.transform.childCount; ++i)
+        {
+            for (int j = 0; j < rowGroup.transform.GetChild(i).childCount; ++j)
+            {
+                if (rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.GetComponent<Renderer>().isVisible)
+                    return true;
+            }
+        }
         return false;
     }
 

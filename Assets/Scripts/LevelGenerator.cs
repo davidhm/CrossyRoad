@@ -107,12 +107,12 @@ class LevelGenerator : MonoBehaviour {
         RowGroup current = RowGroup.generateRowGroup(nextRowZ, rowType.Grass,generateRandomNumberOfRows());
         rows.AddLast(current);
         nextRowZ = current.NextRowZ;
-        /*while (current.isGroupVisible())
+        while (current.isGroupVisible())
         {
             current = RowGroup.generateRowGroup(nextRowZ, current.Type, generateRandomNumberOfRows());
             rows.AddLast(current);
             nextRowZ = current.NextRowZ;
-        }*/
+        }
         current = RowGroup.generateRowGroup(nextRowZ, current.Type,generateRandomNumberOfRows());
         rows.AddLast(current);
         nextRowZ = current.NextRowZ;
