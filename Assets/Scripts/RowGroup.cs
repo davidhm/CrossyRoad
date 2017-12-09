@@ -115,7 +115,7 @@ class RowGroup
 
     public void destroyGroup()
     {
-
+        Object.Destroy(rowGroup);
     }
 }
 

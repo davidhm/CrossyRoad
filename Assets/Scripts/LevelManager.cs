@@ -5,15 +5,17 @@ using UnityEngine.UI;
 public sealed class LevelManager : MonoBehaviour {
 
     public GameObject mainMenu, player;
-    public GameObject generator;
+    public GameObject generatorPrefab;
     public Vector3 unitCube;
     public float vehicleMaxSpeed, vehicleMinSpeed;
+    private GameObject generatorRuntime;
     // Use this for initialization
-    void Start()
+    void Awake()
     {
-        generator.GetComponent<LevelGenerator>().setLevelManager(this);
+        generatorRuntime = (GameObject)Instantiate(generatorPrefab);
+        generatorRuntime.GetComponent<LevelGenerator>().setLevelManager(this);
         LevelGenerator.UnitCube = unitCube;
-        generator.GetComponent<LevelGenerator>().generateInitialArea();
+        generatorRuntime.GetComponent<LevelGenerator>().generateInitialArea();
     }
 
     public void treatPlayerCollision()

@@ -204,7 +204,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenu: {fileID: 1238567719}
   player: {fileID: 1734373943}
-  generator: {fileID: 1323520413148426, guid: bc6dca135cc459d418d524d06cb602f8, type: 2}
+  generatorPrefab: {fileID: 1323520413148426, guid: bc6dca135cc459d418d524d06cb602f8,
+    type: 2}
   unitCube: {x: 40, y: 40, z: 40}
   vehicleMaxSpeed: 200
   vehicleMinSpeed: 80
@@ -859,6 +860,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0da1436a710286c4086c5c5a557fa440, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitsPerSecond: 4
+  unitsPerSecond: 8
   unit: 40
   levelManager: {fileID: 903993489}

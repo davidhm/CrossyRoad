@@ -10,6 +10,7 @@ class LevelGenerator : MonoBehaviour {
     private float nextRowZ;
     private LinkedList<RowGroup> rows;
     private GameObject initialArea;
+    private float timer;
 
     public static Vector3 UnitCube
     {
@@ -24,24 +25,31 @@ class LevelGenerator : MonoBehaviour {
             halfCube = value.z / 2.0f;
         }
     }
-
+    void Awake()
+    {
+        timer = 0.0f;
+    }
     public GameObject getRowPrefab()
     {
         return rowPrefab;
     }
     void LateUpdate()
     {
-        /*
-        while (!rows.First.Value.isGroupVisible())
+        timer += Time.deltaTime;
+        if (timer >= 0.5f)
         {
-            rows.RemoveFirst();
+            if (!rows.First.Value.isGroupVisible())
+            {
+                rows.First.Value.destroyGroup();
+                rows.RemoveFirst();
+            }
+            if (rows.Last.Value.isGroupVisible())
+            {
+                RowGroup nextRow = RowGroup.generateRowGroup(nextRowZ, rows.Last.Value.Type, generateRandomNumberOfRows());
+                rows.AddLast(nextRow);
+                nextRowZ = nextRow.NextRowZ;
+            }
         }
-        if (rows.Last.Value.isGroupVisible())
-        {
-            RowGroup newGroup = RowGroup.generateRowGroup(nextRowZ, rows.Last.Value.Type,generateRandomNumberOfRows());
-            rows.AddLast(newGroup);
-            nextRowZ = newGroup.NextRowZ;
-        }*/
     }
 
     public void setLevelManager(LevelManager manager)
@@ -107,7 +115,7 @@ class LevelGenerator : MonoBehaviour {
         RowGroup current = RowGroup.generateRowGroup(nextRowZ, rowType.Grass,generateRandomNumberOfRows());
         rows.AddLast(current);
         nextRowZ = current.NextRowZ;
-        while (current.isGroupVisible())
+        for (uint i = 0; i < 10; ++i)
         {
             current = RowGroup.generateRowGroup(nextRowZ, current.Type, generateRandomNumberOfRows());
             rows.AddLast(current);

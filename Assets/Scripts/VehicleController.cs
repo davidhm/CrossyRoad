@@ -21,13 +21,8 @@ public class VehicleController : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         transform.Translate(speed * Time.deltaTime);
-        //checkRowOverflow();
+        checkRowOverflow();
 	}
-    
-    void OnBecameInvisible()
-    {
-        Destroy(gameObject);
-    }
 
     private void checkRowOverflow()
     {
