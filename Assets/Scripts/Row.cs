@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 public enum rowType { Grass, Road, Water}
 public class Row : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class Row : MonoBehaviour
     private float truckProportion;
     private static float vehicleMaxSpeed,vehicleMinSpeed;
     private float treeProportion;
+    private List<bool> occupableRow;
 
     public static float VehicleMaxSpeed
     {
@@ -103,8 +106,17 @@ public class Row : MonoBehaviour
         if (currentType == rowType.Road && transform.Find("Vehicle") == null)
             generateOneVehicle();
     }
+
+    public List<bool> getOccupableRow()
+    {
+        return occupableRow;
+    }
+
     public void generateInitialElements()
     {
+        occupableRow = new List<bool>(9);
+        for (int i = 0; i < 9; ++i)
+            occupableRow.Add(true);
         if (currentType == rowType.Road)
         {
             generateRoadRow();
@@ -117,6 +129,7 @@ public class Row : MonoBehaviour
 
     private void generateGrassRow()
     {
+        int k = 0;
         for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
             i <= rightmostBorder + rowMarginInUnitCubes*unitCube.x - halfCube;
             i += unitCube.x)
@@ -124,11 +137,12 @@ public class Row : MonoBehaviour
             GameObject grassSlab = (GameObject)Instantiate(grassPrefab, transform);
             float grassHeight = grassPrefab.GetComponent<Renderer>().bounds.extents.y;
             grassSlab.transform.position = new Vector3(i, grassHeight, transform.position.z);
-            if (i < leftmostBorder || i > rightmostBorder || Random.value < treeProportion)
+            if (i < leftmostBorder || i > rightmostBorder || UnityEngine.Random.value < treeProportion)
             {
                 GameObject tree = (GameObject)Instantiate(treePrefab, transform);
                 float treeHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
                 tree.transform.position = new Vector3(i, treeHeight, transform.position.z);
+                occupableRow[k] = false;
             }
         }
     }
@@ -156,7 +170,7 @@ public class Row : MonoBehaviour
             float carHeight = roadHeightOffset;
             float carLateralPosition, carWidthOffset;
             carWidthOffset = carPrefab.GetComponent<Renderer>().bounds.extents.x;
-            float carSpeed = Random.Range(vehicleMinSpeed, vehicleMaxSpeed);
+            float carSpeed = UnityEngine.Random.Range(vehicleMinSpeed, vehicleMaxSpeed);
             if (IncomingFromLeft)
             {
                 carLateralPosition = leftmostBorder - 5*unitCube.x + carWidthOffset;

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 class LevelGenerator : MonoBehaviour {
     public GameObject carPrefab, truckPrefab,treePrefab,grassPrefab,rowPrefab;
@@ -50,6 +51,23 @@ class LevelGenerator : MonoBehaviour {
                 nextRowZ = nextRow.NextRowZ;
             }
         }
+    }
+
+    public bool checkPositionIsFree(Vector3 position)
+    {
+        if (position.z > levelManager.InitialPlayerPosition.z + 4 * unitCube.z)
+        {
+            LinkedListNode<RowGroup> currentNode = rows.First;
+            while (currentNode != null && (position.z < currentNode.Value.FirstRowZ ||
+                position.z > currentNode.Value.LastRowZ))
+            {
+                currentNode = currentNode.Next;
+            }
+            if (currentNode == null)
+                throw new InvalidOperationException("The queried position does not exist in the generator's list.");
+            return currentNode.Value.checkIfPositionIsFree(position, levelManager);
+        }
+        else return true;
     }
 
     public void setLevelManager(LevelManager manager)
@@ -128,7 +146,7 @@ class LevelGenerator : MonoBehaviour {
 
     private uint generateRandomNumberOfRows()
     {
-        float randValue = Random.value;
+        float randValue = UnityEngine.Random.value;
         if (randValue < 0.3)
         {
             return 1;

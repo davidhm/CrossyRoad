@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -9,6 +10,16 @@ public sealed class LevelManager : MonoBehaviour {
     public Vector3 unitCube;
     public float vehicleMaxSpeed, vehicleMinSpeed;
     private GameObject generatorRuntime;
+    private Vector3 initialPlayerPosition;
+
+    public Vector3 InitialPlayerPosition
+    {
+        get
+        {
+            return initialPlayerPosition;
+        }
+    }
+
     // Use this for initialization
     void Awake()
     {
@@ -16,6 +27,7 @@ public sealed class LevelManager : MonoBehaviour {
         generatorRuntime.GetComponent<LevelGenerator>().setLevelManager(this);
         LevelGenerator.UnitCube = unitCube;
         generatorRuntime.GetComponent<LevelGenerator>().generateInitialArea();
+        initialPlayerPosition = player.transform.position;
     }
 
     public void treatPlayerCollision()
@@ -32,5 +44,16 @@ public sealed class LevelManager : MonoBehaviour {
     public Vector3 getPlayerPosition()
     {
         return player.transform.position;
+    }
+
+    public bool checkPositionIsOccupable(Vector3 movementDestination)
+    {
+        return generatorRuntime.GetComponent<LevelGenerator>().checkPositionIsFree(movementDestination);
+    }
+
+    public int getColumnInCubeUnits(Vector3 position)
+    {
+        int res = Mathf.RoundToInt((position.x - InitialPlayerPosition.x + unitCube.x * 4) / unitCube.x);
+        return res;
     }
 }

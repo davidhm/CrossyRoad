@@ -92,8 +92,11 @@ public class PlayerController : MonoBehaviour {
                     newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 }
                 nextObjective.MovementDestination = newDestination;
-                movementList.AddLast(nextObjective);
-                currentState = playerState.Moving;
+                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                {
+                    movementList.AddLast(nextObjective);
+                    currentState = playerState.Moving;
+                }
             }
             else if (Input.GetKeyDown(KeyCode.DownArrow))
             {
@@ -112,8 +115,11 @@ public class PlayerController : MonoBehaviour {
                     newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 }
                 nextObjective.MovementDestination = newDestination;
-                movementList.AddLast(nextObjective);
-                currentState = playerState.Moving;
+                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                {
+                    movementList.AddLast(nextObjective);
+                    currentState = playerState.Moving;
+                }
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))
             {
@@ -132,8 +138,11 @@ public class PlayerController : MonoBehaviour {
                     newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
                 }
                 nextObjective.MovementDestination = newDestination;
-                movementList.AddLast(nextObjective);
-                currentState = playerState.Moving;
+                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                {
+                    movementList.AddLast(nextObjective);
+                    currentState = playerState.Moving;
+                }
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
@@ -152,8 +161,11 @@ public class PlayerController : MonoBehaviour {
                     newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
                 }
                 nextObjective.MovementDestination = newDestination;
-                movementList.AddLast(nextObjective);
-                currentState = playerState.Moving;
+                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                {
+                    movementList.AddLast(nextObjective);
+                    currentState = playerState.Moving;
+                }
             }
         }
         /*else if (Input.GetKeyDown(KeyCode.G))
@@ -217,8 +229,8 @@ public class PlayerController : MonoBehaviour {
         currentState = playerState.Idle;
         float xTile = (transform.position.x - initialPosition.x) / LevelGenerator.UnitCube.x;
         float zTile = (transform.position.z - initialPosition.z) / LevelGenerator.UnitCube.z;
-        int intXTile = (int)Math.Round(xTile, 0);
-        int intZTile = (int)Math.Round(zTile, 0);
+        int intXTile = Mathf.RoundToInt(xTile);
+        int intZTile = Mathf.RoundToInt(zTile);
         transform.position = new Vector3(intXTile, transform.position.y, intZTile);
     }
 
