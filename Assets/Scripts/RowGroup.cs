@@ -124,10 +124,14 @@ class RowGroup
     }
 
     public bool checkIfPositionIsFree(Vector3 position, LevelManager manager)
-    {
-        int column = manager.getColumnInCubeUnits(position);
-        int row = Mathf.RoundToInt((position.z - firstRowZ) / LevelGenerator.UnitCube.z);
-        return occupableMatrix[row][column];
+    {        
+        if (type == rowType.Grass)
+        {
+            int column = manager.getColumnInCubeUnits(position);
+            int row = Mathf.RoundToInt((position.z - firstRowZ) / LevelGenerator.UnitCube.z);
+            return occupableMatrix[row][column];
+        }
+        return true;
     }
 
     public static RowGroup generateRowGroup(float firstRowZ,rowType previousGroupType,uint numberOfRows)

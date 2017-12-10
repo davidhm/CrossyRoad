@@ -10,7 +10,8 @@ public class PlayerController : MonoBehaviour {
     public GameObject levelManager;
     //private static float godModeSpeed = 160.0f;
     private Vector3 initialPosition;
-
+    private bool debugIdle;
+    private bool godMode;
     private class MovementObjective
     {
         private Vector3 movementDirection;
@@ -49,18 +50,25 @@ public class PlayerController : MonoBehaviour {
         currentState = playerState.Idle;
         initialPosition = transform.position;
         movementList = new LinkedList<MovementObjective>();
+        debugIdle = true;
+        godMode = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
         processInput();
         updatePosition();
+        /*if (currentState == playerState.Idle && debugIdle)
+        {
+            Debug.Log("Position is " + levelManager.GetComponent<LevelManager>().getColumnInCubeUnits(transform.position));
+            debugIdle = false;
+        }
+        debugIdle = currentState != playerState.Idle;*/
 	}
 
     void OnTriggerEnter(Collider other)
     {
-        if (currentState != playerState.GodModeMoving &&
-            currentState != playerState.GodModeStatic)
+        if (!godMode)
         {
             currentState = playerState.Dead;
             levelManager.GetComponent<LevelManager>().treatPlayerCollision();
@@ -167,11 +175,11 @@ public class PlayerController : MonoBehaviour {
                     currentState = playerState.Moving;
                 }
             }
+            else if (Input.GetKeyDown(KeyCode.G))
+            {
+                godMode = true;
+            }
         }
-        /*else if (Input.GetKeyDown(KeyCode.G))
-        {
-            currentState = playerState.GodModeStatic;
-        }*/
         /*if (currentState == playerState.GodModeStatic)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))

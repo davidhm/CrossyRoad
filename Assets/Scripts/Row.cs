@@ -133,7 +133,7 @@ public class Row : MonoBehaviour
         for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
             i <= rightmostBorder + rowMarginInUnitCubes*unitCube.x - halfCube;
             i += unitCube.x)
-        {
+        {          
             GameObject grassSlab = (GameObject)Instantiate(grassPrefab, transform);
             float grassHeight = grassPrefab.GetComponent<Renderer>().bounds.extents.y;
             grassSlab.transform.position = new Vector3(i, grassHeight, transform.position.z);
@@ -142,8 +142,11 @@ public class Row : MonoBehaviour
                 GameObject tree = (GameObject)Instantiate(treePrefab, transform);
                 float treeHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
                 tree.transform.position = new Vector3(i, treeHeight, transform.position.z);
-                occupableRow[k] = false;
+                if (k >= 0 && k <= 9 && i > leftmostBorder && i < rightmostBorder)
+                    occupableRow[k] = false;
             }
+            if (i >= leftmostBorder + halfCube && i < rightmostBorder - halfCube)
+                ++k;
         }
     }
 

@@ -55,7 +55,11 @@ class LevelGenerator : MonoBehaviour {
 
     public bool checkPositionIsFree(Vector3 position)
     {
-        if (position.z > levelManager.InitialPlayerPosition.z + 4 * unitCube.z)
+        int column = levelManager.GetComponent<LevelManager>().getColumnInCubeUnits(position);
+        if (column < 0 || column >= 9)
+            return false;
+        if (position.z >= levelManager.InitialPlayerPosition.z + 4 * unitCube.z &&
+            position.z >= rows.First.Value.FirstRowZ)
         {
             LinkedListNode<RowGroup> currentNode = rows.First;
             while (currentNode != null && (position.z < currentNode.Value.FirstRowZ ||
@@ -67,7 +71,9 @@ class LevelGenerator : MonoBehaviour {
                 throw new InvalidOperationException("The queried position does not exist in the generator's list.");
             return currentNode.Value.checkIfPositionIsFree(position, levelManager);
         }
-        else return true;
+        if (position.z < levelManager.InitialPlayerPosition.z + 4 * unitCube.z)
+            return true;
+        return false;
     }
 
     public void setLevelManager(LevelManager manager)
