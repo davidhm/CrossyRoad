@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-
+using System.Collections.Generic;
+using System;
 
 class LevelGenerator : MonoBehaviour {
     public GameObject carPrefab, truckPrefab,treePrefab,grassPrefab,rowPrefab;
@@ -7,36 +8,102 @@ class LevelGenerator : MonoBehaviour {
     private Vector3 leftBoundary, rightBoundary;
     private static float halfCube;
     private static Vector3 unitCube;
-    private float lastRowZ;
+    private float nextRowZ;
+    private LinkedList<RowGroup> rows;
+    private GameObject initialArea;
+    private float timer;
+
+    public static Vector3 UnitCube
+    {
+        get
+        {
+            return unitCube;
+        }
+
+        set
+        {
+            unitCube = value;
+            halfCube = value.z / 2.0f;
+        }
+    }
+    void Awake()
+    {
+        timer = 0.0f;
+    }
+    public GameObject getRowPrefab()
+    {
+        return rowPrefab;
+    }
+    void LateUpdate()
+    {
+        timer += Time.deltaTime;
+        if (timer >= 0.5f)
+        {
+            if (!rows.First.Value.isGroupVisible())
+            {
+                rows.First.Value.destroyGroup();
+                rows.RemoveFirst();
+            }
+            if (rows.Last.Value.isGroupVisible())
+            {
+                RowGroup nextRow = RowGroup.generateRowGroup(nextRowZ, rows.Last.Value.Type, generateRandomNumberOfRows());
+                rows.AddLast(nextRow);
+                nextRowZ = nextRow.NextRowZ;
+            }
+        }
+    }
+
+    public bool checkPositionIsFree(Vector3 position)
+    {
+        int column = levelManager.GetComponent<LevelManager>().getColumnInCubeUnits(position);
+        if (column < 0 || column >= 9)
+            return false;
+        if (position.z >= levelManager.InitialPlayerPosition.z + 4 * unitCube.z &&
+            position.z >= rows.First.Value.FirstRowZ)
+        {
+            LinkedListNode<RowGroup> currentNode = rows.First;
+            while (currentNode != null && (position.z < currentNode.Value.FirstRowZ ||
+                position.z > currentNode.Value.LastRowZ))
+            {
+                currentNode = currentNode.Next;
+            }
+            if (currentNode == null)
+                throw new InvalidOperationException("The queried position does not exist in the generator's list.");
+            return currentNode.Value.checkIfPositionIsFree(position, levelManager);
+        }
+        if (position.z < levelManager.InitialPlayerPosition.z + 4 * unitCube.z)
+            return true;
+        return false;
+    }
+
     public void setLevelManager(LevelManager manager)
     {
         levelManager = manager;
     }
 
-    public void setUnitCube(Vector3 unitCube)
-    {
-        LevelGenerator.unitCube = unitCube;
-        halfCube = unitCube.z / 2.0f;
-    }
-
     public void generateInitialArea()
     {
-
         leftBoundary = levelManager.GetComponent<LevelManager>().getPlayerPosition();
         leftBoundary.x -= 9*halfCube;
         rightBoundary = levelManager.GetComponent<LevelManager>().getPlayerPosition();
         rightBoundary.x += 9*halfCube;
         setUpRowVariables();
+        initialArea = new GameObject("initialArea");
+        rows = new LinkedList<RowGroup>();
         generateInitialObjects();
         generateInitialRows();
     }
 
     private void setUpRowVariables()
     {
-        rowPrefab.GetComponent<Row>().setUnitCube(unitCube);
+        Row.setUnitCube(UnitCube);
         Row.leftmostBorder = leftBoundary.x;
-        Row.rightmostBorder = leftBoundary.x + 9 * unitCube.x;
+        Row.rightmostBorder = leftBoundary.x + 9 * UnitCube.x;
         Row.rowWidthInUnitCubes = 9;
+        Row.rowMarginInUnitCubes = 3;
+        RowGroup.generator = this;
+        Row.VehicleMaxSpeed = levelManager.vehicleMaxSpeed;
+        Row.VehicleMinSpeed = levelManager.vehicleMinSpeed;
     }
     private void generateInitialObjects()
     {
@@ -49,13 +116,15 @@ class LevelGenerator : MonoBehaviour {
             {
                 Vector3 grassCoordinates = j + offset;
                 grassCoordinates.y = grassPrefab.transform.localScale.y / 2.0f;
-                Instantiate(grassPrefab, grassCoordinates, Quaternion.identity);
+                GameObject grass = (GameObject) Instantiate(grassPrefab, initialArea.transform);
+                grass.transform.position = grassCoordinates;
                 if (j.x < leftBoundary.x || j.x > rightBoundary.x)
                 {
                     Vector3 treeCoordinates = j + offset;
                     treeCoordinates.y = grassPrefab.transform.localScale.y;
                     treeCoordinates.y += treePrefab.transform.localScale.y / 2.0f;
-                    Instantiate(treePrefab, treeCoordinates, Quaternion.identity);
+                    GameObject tree = (GameObject) Instantiate(treePrefab, initialArea.transform);
+                    tree.transform.position = treeCoordinates;
                 }
             }
             
@@ -65,12 +134,36 @@ class LevelGenerator : MonoBehaviour {
     private void generateInitialRows()
     {
         float rowOffset = levelManager.GetComponent<LevelManager>().getPlayerPosition().z;
-        rowOffset += 4 * unitCube.z;
-        lastRowZ = rowOffset;
-        GameObject currentRow = Instantiate(rowPrefab, new Vector3(0, 0, rowOffset),Quaternion.identity);
-        currentRow.GetComponent<Row>().setCurrentType(rowType.Road);
-        currentRow.GetComponent<Row>().setCurrentSense(true);
-        currentRow.GetComponent<Row>().setVehicleSpeedLimits(80, 240);
-        currentRow.GetComponent<Row>().generateInitialElements();
+        rowOffset += 4 * UnitCube.z;
+        nextRowZ = rowOffset;
+        RowGroup current = RowGroup.generateRowGroup(nextRowZ, rowType.Grass,generateRandomNumberOfRows());
+        rows.AddLast(current);
+        nextRowZ = current.NextRowZ;
+        for (uint i = 0; i < 10; ++i)
+        {
+            current = RowGroup.generateRowGroup(nextRowZ, current.Type, generateRandomNumberOfRows());
+            rows.AddLast(current);
+            nextRowZ = current.NextRowZ;
+        }
+        current = RowGroup.generateRowGroup(nextRowZ, current.Type,generateRandomNumberOfRows());
+        rows.AddLast(current);
+        nextRowZ = current.NextRowZ;
+    }
+
+    private uint generateRandomNumberOfRows()
+    {
+        float randValue = UnityEngine.Random.value;
+        if (randValue < 0.3)
+        {
+            return 1;
+        }
+        else if (randValue >= 0.3 && randValue < 0.6)
+        {
+            return 3;
+        }
+        else
+        {
+            return 5;
+        }
     }
 }

@@ -1,19 +1,33 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public sealed class LevelManager : MonoBehaviour {
 
     public GameObject mainMenu, player;
-    public GameObject generator;
+    public GameObject generatorPrefab;
     public Vector3 unitCube;
+    public float vehicleMaxSpeed, vehicleMinSpeed;
+    private GameObject generatorRuntime;
+    private Vector3 initialPlayerPosition;
+
+    public Vector3 InitialPlayerPosition
+    {
+        get
+        {
+            return initialPlayerPosition;
+        }
+    }
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
-        generator.GetComponent<LevelGenerator>().setLevelManager(this);
-        generator.GetComponent<LevelGenerator>().setUnitCube(unitCube);
-        generator.GetComponent<LevelGenerator>().generateInitialArea();
+        generatorRuntime = (GameObject)Instantiate(generatorPrefab);
+        generatorRuntime.GetComponent<LevelGenerator>().setLevelManager(this);
+        LevelGenerator.UnitCube = unitCube;
+        generatorRuntime.GetComponent<LevelGenerator>().generateInitialArea();
+        initialPlayerPosition = player.transform.position;
     }
 
     public void treatPlayerCollision()
@@ -31,19 +45,15 @@ public sealed class LevelManager : MonoBehaviour {
     {
         return player.transform.position;
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
-    void LateUpdate()
+    public bool checkPositionIsOccupable(Vector3 movementDestination)
     {
-       /* if (player.GetComponent<PlayerController>().getNewPosition().z >= 1)
-        {
-            player.GetComponent<PlayerController>().setPlayerState(PlayerController.playerState.Dead);
-            mainMenu.transform.GetChild(1).GetComponent<Text>().text = "You win!";
-            mainMenu.SetActive(true);
-        }*/
+        return generatorRuntime.GetComponent<LevelGenerator>().checkPositionIsFree(movementDestination);
+    }
+
+    public int getColumnInCubeUnits(Vector3 position)
+    {
+        int res = Mathf.RoundToInt((position.x - InitialPlayerPosition.x + unitCube.x * 4) / unitCube.x);
+        return res;
     }
 }
