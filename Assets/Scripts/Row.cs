@@ -166,8 +166,8 @@ public class Row : MonoBehaviour
 
     private void generateOneVehicle()
     {
-        if (UnityEngine.Random.value > truckProportion)
-        {
+        //if (UnityEngine.Random.value > truckProportion)
+        //{
             GameObject carInstance = (GameObject)Instantiate(carPrefab, transform);
             carInstance.name = "Vehicle";
             float roadHeightOffset = roadPrefab.GetComponent<Renderer>().bounds.size.y;
@@ -190,8 +190,8 @@ public class Row : MonoBehaviour
             }
             carInstance.transform.position = new Vector3(carLateralPosition, carHeight,
                 transform.position.z);            
-        }
-        else
+        //}
+        /*else
         {
             GameObject truckFrontInstance = (GameObject)Instantiate(truckFrontPrefab, transform);
             GameObject truckBackInstance = (GameObject)Instantiate(truckBackPrefab, transform);
@@ -220,7 +220,7 @@ public class Row : MonoBehaviour
             }
             truckInstance.transform.position = new Vector3(truckLateralPosition, truckHeight,
                 truckInstance.transform.position.z);
-        }
+        }*/
     }
 }
 
