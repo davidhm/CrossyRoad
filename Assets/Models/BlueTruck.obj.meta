@@ -1,23 +1,23 @@
 fileFormatVersion: 2
-guid: 7148eb5e24faf4841a6031329194ceab
-timeCreated: 1512316096
+guid: 00af49985ee2e7b46acbb5420c4a5519
+timeCreated: 1513291361
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: Cotxe
+    100000: BlueTruck
     100002: //RootNode
-    400000: Cotxe
+    400000: BlueTruck
     400002: //RootNode
-    2300000: Cotxe
-    3300000: Cotxe
-    4300000: Cotxe
+    2300000: BlueTruck
+    3300000: BlueTruck
+    4300000: BlueTruck
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: palette
-    second: {fileID: 2100000, guid: b38c1895c81d21941874d79b0b7b957a, type: 2}
+    second: {fileID: 2100000, guid: 3c9c83b54a449d24fb679e33f2e7df69, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

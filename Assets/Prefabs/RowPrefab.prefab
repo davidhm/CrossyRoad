@@ -51,12 +51,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a36bbcf82afe1ba47af72ec45feeb3fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carPrefab: {fileID: 1364316440736318, guid: 1df3b060ba5116541aa1c025ea835adc, type: 2}
+  carPrefab: {fileID: 1669316821044168, guid: a907334815405494185c53686d474741, type: 2}
   treePrefab: {fileID: 1329693175543538, guid: 18a0b0efdca83414f923622f039ee27d, type: 2}
   grassPrefab: {fileID: 1330230353037966, guid: be823366ff69233418ea99094a761850,
     type: 2}
   roadPrefab: {fileID: 1412190525201568, guid: bb7144d39b41d6b4cab0fe33bfdba4f3, type: 2}
-  truckFrontPrefab: {fileID: 1416045639945348, guid: e282e555fd69b8b4588937a3dd45c5ff,
+  boulderPrefab: {fileID: 1446132734056058, guid: 9d5ba1b8ed50cd442b9f6f0970be052f,
     type: 2}
-  truckBackPrefab: {fileID: 1207509350677862, guid: dbc45cdb26c87ee41bb7137e1041bb6f,
+  truckPrefab: {fileID: 1707955449329638, guid: ce3868f96c9b72641ab22e6e0159bdc2,
     type: 2}
+  redCarMesh: {fileID: 4300000, guid: 60cd672bf913d3c4783312cf650b61c5, type: 3}
+  blueCarMesh: {fileID: 4300000, guid: d2fb526fd57e96544835a97281b36448, type: 3}
+  greenCarMesh: {fileID: 4300000, guid: 34f8b2e3777aef442a234aefd728b91e, type: 3}
+  redTruckMesh: {fileID: 4300000, guid: dea9be5378b47a844aee79ee05b07810, type: 3}
+  blueTruckMesh: {fileID: 4300000, guid: 00af49985ee2e7b46acbb5420c4a5519, type: 3}
+  greenTruckMesh: {fileID: 4300000, guid: 3c4055f2cb862da4ab9c86a93cd02bf2, type: 3}

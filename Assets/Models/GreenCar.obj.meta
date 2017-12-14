@@ -1,23 +1,23 @@
 fileFormatVersion: 2
-guid: de6a754dcb6e88a4b8f8d042a1727164
-timeCreated: 1513165121
+guid: 34f8b2e3777aef442a234aefd728b91e
+timeCreated: 1513288169
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: CamioBack
+    100000: GreenCar
     100002: //RootNode
-    400000: CamioBack
+    400000: GreenCar
     400002: //RootNode
-    2300000: CamioBack
-    3300000: CamioBack
-    4300000: CamioBack
+    2300000: GreenCar
+    3300000: GreenCar
+    4300000: GreenCar
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: palette
-    second: {fileID: 2100000, guid: bdd3ac16a4f629243855435b2ee72920, type: 2}
+    second: {fileID: 2100000, guid: 3c9c83b54a449d24fb679e33f2e7df69, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

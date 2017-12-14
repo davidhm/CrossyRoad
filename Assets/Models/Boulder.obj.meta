@@ -1,23 +1,23 @@
 fileFormatVersion: 2
-guid: 0adda5808185e7841a092d4863e1485b
-timeCreated: 1512316402
+guid: db7ce5322be87e44489798c504a4df0f
+timeCreated: 1513291504
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: Arbre
+    100000: Boulder
     100002: //RootNode
-    400000: Arbre
+    400000: Boulder
     400002: //RootNode
-    2300000: Arbre
-    3300000: Arbre
-    4300000: Arbre
+    2300000: Boulder
+    3300000: Boulder
+    4300000: Boulder
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: palette
-    second: {fileID: 2100000, guid: 1f94c76fa141b034c9567113d4614e86, type: 2}
+    second: {fileID: 2100000, guid: 1dbf636aee1ea4d40aa95c3beb28256d, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

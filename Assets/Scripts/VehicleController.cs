@@ -4,6 +4,8 @@ public class VehicleController : MonoBehaviour {
 
     private bool overflowedRow;
     private Vector3 speed;
+    private bool justSpawned;
+    private bool incomingFromLeft;
 
     public Vector3 Speed
     {
@@ -18,6 +20,32 @@ public class VehicleController : MonoBehaviour {
         }
     }
 
+    public bool JustSpawned
+    {
+        get
+        {
+            return justSpawned;
+        }
+
+        set
+        {
+            justSpawned = value;
+        }
+    }
+
+    public bool IncomingFromLeft
+    {
+        get
+        {
+            return incomingFromLeft;
+        }
+
+        set
+        {
+            incomingFromLeft = value;
+        }
+    }
+
     // Update is called once per frame
     void Update () {
         transform.Translate(speed * Time.deltaTime);
@@ -26,14 +54,23 @@ public class VehicleController : MonoBehaviour {
 
     private void checkRowOverflow()
     {
-        Vector3 unitCube = LevelGenerator.UnitCube;
-        float offset = gameObject.GetComponent<Renderer>().bounds.extents.x;
-        if (transform.position.x - offset > Row.rightmostBorder + 
-            Row.rowMarginInUnitCubes * unitCube.x ||
-            transform.position.x + offset < Row.leftmostBorder -
-            Row.rowMarginInUnitCubes * unitCube.x)
+        if (justSpawned)
         {
-            Destroy(gameObject);
+            if (incomingFromLeft && transform.position.x > Row.leftmostBorder)
+                justSpawned = false;
+            else if (!incomingFromLeft && transform.position.x < Row.rightmostBorder)
+                justSpawned = false;
+        }
+        else
+        {
+            float offset = gameObject.GetComponent<Renderer>().bounds.extents.x;
+            if ((incomingFromLeft && transform.position.x >
+                Row.rightmostBorder + Row.rowMarginInUnitCubes*LevelGenerator.UnitCube.x + offset) ||
+                (!incomingFromLeft && transform.position.x <
+                Row.leftmostBorder - Row.rowMarginInUnitCubes * LevelGenerator.UnitCube.x - offset))
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

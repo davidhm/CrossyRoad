@@ -1,23 +1,23 @@
 fileFormatVersion: 2
-guid: 5346a34fb98201f4381118ac1e0d07e8
-timeCreated: 1511361312
+guid: 3c4055f2cb862da4ab9c86a93cd02bf2
+timeCreated: 1513291367
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: default
-    400000: //RootNode
-    400002: default
-    2300000: default
-    3300000: default
-    4300000: default
+    100000: GreenTruck
+    100002: //RootNode
+    400000: GreenTruck
+    400002: //RootNode
+    2300000: GreenTruck
+    3300000: GreenTruck
+    4300000: GreenTruck
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: palette
-    second: {fileID: 2100000, guid: 0db99b34fed943b42a8b67c7ab527bc0, type: 2}
+    second: {fileID: 2100000, guid: 3c9c83b54a449d24fb679e33f2e7df69, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
