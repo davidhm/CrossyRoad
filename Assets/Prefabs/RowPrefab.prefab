@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a36bbcf82afe1ba47af72ec45feeb3fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carPrefab: {fileID: 1364316440736318, guid: 1df3b060ba5116541aa1c025ea835adc, type: 2}
+  carPrefab: {fileID: 1669316821044168, guid: a907334815405494185c53686d474741, type: 2}
   treePrefab: {fileID: 1329693175543538, guid: 18a0b0efdca83414f923622f039ee27d, type: 2}
   grassPrefab: {fileID: 1330230353037966, guid: be823366ff69233418ea99094a761850,
     type: 2}
