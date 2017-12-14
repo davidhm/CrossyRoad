@@ -4,8 +4,7 @@ using UnityEngine;
 public enum rowType { Grass, Road, Water}
 public class Row : MonoBehaviour
 {
-    public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab;
-    public GameObject truckFrontPrefab, truckBackPrefab;
+    public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab,boulderPrefab;
     public static float leftmostBorder;
     public static uint rowWidthInUnitCubes;
     public static float rightmostBorder;
@@ -138,12 +137,27 @@ public class Row : MonoBehaviour
             GameObject grassSlab = (GameObject)Instantiate(grassPrefab, transform);
             float grassHeight = grassPrefab.GetComponent<Renderer>().bounds.extents.y;
             grassSlab.transform.position = new Vector3(i, grassHeight, transform.position.z);
-            if (i < leftmostBorder || i > rightmostBorder || UnityEngine.Random.value < treeProportion)
+            if (i < leftmostBorder || i > rightmostBorder)
             {
                 GameObject tree = (GameObject)Instantiate(treePrefab, transform);
                 float treeHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
                 tree.transform.position = new Vector3(i, treeHeight, transform.position.z);
-                if (k >= 0 && k <= 9 && i > leftmostBorder && i < rightmostBorder)
+            }
+            else if (UnityEngine.Random.value < treeProportion) 
+            {
+                if (UnityEngine.Random.value > 0.5)
+                {
+                    GameObject tree = (GameObject)Instantiate(treePrefab, transform);
+                    float treeHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                    tree.transform.position = new Vector3(i, treeHeight, transform.position.z);                    
+                }
+                else
+                {
+                    GameObject boulder = (GameObject)Instantiate(boulderPrefab, transform);
+                    float boulderHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                    boulder.transform.position = new Vector3(i, boulderHeight, transform.position.z);
+                }
+                if (k >= 0 && k <= 9)
                     occupableRow[k] = false;
             }
             if (i >= leftmostBorder + halfCube && i < rightmostBorder - halfCube)

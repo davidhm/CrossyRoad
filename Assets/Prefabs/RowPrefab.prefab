@@ -56,7 +56,5 @@ MonoBehaviour:
   grassPrefab: {fileID: 1330230353037966, guid: be823366ff69233418ea99094a761850,
     type: 2}
   roadPrefab: {fileID: 1412190525201568, guid: bb7144d39b41d6b4cab0fe33bfdba4f3, type: 2}
-  truckFrontPrefab: {fileID: 1416045639945348, guid: e282e555fd69b8b4588937a3dd45c5ff,
-    type: 2}
-  truckBackPrefab: {fileID: 1207509350677862, guid: dbc45cdb26c87ee41bb7137e1041bb6f,
+  boulderPrefab: {fileID: 1446132734056058, guid: 9d5ba1b8ed50cd442b9f6f0970be052f,
     type: 2}
