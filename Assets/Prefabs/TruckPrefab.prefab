@@ -38,8 +38,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1707955449329638}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
-  m_LocalScale: {x: 3, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -58,7 +58,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 0fd98b1d6a2524e45a5f65a81167d3c8, type: 2}
+  - {fileID: 2100000, guid: 3c9c83b54a449d24fb679e33f2e7df69, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84,7 +84,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1707955449329638}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 4300000, guid: 00af49985ee2e7b46acbb5420c4a5519, type: 3}
 --- !u!54 &54997532784445606
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -110,8 +110,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 120, y: 40, z: 40}
+  m_Center: {x: 0, y: 20, z: 0}
 --- !u!114 &114368897173462478
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -123,5 +123,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec7b792e2d638644f94a977294fcd5ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialPosition: {x: 0, y: 0, z: 0}
-  speed: {x: 0, y: 0, z: 0}

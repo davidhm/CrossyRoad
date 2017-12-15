@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 public enum rowType { Grass, Road, Water}
 public class Row : MonoBehaviour
 {
-    public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab;
+    public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab,boulderPrefab;
+    public GameObject truckPrefab;
+    public Mesh redCarMesh, blueCarMesh, greenCarMesh;
+    public Mesh redTruckMesh, blueTruckMesh, greenTruckMesh;
     public static float leftmostBorder;
     public static uint rowWidthInUnitCubes;
     public static float rightmostBorder;
@@ -137,12 +139,27 @@ public class Row : MonoBehaviour
             GameObject grassSlab = (GameObject)Instantiate(grassPrefab, transform);
             float grassHeight = grassPrefab.GetComponent<Renderer>().bounds.extents.y;
             grassSlab.transform.position = new Vector3(i, grassHeight, transform.position.z);
-            if (i < leftmostBorder || i > rightmostBorder || UnityEngine.Random.value < treeProportion)
+            if (i < leftmostBorder || i > rightmostBorder)
             {
                 GameObject tree = (GameObject)Instantiate(treePrefab, transform);
                 float treeHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
                 tree.transform.position = new Vector3(i, treeHeight, transform.position.z);
-                if (k >= 0 && k <= 9 && i > leftmostBorder && i < rightmostBorder)
+            }
+            else if (UnityEngine.Random.value < treeProportion) 
+            {
+                if (UnityEngine.Random.value > 0.5)
+                {
+                    GameObject tree = (GameObject)Instantiate(treePrefab, transform);
+                    float treeHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                    tree.transform.position = new Vector3(i, treeHeight, transform.position.z);                    
+                }
+                else
+                {
+                    GameObject boulder = (GameObject)Instantiate(boulderPrefab, transform);
+                    float boulderHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                    boulder.transform.position = new Vector3(i, boulderHeight, transform.position.z);
+                }
+                if (k >= 0 && k <= 9)
                     occupableRow[k] = false;
             }
             if (i >= leftmostBorder + halfCube && i < rightmostBorder - halfCube)
@@ -165,8 +182,8 @@ public class Row : MonoBehaviour
 
     private void generateOneVehicle()
     {
-        //if (Random.value > truckProportion)
-        //{
+        if (Random.value > truckProportion)
+        {
             GameObject carInstance = (GameObject)Instantiate(carPrefab, transform);
             carInstance.name = "Vehicle";
             float roadHeightOffset = roadPrefab.GetComponent<Renderer>().bounds.size.y;
@@ -174,46 +191,85 @@ public class Row : MonoBehaviour
             float carLateralPosition, carWidthOffset;
             carWidthOffset = carPrefab.GetComponent<Renderer>().bounds.extents.x;
             float carSpeed = UnityEngine.Random.Range(vehicleMinSpeed, vehicleMaxSpeed);
+            assignCarModel(carInstance);
             if (IncomingFromLeft)
             {
-                carLateralPosition = leftmostBorder - 5*unitCube.x + carWidthOffset;
-                carInstance.GetComponent<VehicleController>().Speed = new Vector3(
-                    -carSpeed,0,0);
+                carLateralPosition = leftmostBorder - rowMarginInUnitCubes*unitCube.x - carWidthOffset;
                 carInstance.transform.Rotate(new Vector3(0, 180, 0));
+                carInstance.GetComponent<VehicleController>().IncomingFromLeft = true;
             }
             else
             {
-                carLateralPosition = rightmostBorder + 5*unitCube.x - carWidthOffset;
-                carInstance.GetComponent<VehicleController>().Speed = new Vector3(
-                    -carSpeed, 0, 0);
+                carLateralPosition = rightmostBorder + rowMarginInUnitCubes*unitCube.x + carWidthOffset;
+                carInstance.GetComponent<VehicleController>().IncomingFromLeft = false;
             }
+            carInstance.GetComponent<VehicleController>().Speed = new Vector3(
+                    -carSpeed, 0, 0);
             carInstance.transform.position = new Vector3(carLateralPosition, carHeight,
-                transform.position.z);            
-        /*}
+                    transform.position.z);
+            carInstance.GetComponent<VehicleController>().JustSpawned = true;        
+        }
         else
         {
             GameObject truckInstance = (GameObject)Instantiate(truckPrefab, transform);
+            truckInstance.name = "Vehicle";
             float roadHeightOffset = roadPrefab.GetComponent<Renderer>().bounds.size.y;
-            float truckHeightOffset = truckPrefab.GetComponent<Renderer>().bounds.extents.y;
-            float truckHeight = roadHeightOffset + truckHeightOffset;
+            float truckHeight = roadHeightOffset;
             float truckLateralPosition, truckWidthOffset;
             truckWidthOffset = truckPrefab.GetComponent<Renderer>().bounds.extents.x;
-            float truckSpeed = Random.Range(vehicleMinSpeed, vehicleMaxSpeed);
-            if (incomingFromLeft)
+            float truckSpeed = UnityEngine.Random.Range(vehicleMinSpeed, vehicleMaxSpeed);
+            assigntruckModel(truckInstance);
+            if (IncomingFromLeft)
             {
-                truckLateralPosition = leftmostBorder + truckWidthOffset;
-                truckInstance.GetComponent<VehicleController>().setSpeed(new Vector3(
-                    truckSpeed, 0, 0));
+                truckLateralPosition = leftmostBorder - rowMarginInUnitCubes * unitCube.x - truckWidthOffset;
+                truckInstance.transform.Rotate(new Vector3(0, 180, 0));
+                truckInstance.GetComponent<VehicleController>().IncomingFromLeft = true;
             }
             else
             {
-                truckLateralPosition = rightmostBorder - truckWidthOffset;
-                truckInstance.GetComponent<VehicleController>().setSpeed(new Vector3(
-                    -truckSpeed, 0, 0));
+                truckLateralPosition = rightmostBorder + rowMarginInUnitCubes * unitCube.x + truckWidthOffset;
+                truckInstance.GetComponent<VehicleController>().IncomingFromLeft = false;
             }
+            truckInstance.GetComponent<VehicleController>().Speed = new Vector3(
+                    -truckSpeed, 0, 0);
             truckInstance.transform.position = new Vector3(truckLateralPosition, truckHeight,
-                truckInstance.transform.position.z);
-        }*/
+                    transform.position.z);
+            truckInstance.GetComponent<VehicleController>().JustSpawned = true;
+        }
+    }
+
+    private void assigntruckModel(GameObject truckInstance)
+    {
+        float randValue = Random.value;
+        if (randValue < 0.33)
+        {
+            truckInstance.GetComponent<MeshFilter>().mesh = redTruckMesh;
+        }
+        else if (randValue >= 0.33 && randValue < 0.66)
+        {
+            truckInstance.GetComponent<MeshFilter>().mesh = redTruckMesh;
+        }
+        else
+        {
+            truckInstance.GetComponent<MeshFilter>().mesh = blueTruckMesh;
+        }
+    }
+
+    private void assignCarModel(GameObject carInstance)
+    {
+        float randValue = Random.value;
+        if (randValue < 0.33)
+        {
+            carInstance.GetComponent<MeshFilter>().mesh = redCarMesh;
+        }
+        else if (randValue >= 0.33 && randValue < 0.66)
+        {
+            carInstance.GetComponent<MeshFilter>().mesh = greenCarMesh;
+        }
+        else
+        {
+            carInstance.GetComponent<MeshFilter>().mesh = blueCarMesh;
+        }
     }
 }
 
