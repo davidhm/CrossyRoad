@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class VehicleController : MonoBehaviour {
 
@@ -6,6 +7,7 @@ public class VehicleController : MonoBehaviour {
     private Vector3 speed;
     private bool justSpawned;
     private bool incomingFromLeft;
+    private LinkedList<CollisionInfo> collisionsDebug;
 
     public Vector3 Speed
     {
@@ -46,6 +48,19 @@ public class VehicleController : MonoBehaviour {
         }
     }
 
+    public LinkedList<CollisionInfo> CollisionsDebug
+    {
+        get
+        {
+            return collisionsDebug;
+        }
+
+        set
+        {
+            collisionsDebug = value;
+        }
+    }
+
     // Update is called once per frame
     void Update () {
         transform.Translate(speed * Time.deltaTime);
@@ -72,5 +87,10 @@ public class VehicleController : MonoBehaviour {
                 Destroy(gameObject);
             }
         }
+    }
+
+    void onTriggerEnter()
+    {
+        Time.timeScale = 0;
     }
 }
