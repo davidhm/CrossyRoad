@@ -12,7 +12,6 @@ class LevelGenerator : MonoBehaviour {
     private LinkedList<RowGroup> rows;
     private GameObject initialArea;
     private float timer;
-
     public static Vector3 UnitCube
     {
         get
@@ -29,6 +28,7 @@ class LevelGenerator : MonoBehaviour {
     void Awake()
     {
         timer = 0.0f;
+        
     }
     public GameObject getRowPrefab()
     {
@@ -56,7 +56,7 @@ class LevelGenerator : MonoBehaviour {
     public bool checkPositionIsFree(Vector3 position)
     {
         int column = levelManager.GetComponent<LevelManager>().getColumnInCubeUnits(position);
-        if (column < 0 || column >= 9)
+        if (column < 0 || column >= 9 || position.z < levelManager.InitialPlayerPosition.z - 3*unitCube.z)
             return false;
         if (position.z >= levelManager.InitialPlayerPosition.z + 4 * unitCube.z &&
             position.z >= rows.First.Value.FirstRowZ)
@@ -100,7 +100,7 @@ class LevelGenerator : MonoBehaviour {
         Row.leftmostBorder = leftBoundary.x;
         Row.rightmostBorder = leftBoundary.x + 9 * UnitCube.x;
         Row.rowWidthInUnitCubes = 9;
-        Row.rowMarginInUnitCubes = 3;
+        Row.rowMarginInUnitCubes = 15;
         RowGroup.generator = this;
         Row.VehicleMaxSpeed = levelManager.vehicleMaxSpeed;
         Row.VehicleMinSpeed = levelManager.vehicleMinSpeed;
@@ -108,11 +108,11 @@ class LevelGenerator : MonoBehaviour {
     private void generateInitialObjects()
     {
         Vector3 aux = new Vector3(halfCube, 0, 0);
-        for (float i = -5*unitCube.z; i <= 3*unitCube.z; i += unitCube.z)
+        for (float i = -10*unitCube.z; i <= 3*unitCube.z; i += unitCube.z)
         {
             Vector3 offset = new Vector3(0, 0, i);
-            for (Vector3 j = (leftBoundary - 6*aux) + aux; 
-                j.x <= ((rightBoundary + 6*aux) - aux).x; j += 2* aux)
+            for (Vector3 j = (leftBoundary - 30*aux) + aux; 
+                j.x <= ((rightBoundary + 30*aux) - aux).x; j += 2* aux)
             {
                 Vector3 grassCoordinates = j + offset;
                 grassCoordinates.y = grassPrefab.transform.localScale.y / 2.0f;
