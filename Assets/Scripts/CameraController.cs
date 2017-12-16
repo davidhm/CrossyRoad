@@ -11,8 +11,7 @@ public class CameraController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         relatiuAPlayer = player.transform.position - transform.position;
-        transform.LookAt(player.transform.position + playerLookAtOffset);
-        currentState = cameraStates.InitialState;
+        transform.LookAt(player.transform.position + playerLookAtOffset); 
 	}
 	
 	// Update is called once per frame

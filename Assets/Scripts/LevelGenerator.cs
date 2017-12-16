@@ -108,7 +108,7 @@ class LevelGenerator : MonoBehaviour {
     private void generateInitialObjects()
     {
         Vector3 aux = new Vector3(halfCube, 0, 0);
-        for (float i = -4*halfCube; i <= 6*halfCube; i += 2*halfCube)
+        for (float i = -5*unitCube.z; i <= 3*unitCube.z; i += unitCube.z)
         {
             Vector3 offset = new Vector3(0, 0, i);
             for (Vector3 j = (leftBoundary - 6*aux) + aux; 
@@ -118,7 +118,7 @@ class LevelGenerator : MonoBehaviour {
                 grassCoordinates.y = grassPrefab.transform.localScale.y / 2.0f;
                 GameObject grass = (GameObject) Instantiate(grassPrefab, initialArea.transform);
                 grass.transform.position = grassCoordinates;
-                if (j.x < leftBoundary.x || j.x > rightBoundary.x)
+                if (j.x < leftBoundary.x || j.x > rightBoundary.x || i < -3*unitCube.z)
                 {
                     Vector3 treeCoordinates = j + offset;
                     treeCoordinates.y = grassPrefab.transform.localScale.y;
