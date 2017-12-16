@@ -75,6 +75,12 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    void OnBecameInvisible()
+    {
+        currentState = playerState.Dead;
+        levelManager.GetComponent<LevelManager>().treatPlayerInvisible();
+    }
+
     public bool isMoving()
     {
         return currentState == playerState.Moving;

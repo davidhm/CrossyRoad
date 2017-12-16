@@ -1,48 +1,70 @@
 ﻿using UnityEngine;
+public enum cameraStates { GameStarted, PlayerDead, InitialState };
 
 public class CameraController : MonoBehaviour {
-
     public GameObject player;
     public Vector3 playerLookAtOffset;
-    public float minimumSpeed, acceleration;
-    private enum cameraStates { FollowingPlayer, PlayerStopped, InitialState};
+    public float idleForwardSpeed, maxPlayerForwardDistance;
+    private float currentForwardSpeed, playerToCenterDistance, maxForwardSpeed;    
+    private bool gameStarted;
     private cameraStates currentState;
-    private Vector3 relatiuAPlayer;
-	// Use this for initialization
-	void Start () {
-        relatiuAPlayer = player.transform.position - transform.position;
-        transform.LookAt(player.transform.position + playerLookAtOffset); 
+    private Vector3 cameraLookAt;
+
+    public cameraStates CurrentState
+    {
+        get
+        {
+            return currentState;
+        }
+
+        set
+        {
+            currentState = value;
+        }
+    }
+
+    // Use this for initialization
+    void Start () {
+        cameraLookAt = (player.transform.position + playerLookAtOffset) - transform.position;
+        transform.LookAt(player.transform.position + playerLookAtOffset);
+        currentState = cameraStates.InitialState;
+        playerToCenterDistance = playerLookAtOffset.z;
+        maxForwardSpeed = player.GetComponent<PlayerController>().unit * player.GetComponent<PlayerController>().unitsPerSecond;
 	}
 	
 	// Update is called once per frame
 	void LateUpdate () {
-        transform.position = player.transform.position - relatiuAPlayer;
-        /*computeState();
-        computeMovement();   */
+        computeState();
+        computeMovement();
 	}
     
     void computeState()
     {
-        if (currentState == cameraStates.FollowingPlayer)
+        if (currentState == cameraStates.InitialState && player.GetComponent<PlayerController>().isMoving())
         {
-            if ((transform.position + relatiuAPlayer + playerLookAtOffset).z >= 
-                (player.transform.position + playerLookAtOffset).z)
+            currentState = cameraStates.GameStarted;
+            currentForwardSpeed = idleForwardSpeed;
+        }
+        else if (currentState == cameraStates.GameStarted)
+        {
+            if (player.transform.position.z + playerToCenterDistance > (transform.position + cameraLookAt).z)
             {
-                currentState = cameraStates.PlayerStopped;
+                float difference = (player.transform.position.z + playerToCenterDistance) - (transform.position + cameraLookAt).z;
+                currentForwardSpeed = Mathf.Lerp(idleForwardSpeed, maxForwardSpeed, difference / maxPlayerForwardDistance);
+            }
+            else
+            {
+                currentForwardSpeed = idleForwardSpeed;
             }
         }
-        else if (player.GetComponent<PlayerController>().isMoving())
-            currentState = cameraStates.FollowingPlayer;
     }
     void computeMovement()
     {
-        if (currentState == cameraStates.FollowingPlayer)
+        if (currentState == cameraStates.GameStarted)
         {
-
-        }
-        else if (currentState == cameraStates.FollowingPlayer)
-        {
-
+            Vector3 increment = new Vector3();
+            increment.z = Time.deltaTime * currentForwardSpeed;
+            transform.Translate(increment,Space.World);
         }
     }
 }

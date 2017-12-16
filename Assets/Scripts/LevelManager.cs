@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public sealed class LevelManager : MonoBehaviour {
 
-    public GameObject mainMenu, player;
+    public GameObject mainMenu, player, cameraObject;
     public GameObject generatorPrefab;
     public Vector3 unitCube;
     public float vehicleMaxSpeed, vehicleMinSpeed;
@@ -32,6 +32,7 @@ public sealed class LevelManager : MonoBehaviour {
 
     public void treatPlayerCollision()
     {
+        cameraObject.GetComponent<CameraController>().CurrentState = cameraStates.PlayerDead;
         mainMenu.transform.GetChild(1).GetComponent<Text>().text = "You lose!";
         mainMenu.SetActive(true);
     }
@@ -55,5 +56,12 @@ public sealed class LevelManager : MonoBehaviour {
     {
         int res = Mathf.RoundToInt((position.x - InitialPlayerPosition.x + unitCube.x * 4) / unitCube.x);
         return res;
+    }
+
+    public void treatPlayerInvisible()
+    {
+        cameraObject.GetComponent<CameraController>().CurrentState = cameraStates.PlayerDead;
+        mainMenu.transform.GetChild(1).GetComponent<Text>().text = "You lose!";
+        mainMenu.SetActive(true);
     }
 }

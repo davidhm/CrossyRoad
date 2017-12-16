@@ -275,6 +275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenu: {fileID: 1238567719}
   player: {fileID: 1734373943}
+  cameraObject: {fileID: 1038508530}
   generatorPrefab: {fileID: 1323520413148426, guid: bc6dca135cc459d418d524d06cb602f8,
     type: 2}
   unitCube: {x: 40, y: 40, z: 40}
@@ -461,8 +462,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1734373943}
   playerLookAtOffset: {x: -40, y: 0, z: 200}
-  minimumSpeed: 0
-  acceleration: 0
+  idleForwardSpeed: 40
+  maxPlayerForwardDistance: 400
 --- !u!1 &1057467829
 GameObject:
   m_ObjectHideFlags: 0
