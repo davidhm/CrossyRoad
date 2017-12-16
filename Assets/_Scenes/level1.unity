@@ -275,6 +275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenu: {fileID: 1238567719}
   player: {fileID: 1734373943}
+  cameraObject: {fileID: 1038508530}
   generatorPrefab: {fileID: 1323520413148426, guid: bc6dca135cc459d418d524d06cb602f8,
     type: 2}
   unitCube: {x: 40, y: 40, z: 40}
@@ -416,11 +417,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
+  near clip plane: 1
+  far clip plane: 2000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 200
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -442,7 +443,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1038508530}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 80, y: 200, z: -120}
+  m_LocalPosition: {x: 120, y: 392, z: -440}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -460,9 +461,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1734373943}
-  playerLookAtOffset: {x: 0, y: 0, z: 80}
-  minimumSpeed: 0
-  acceleration: 0
+  playerLookAtOffset: {x: -40, y: 0, z: 200}
+  idleForwardSpeed: 40
+  maxPlayerForwardDistance: 400
 --- !u!1 &1057467829
 GameObject:
   m_ObjectHideFlags: 0

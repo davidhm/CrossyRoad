@@ -169,8 +169,8 @@ public class Row : MonoBehaviour
 
     private void generateRoadRow()
     {
-        for (float j = leftmostBorder - 5*halfCube;
-            j <= 5*halfCube + rightmostBorder; j += 2*halfCube)
+        for (float j = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
+            j <= rowMarginInUnitCubes*unitCube.x + rightmostBorder - halfCube; j += unitCube.x)
         {
             GameObject roadSlab = (GameObject) Instantiate(roadPrefab, transform);
             float slabY = roadSlab.GetComponent<Renderer>().bounds.extents.y;
