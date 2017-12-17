@@ -66,3 +66,5 @@ MonoBehaviour:
   redTruckMesh: {fileID: 4300000, guid: dea9be5378b47a844aee79ee05b07810, type: 3}
   blueTruckMesh: {fileID: 4300000, guid: 00af49985ee2e7b46acbb5420c4a5519, type: 3}
   greenTruckMesh: {fileID: 4300000, guid: 3c4055f2cb862da4ab9c86a93cd02bf2, type: 3}
+  darkGrassMesh: {fileID: 4300000, guid: 0a45c2f4d46a4cc44bf8ef63c95f197c, type: 3}
+  clearGrassMesh: {fileID: 4300000, guid: fdf7a4ba89162a24e9ab8e6485de0817, type: 3}

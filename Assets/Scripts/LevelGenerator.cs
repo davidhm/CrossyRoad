@@ -4,6 +4,9 @@ using System;
 
 class LevelGenerator : MonoBehaviour {
     public GameObject carPrefab, truckPrefab,treePrefab,grassPrefab,rowPrefab;
+    public Mesh darkGrassMesh, clearRoadMesh;
+    public Mesh clearGrassMesh, forwardStripeRoadMesh, backwardStripeRoadMesh;
+    public Mesh bothStripeRoadMesh;
     private LevelManager levelManager;
     private Vector3 leftBoundary, rightBoundary;
     private static float halfCube;
@@ -12,6 +15,7 @@ class LevelGenerator : MonoBehaviour {
     private LinkedList<RowGroup> rows;
     private GameObject initialArea;
     private float timer;
+
     public static Vector3 UnitCube
     {
         get
@@ -25,6 +29,7 @@ class LevelGenerator : MonoBehaviour {
             halfCube = value.z / 2.0f;
         }
     }
+
     void Awake()
     {
         timer = 0.0f;
@@ -115,14 +120,13 @@ class LevelGenerator : MonoBehaviour {
                 j.x <= ((rightBoundary + 30*aux) - aux).x; j += 2* aux)
             {
                 Vector3 grassCoordinates = j + offset;
-                grassCoordinates.y = grassPrefab.transform.localScale.y / 2.0f;
+                grassCoordinates.y = grassPrefab.GetComponent<Renderer>().bounds.extents.y;
                 GameObject grass = (GameObject) Instantiate(grassPrefab, initialArea.transform);
                 grass.transform.position = grassCoordinates;
                 if (j.x < leftBoundary.x || j.x > rightBoundary.x || i < -3*unitCube.z)
                 {
                     Vector3 treeCoordinates = j + offset;
-                    treeCoordinates.y = grassPrefab.transform.localScale.y;
-                    treeCoordinates.y += treePrefab.transform.localScale.y / 2.0f;
+                    treeCoordinates.y = grassPrefab.GetComponent<Renderer>().bounds.size.y;
                     GameObject tree = (GameObject) Instantiate(treePrefab, initialArea.transform);
                     tree.transform.position = treeCoordinates;
                 }

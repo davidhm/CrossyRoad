@@ -1,17 +1,17 @@
 fileFormatVersion: 2
-guid: 77727f27e5f184044b9a7e145bb14541
+guid: 57d8c97faf641454fa928aec31c02b1c
 timeCreated: 1513520878
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: RoadForwardStripe
+    100000: RoadBothStripe
     100002: //RootNode
-    400000: RoadForwardStripe
+    400000: RoadBothStripe
     400002: //RootNode
-    2300000: RoadForwardStripe
-    3300000: RoadForwardStripe
-    4300000: RoadForwardStripe
+    2300000: RoadBothStripe
+    3300000: RoadBothStripe
+    4300000: RoadBothStripe
   externalObjects:
   - first:
       type: UnityEngine:Material

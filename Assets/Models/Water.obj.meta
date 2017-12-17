@@ -1,17 +1,17 @@
 fileFormatVersion: 2
-guid: 77727f27e5f184044b9a7e145bb14541
-timeCreated: 1513520878
+guid: 305cb0bbc8db8064a9af09447af0fd42
+timeCreated: 1513527736
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: RoadForwardStripe
+    100000: Water
     100002: //RootNode
-    400000: RoadForwardStripe
+    400000: Water
     400002: //RootNode
-    2300000: RoadForwardStripe
-    3300000: RoadForwardStripe
-    4300000: RoadForwardStripe
+    2300000: Water
+    3300000: Water
+    4300000: Water
   externalObjects:
   - first:
       type: UnityEngine:Material

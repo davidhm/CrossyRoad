@@ -61,6 +61,23 @@ class RowGroup
         for (int k = 0; k < numberOfRows; ++k)
         {
             GameObject nextRow = Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+            if (numberOfRows > 1)
+            {
+                if (k == 0)
+                {
+                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.forwardStripeRoadMesh;
+                }
+                else if (k == numberOfRows - 1)
+                {
+                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.backwardStripeRoadMesh;
+                }
+                else
+                {
+                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.bothStripeRoadMesh;
+                }
+            }
+            else
+                nextRow.GetComponent<Row>().StripedRoadMesh = generator.clearRoadMesh;
             nextRow.GetComponent<Row>().CurrentType = rowType.Road;
             nextRow.transform.position = new Vector3(0, 0, nextRowZ);
             nextRowZ += LevelGenerator.UnitCube.z;

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 335773932261c8043b36b5c5665ea979
-timeCreated: 1513469253
+guid: d6824261eb999c04d96452d8c1a051a2
+timeCreated: 1513520878
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -17,7 +17,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: palette
-    second: {fileID: 2100000, guid: e6e3807eb30e5604f97a370b7da269c4, type: 2}
+    second: {fileID: 2100000, guid: 3f8d89d1f7ce63748b82193b1cad1b73, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

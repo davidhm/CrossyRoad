@@ -14,6 +14,8 @@ public class Row : MonoBehaviour
     public GameObject truckPrefab;
     public Mesh redCarMesh, blueCarMesh, greenCarMesh;
     public Mesh redTruckMesh, blueTruckMesh, greenTruckMesh;
+    public Mesh darkGrassMesh, clearGrassMesh;
+    private Mesh stripedRoadMesh;
     public static float leftmostBorder;
     public static uint rowWidthInUnitCubes;
     public static float rightmostBorder;
@@ -105,6 +107,19 @@ public class Row : MonoBehaviour
         }
     }
 
+    public Mesh StripedRoadMesh
+    {
+        get
+        {
+            return stripedRoadMesh;
+        }
+
+        set
+        {
+            stripedRoadMesh = value;
+        }
+    }
+
     public static void setUnitCube(Vector3 unitCube)
     {
         Row.unitCube = unitCube;
@@ -189,6 +204,11 @@ public class Row : MonoBehaviour
             i += unitCube.x)
         {          
             GameObject grassSlab = (GameObject)Instantiate(grassPrefab, transform);
+            /*if (i > leftmostBorder && i < rightmostBorder &&
+                UnityEngine.Random.value <= 0.3)
+            {
+                grassSlab.GetComponent<MeshFilter>().mesh = darkGrassMesh;
+            }*/
             float grassHeight = grassPrefab.GetComponent<Renderer>().bounds.extents.y;
             grassSlab.transform.position = new Vector3(i, grassHeight, transform.position.z);
             if (i < leftmostBorder || i > rightmostBorder)
@@ -225,8 +245,9 @@ public class Row : MonoBehaviour
             j <= rowMarginInUnitCubes*unitCube.x + rightmostBorder - halfCube; j += unitCube.x)
         {
             GameObject roadSlab = (GameObject) Instantiate(roadPrefab, transform);
-            float slabY = roadSlab.GetComponent<Renderer>().bounds.extents.y;
-            roadSlab.transform.position = new Vector3(j,slabY,
+            if (Mathf.RoundToInt((j - (leftmostBorder - rowMarginInUnitCubes * unitCube.x + halfCube)) / unitCube.x) % 2 == 0)
+                roadSlab.GetComponent<MeshFilter>().mesh = stripedRoadMesh;
+            roadSlab.transform.position = new Vector3(j,0.0f,
                 transform.position.z);
         }
         generateOneVehicle();
