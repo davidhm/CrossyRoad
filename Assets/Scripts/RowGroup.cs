@@ -43,17 +43,27 @@ class RowGroup
 
     private void createGroupWithPreviousTypeRoad()
     {
-        for (int k = 0; k < numberOfRows; ++k)
+        if (Random.value > 0.5)
         {
-            GameObject nextRow = Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
-            nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
-            nextRow.transform.position = new Vector3(0, 0, nextRowZ);
-            nextRowZ += LevelGenerator.UnitCube.z;
-            setRandomGrassParameters(nextRow.GetComponent<Row>());
-            nextRow.GetComponent<Row>().generateInitialElements();
-            occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
+            for (int k = 0; k < numberOfRows; ++k)
+            {
+                GameObject nextRow = Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+                nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
+                nextRow.transform.position = new Vector3(0, 0, nextRowZ);
+                nextRowZ += LevelGenerator.UnitCube.z;
+                setRandomGrassParameters(nextRow.GetComponent<Row>());
+                nextRow.GetComponent<Row>().generateInitialElements();
+                occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
+            }
+            type = rowType.Grass;
         }
-        type = rowType.Grass;
+        else
+        {
+            for (int k = 0; k < numberOfRows; ++k)
+            {
+                GameObject nextRow = Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+            }
+        }
     }
 
     private void createGroupWithPreviousTypeGrass()
