@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 public enum rowType { Grass, Road, Water}
 
@@ -12,9 +11,11 @@ public class Row : MonoBehaviour
 {
     public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab,boulderPrefab;
     public GameObject truckPrefab;
+    public GameObject waterPrefab, trunkPrefab;
     public Mesh redCarMesh, blueCarMesh, greenCarMesh;
     public Mesh redTruckMesh, blueTruckMesh, greenTruckMesh;
     public Mesh darkGrassMesh, clearGrassMesh;
+    public Mesh smallTrunkMesh, mediumTrunkMesh, largeTrunkMesh;
     private Mesh stripedRoadMesh;
     public static float leftmostBorder;
     public static uint rowWidthInUnitCubes;
@@ -193,6 +194,22 @@ public class Row : MonoBehaviour
         else if (currentType == rowType.Grass)
         {
             generateGrassRow();
+        }
+        else if (currentType == rowType.Water)
+        {
+            generateWaterRow();
+        }
+    }
+
+    private void generateWaterRow()
+    {
+        for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
+            i <= rightmostBorder + rowMarginInUnitCubes * unitCube.x - halfCube;
+            i += unitCube.x)
+        {
+            GameObject waterInstance = (GameObject)Instantiate(waterPrefab, transform);
+            float waterHeight = -waterPrefab.GetComponent<Renderer>().bounds.extents.y;
+            waterInstance.transform.position = new Vector3(i, waterHeight, transform.position.z);
         }
     }
 

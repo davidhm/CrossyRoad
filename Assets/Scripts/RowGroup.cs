@@ -38,12 +38,22 @@ class RowGroup
 
     private void createGroupWithPreviousTypeWater()
     {
-        
+        for (int k = 0; k < numberOfRows; ++k)
+        {
+            GameObject nextRow = Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+            nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
+            nextRow.transform.position = new Vector3(0, 0, nextRowZ);
+            nextRowZ += LevelGenerator.UnitCube.z;
+            setRandomGrassParameters(nextRow.GetComponent<Row>());
+            nextRow.GetComponent<Row>().generateInitialElements();
+            occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
+        }
+        type = rowType.Grass;
     }
 
     private void createGroupWithPreviousTypeRoad()
     {
-        if (Random.value > 0.5)
+        if (Random.value > 0.2)
         {
             for (int k = 0; k < numberOfRows; ++k)
             {
@@ -62,7 +72,13 @@ class RowGroup
             for (int k = 0; k < numberOfRows; ++k)
             {
                 GameObject nextRow = Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+                nextRow.GetComponent<Row>().CurrentType = rowType.Water;
+                nextRow.transform.position = new Vector3(0, 0, nextRowZ);
+                nextRowZ += LevelGenerator.UnitCube.z;
+                nextRow.GetComponent<Row>().generateInitialElements();
+                occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
             }
+            type = rowType.Water;
         }
     }
 
