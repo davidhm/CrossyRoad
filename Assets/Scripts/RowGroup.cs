@@ -53,7 +53,7 @@ class RowGroup
 
     private void createGroupWithPreviousTypeRoad()
     {
-        if (Random.value > 0.2)
+        if (Random.value > 0.5)
         {
             for (int k = 0; k < numberOfRows; ++k)
             {

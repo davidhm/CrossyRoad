@@ -28,6 +28,7 @@ public class Row : MonoBehaviour
     private float truckProportion;
     private static float vehicleMaxSpeed,vehicleMinSpeed;
     private float treeProportion;
+    private float trunkTimer;
     private List<bool> occupableRow;
 
     public static float VehicleMaxSpeed
@@ -175,6 +176,10 @@ public class Row : MonoBehaviour
                 generateOneVehicle(collisions);
             }
         }
+        else if (currentType == rowType.Water)
+        {
+
+        }
     }
 
     public List<bool> getOccupableRow()
@@ -203,6 +208,11 @@ public class Row : MonoBehaviour
 
     private void generateWaterRow()
     {
+        trunkTimer = 0.5f + Random.Range(0, 0.5f);
+        incomingFromLeft = Random.value > 0.5;
+        trunkPrefab.GetComponent<TrunkController>().FastSpeed = 400.0f;
+        trunkPrefab.GetComponent<TrunkController>().IncomingFromLeft = incomingFromLeft;
+        trunkPrefab.GetComponent<TrunkController>().SlowSpeed = 40.0f + Random.Range(0.0f, 80.0f);        
         for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
             i <= rightmostBorder + rowMarginInUnitCubes * unitCube.x - halfCube;
             i += unitCube.x)
@@ -211,6 +221,25 @@ public class Row : MonoBehaviour
             float waterHeight = -waterPrefab.GetComponent<Renderer>().bounds.extents.y;
             waterInstance.transform.position = new Vector3(i, waterHeight, transform.position.z);
         }
+        generateOneTrunk();
+    }
+
+    private void generateOneTrunk()
+    {
+        GameObject trunkInstance = (GameObject)Instantiate(trunkPrefab, transform);
+        float lateralPosition;
+        if (incomingFromLeft)
+        {
+            lateralPosition = leftmostBorder - rowMarginInUnitCubes * unitCube.x;
+            lateralPosition -= trunkInstance.GetComponent<Renderer>().bounds.extents.x;
+        }
+        else
+        {
+            lateralPosition = rightmostBorder + rowMarginInUnitCubes * unitCube.x;
+            lateralPosition += trunkInstance.GetComponent<Renderer>().bounds.extents.x;
+        }
+        trunkInstance.transform.position = new Vector3(lateralPosition, 0.0f, transform.position.z);
+        trunkInstance.GetComponent<TrunkController>().JustSpawned = true;
     }
 
     private void generateGrassRow()
