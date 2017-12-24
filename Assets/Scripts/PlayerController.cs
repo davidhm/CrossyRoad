@@ -58,12 +58,6 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
         processInput();
         updatePosition();
-        /*if (currentState == playerState.Idle && debugIdle)
-        {
-            Debug.Log("Position is " + levelManager.GetComponent<LevelManager>().getColumnInCubeUnits(transform.position));
-            debugIdle = false;
-        }
-        debugIdle = currentState != playerState.Idle;*/
 	}
 
     void OnTriggerEnter(Collider other)
@@ -185,57 +179,7 @@ public class PlayerController : MonoBehaviour {
             {
                 godMode = true;
             }
-        }
-        /*if (currentState == playerState.GodModeStatic)
-        {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                movingDirection = new Vector3(0, 0, 1);
-                currentState = playerState.GodModeMoving;
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                movingDirection = new Vector3(0, 0, -1);
-                currentState = playerState.GodModeMoving;
-            }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                movingDirection = new Vector3(-1, 0, 0);
-                currentState = playerState.GodModeMoving;
-            }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                movingDirection = new Vector3(1, 0, 0);
-                currentState = playerState.GodModeMoving;
-            }
-            else if (Input.GetKeyDown(KeyCode.G))
-            {
-                backToNormalMode();
-            }
-        }
-        else if (currentState == playerState.GodModeMoving)
-        {
-            if (Input.GetKey(KeyCode.UpArrow))
-            {
-                movingDirection = new Vector3(0, 0, 1);
-            }
-            else if (Input.GetKey(KeyCode.DownArrow))
-            {
-                movingDirection = new Vector3(0, 0, -1);
-            }
-            else if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                movingDirection = new Vector3(-1, 0, 0);
-            }
-            else if (Input.GetKey(KeyCode.RightArrow))
-            {
-                movingDirection = new Vector3(1, 0, 0);
-            }
-            else
-            {
-                currentState = playerState.GodModeStatic;
-            }
-        }*/
+        }        
     }
 
     private void backToNormalMode()
@@ -310,9 +254,5 @@ public class PlayerController : MonoBehaviour {
                     transform.position = updatedPosition;
             }
         }
-        /*else if (currentState == playerState.GodModeMoving)
-        {
-            transform.Translate(movingDirection * godModeSpeed * Time.deltaTime);
-        }*/
     }
 }

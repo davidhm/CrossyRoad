@@ -459,12 +459,27 @@ public class Row : MonoBehaviour
 
     public bool isTrunkInPosition(Vector3 position)
     {
-
+        LinkedListNode<GameObject> current = trunksInWater.First;
+        Vector3 candidatePosition = current.Value.transform.position;
+        float offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+        while (current != null && (
+            position.x < candidatePosition.x - offset||
+            position.x > candidatePosition.x + offset))
+        {
+            current = current.Next;
+            candidatePosition = current.Value.transform.position;
+            offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+        }
+        return current != null;
     }
 
     public void notifyTrunkDestroyed(GameObject trunk)
     {
-        
+        LinkedListNode<GameObject> current = trunksInWater.First;
+        while (current != null && current.Value != trunk)        
+            current = current.Next;
+        if (current != null)
+            trunksInWater.Remove(current);        
     }
 }
 

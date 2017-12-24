@@ -73,7 +73,7 @@ class LevelGenerator : MonoBehaviour {
                 currentNode = currentNode.Next;
             }
             if (currentNode != null)              
-                return currentNode.Value.checkIfTrunkInPosition(position, levelManager);
+                return currentNode.Value.checkIfTrunkInPosition(position);
         }
         return false;
     } 

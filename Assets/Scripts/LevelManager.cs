@@ -30,11 +30,16 @@ public sealed class LevelManager : MonoBehaviour {
         initialPlayerPosition = player.transform.position;
     }
 
-    public void treatPlayerCollision()
+    private void generalLoss()
     {
         cameraObject.GetComponent<CameraController>().CurrentState = cameraStates.PlayerDead;
         mainMenu.transform.GetChild(1).GetComponent<Text>().text = "You lose!";
         mainMenu.SetActive(true);
+    }
+
+    public void treatPlayerCollision()
+    {
+        generalLoss();
     }
 
     public void onReplayButtonClick()
@@ -52,6 +57,11 @@ public sealed class LevelManager : MonoBehaviour {
         return generatorRuntime.GetComponent<LevelGenerator>().checkPositionIsFree(movementDestination);
     }
 
+    public bool checkIfTrunkInPosition(Vector3 position)
+    {
+        return generatorRuntime.GetComponent<LevelGenerator>().checkIfTrunkInPosition(position);
+    }
+
     public int getColumnInCubeUnits(Vector3 position)
     {
         int res = Mathf.RoundToInt((position.x - InitialPlayerPosition.x + unitCube.x * 4) / unitCube.x);
@@ -60,8 +70,11 @@ public sealed class LevelManager : MonoBehaviour {
 
     public void treatPlayerInvisible()
     {
-        cameraObject.GetComponent<CameraController>().CurrentState = cameraStates.PlayerDead;
-        mainMenu.transform.GetChild(1).GetComponent<Text>().text = "You lose!";
-        mainMenu.SetActive(true);
+        generalLoss();
+    }
+
+    public void treatPlayerDrowned()
+    {
+        generalLoss();
     }
 }
