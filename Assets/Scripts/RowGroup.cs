@@ -177,6 +177,22 @@ class RowGroup
         return true;
     }
 
+    public bool checkIfTrunkInPosition(Vector3 position)
+    {
+        if (type != rowType.Water || position.z < firstRowZ || position.z > lastRowZ)
+            return false;
+        float targetRowZ = Mathf.Round((position.z - firstRowZ) / LevelGenerator.UnitCube.z);
+        for (int i = 0; i < rowGroup.transform.childCount; ++i)
+        {
+            if (rowGroup.transform.GetChild(i).transform.position.z == 
+                targetRowZ*LevelGenerator.UnitCube.z + firstRowZ)
+            {
+                return rowGroup.transform.GetChild(i).gameObject.GetComponent<Row>().isTrunkInPosition(position);
+            }
+        }
+        return false;
+    }
+
     public static RowGroup generateRowGroup(float firstRowZ,rowType previousGroupType,uint numberOfRows)
     {
         return new RowGroup(firstRowZ,previousGroupType,numberOfRows);

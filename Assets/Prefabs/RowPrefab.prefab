@@ -75,3 +75,5 @@ MonoBehaviour:
   smallTrunkMesh: {fileID: 4300000, guid: cf2212283267f2d4fb4ad8ce1042ffd8, type: 3}
   mediumTrunkMesh: {fileID: 4300000, guid: c12a51ef1b7afb343a5712ac579ed53e, type: 3}
   largeTrunkMesh: {fileID: 4300000, guid: 9fec0c03842daa64eb882372d6d140d2, type: 3}
+  darkWaterMesh: {fileID: 4300000, guid: 3ff041e3bcf894643814e5cccbfb24b1, type: 3}
+  clearWaterMesh: {fileID: 4300000, guid: 305cb0bbc8db8064a9af09447af0fd42, type: 3}

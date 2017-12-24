@@ -58,6 +58,26 @@ class LevelGenerator : MonoBehaviour {
         }
     }
 
+    public bool checkIfTrunkInPosition(Vector3 position)
+    {
+        int column = levelManager.GetComponent<LevelManager>().getColumnInCubeUnits(position);
+        if (column < 0 || column >= 9 || position.z < levelManager.InitialPlayerPosition.z - 3 * unitCube.z)
+            return false;
+        if (position.z >= levelManager.InitialPlayerPosition.z + 4 * unitCube.z &&
+            position.z >= rows.First.Value.FirstRowZ)
+        {
+            LinkedListNode<RowGroup> currentNode = rows.First;
+            while (currentNode != null && (position.z < currentNode.Value.FirstRowZ ||
+                position.z > currentNode.Value.LastRowZ || currentNode.Value.Type != rowType.Water))
+            {
+                currentNode = currentNode.Next;
+            }
+            if (currentNode != null)              
+                return currentNode.Value.checkIfTrunkInPosition(position, levelManager);
+        }
+        return false;
+    } 
+
     public bool checkPositionIsFree(Vector3 position)
     {
         int column = levelManager.GetComponent<LevelManager>().getColumnInCubeUnits(position);

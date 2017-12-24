@@ -2,10 +2,11 @@
 class TrunkController : MonoBehaviour
 {
     private bool overflowedRow;
-    private float fastSpeed, slowSpeed, currentSpeed;
+    private float slowSpeed, currentSpeed;
+    private static float fastSpeed;
     private bool justSpawned;
     private bool incomingFromLeft;
-    public float FastSpeed
+    public static float FastSpeed
     {
         get
         {
@@ -93,6 +94,7 @@ class TrunkController : MonoBehaviour
                 (!incomingFromLeft && transform.position.x <
                 Row.leftmostBorder - Row.rowMarginInUnitCubes * LevelGenerator.UnitCube.x - offset))
             {
+                transform.parent.gameObject.GetComponent<Row>().notifyTrunkDestroyed(gameObject);
                 Destroy(gameObject);
             }
         }
