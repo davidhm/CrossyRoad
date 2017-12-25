@@ -133,7 +133,6 @@ public class Row : MonoBehaviour
     void Start()
     {
         TrunkController.FastSpeed = 320.0f;
-        trunksInWater = new LinkedList<GameObject>();
     }
     void LateUpdate() {
         if (currentType == rowType.Road)
@@ -197,6 +196,7 @@ public class Row : MonoBehaviour
     public void generateInitialElements()
     {
         occupableRow = new List<bool>(9);
+        trunksInWater = new LinkedList<GameObject>();
         for (int i = 0; i < 9; ++i)
             occupableRow.Add(true);
         if (currentType == rowType.Road)
@@ -251,7 +251,7 @@ public class Row : MonoBehaviour
         }
         trunkInstance.transform.position = new Vector3(lateralPosition, 0.0f, transform.position.z);
         trunkInstance.GetComponent<TrunkController>().JustSpawned = true;
-        //trunksInWater.AddFirst(trunkInstance);
+        trunksInWater.AddFirst(trunkInstance);
     }
 
     private void generateGrassRow()
