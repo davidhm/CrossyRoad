@@ -5,8 +5,7 @@ public class PlayerController : MonoBehaviour {
 
     private enum playerState { Moving, Idle, Dead,DrownWalk,Drowning};
     private playerState currentState;
-    public float unitsPerSecond;
-    public float unit;
+    public float playerSpeed;
     public GameObject levelManager;
     //private static float godModeSpeed = 160.0f;
     private Vector3 initialPosition;
@@ -325,9 +324,6 @@ public class PlayerController : MonoBehaviour {
             {
                 godMode = true;
             }
-            else if (Input.GetKeyDown(KeyCode.Z))
-            {
-            }
         }        
     }
 
@@ -345,7 +341,7 @@ public class PlayerController : MonoBehaviour {
     {
         if (currentState == playerState.Moving || currentState == playerState.DrownWalk)
         {
-            Vector3 updatedPosition = transform.position + movementList.First.Value.MovementDirection * unit * unitsPerSecond * Time.deltaTime;            
+            Vector3 updatedPosition = transform.position + movementList.First.Value.MovementDirection * LevelGenerator.UnitCube.x * playerSpeed * Time.deltaTime;            
             if (movementList.First.Value.MovementDirection == new Vector3(0,0,1))
             {
                 if (updatedPosition.z >= movementList.First.Value.MovementDestination.z)
@@ -378,6 +374,7 @@ public class PlayerController : MonoBehaviour {
                 if (updatedPosition.z <= movementList.First.Value.MovementDestination.z)
                 {
                     transform.position = movementList.First.Value.MovementDestination;
+                    transform.rotation = movementList.First.Value.TargetOrientation;
                     movementList.RemoveFirst();
                     if (currentState == playerState.DrownWalk)
                     {
@@ -404,6 +401,7 @@ public class PlayerController : MonoBehaviour {
                 if (updatedPosition.x >= movementList.First.Value.MovementDestination.x)
                 {
                     transform.position = movementList.First.Value.MovementDestination;
+                    transform.rotation = movementList.First.Value.TargetOrientation;
                     movementList.RemoveFirst();
                     if (currentState == playerState.DrownWalk)
                     {
@@ -430,6 +428,7 @@ public class PlayerController : MonoBehaviour {
                 if (updatedPosition.x <= movementList.First.Value.MovementDestination.x)
                 {
                     transform.position = movementList.First.Value.MovementDestination;
+                    transform.rotation = movementList.First.Value.TargetOrientation;
                     movementList.RemoveFirst();
                     if (currentState == playerState.DrownWalk)
                     {

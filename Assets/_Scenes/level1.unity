@@ -861,6 +861,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0da1436a710286c4086c5c5a557fa440, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitsPerSecond: 4
-  unit: 40
+  playerSpeed: 4
   levelManager: {fileID: 903993489}
