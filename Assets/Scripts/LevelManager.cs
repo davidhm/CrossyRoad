@@ -57,6 +57,11 @@ public sealed class LevelManager : MonoBehaviour {
         return generatorRuntime.GetComponent<LevelGenerator>().checkPositionIsFree(movementDestination);
     }
 
+    public rowType getRowTypeFromPosition(Vector3 position)
+    {
+        return generatorRuntime.GetComponent<LevelGenerator>().getRowTypeFromPosition(position);
+    }
+
     public bool checkIfTrunkInPosition(Vector3 position)
     {
         return generatorRuntime.GetComponent<LevelGenerator>().checkIfTrunkInPosition(position);
