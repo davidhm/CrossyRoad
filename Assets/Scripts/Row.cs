@@ -251,6 +251,7 @@ public class Row : MonoBehaviour
         }
         trunkInstance.transform.position = new Vector3(lateralPosition, 0.0f, transform.position.z);
         trunkInstance.GetComponent<TrunkController>().JustSpawned = true;
+        trunksInWater.AddFirst(trunkInstance);
     }
 
     private void generateGrassRow()

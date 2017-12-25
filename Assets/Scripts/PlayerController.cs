@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 public class PlayerController : MonoBehaviour {
 
-    private enum playerState { Moving, Idle, Dead,GodModeMoving,GodModeStatic};
+    private enum playerState { Moving, Idle, Dead,DrownWalk,Drowning};
     private playerState currentState;
     public float unitsPerSecond;
     public float unit;
@@ -100,10 +100,26 @@ public class PlayerController : MonoBehaviour {
                     newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 }
                 nextObjective.MovementDestination = newDestination;
-                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+                if (targetType == rowType.Water)
                 {
+                    if (levelManager.GetComponent<LevelManager>().checkIfTrunkInPosition(nextObjective.MovementDestination))
+                    {
+                        currentState = playerState.Moving;
+                    }
+                    else
+                    {
+                        currentState = playerState.DrownWalk;
+                    }
                     movementList.AddLast(nextObjective);
-                    currentState = playerState.Moving;
+                }
+                else
+                {
+                    if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                    {
+                        movementList.AddLast(nextObjective);
+                        currentState = playerState.Moving;
+                    }
                 }
             }
             else if (Input.GetKeyDown(KeyCode.DownArrow))
@@ -123,10 +139,26 @@ public class PlayerController : MonoBehaviour {
                     newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 }
                 nextObjective.MovementDestination = newDestination;
-                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+                if (targetType == rowType.Water)
                 {
+                    if (levelManager.GetComponent<LevelManager>().checkIfTrunkInPosition(nextObjective.MovementDestination))
+                    {
+                        currentState = playerState.Moving;
+                    }
+                    else
+                    {
+                        currentState = playerState.DrownWalk;
+                    }
                     movementList.AddLast(nextObjective);
-                    currentState = playerState.Moving;
+                }
+                else
+                {
+                    if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                    {
+                        movementList.AddLast(nextObjective);
+                        currentState = playerState.Moving;
+                    }
                 }
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -146,10 +178,26 @@ public class PlayerController : MonoBehaviour {
                     newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
                 }
                 nextObjective.MovementDestination = newDestination;
-                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+                if (targetType == rowType.Water)
                 {
+                    if (levelManager.GetComponent<LevelManager>().checkIfTrunkInPosition(nextObjective.MovementDestination))
+                    {
+                        currentState = playerState.Moving;
+                    }
+                    else
+                    {
+                        currentState = playerState.DrownWalk;
+                    }
                     movementList.AddLast(nextObjective);
-                    currentState = playerState.Moving;
+                }
+                else
+                {
+                    if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                    {
+                        movementList.AddLast(nextObjective);
+                        currentState = playerState.Moving;
+                    }
                 }
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -169,10 +217,26 @@ public class PlayerController : MonoBehaviour {
                     newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
                 }
                 nextObjective.MovementDestination = newDestination;
-                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+                if (targetType == rowType.Water)
                 {
+                    if (levelManager.GetComponent<LevelManager>().checkIfTrunkInPosition(nextObjective.MovementDestination))
+                    {
+                        currentState = playerState.Moving;
+                    }
+                    else
+                    {
+                        currentState = playerState.DrownWalk;
+                    }
                     movementList.AddLast(nextObjective);
-                    currentState = playerState.Moving;
+                }
+                else
+                {
+                    if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                    {
+                        movementList.AddLast(nextObjective);
+                        currentState = playerState.Moving;
+                    }
                 }
             }
             else if (Input.GetKeyDown(KeyCode.G))
@@ -194,7 +258,7 @@ public class PlayerController : MonoBehaviour {
 
     private void updatePosition()
     {
-        if (currentState == playerState.Moving)
+        if (currentState == playerState.Moving || currentState == playerState.DrownWalk)
         {
             Vector3 updatedPosition = transform.position + movementList.First.Value.MovementDirection * unit * unitsPerSecond * Time.deltaTime;
             if (movementList.First.Value.MovementDirection == new Vector3(0,0,1))
@@ -203,7 +267,12 @@ public class PlayerController : MonoBehaviour {
                 {
                     transform.position = movementList.First.Value.MovementDestination;
                     movementList.RemoveFirst();
-                    if (movementList.Count == 0)
+                    if (currentState == playerState.DrownWalk)
+                    {
+                        currentState = playerState.Drowning;
+                        treatDrowningState();
+                    }
+                    else if (movementList.Count == 0)
                     {
                         currentState = playerState.Idle;
                     }
@@ -217,10 +286,15 @@ public class PlayerController : MonoBehaviour {
                 {
                     transform.position = movementList.First.Value.MovementDestination;
                     movementList.RemoveFirst();
-                    if (movementList.Count == 0)
+                    if (currentState == playerState.DrownWalk)
+                    {
+                        currentState = playerState.Drowning;
+                        treatDrowningState();
+                    }
+                    else if (movementList.Count == 0)
                     {
                         currentState = playerState.Idle;
-                    }
+                    }                    
                 }
                 else
                     transform.position = updatedPosition;
@@ -231,7 +305,12 @@ public class PlayerController : MonoBehaviour {
                 {
                     transform.position = movementList.First.Value.MovementDestination;
                     movementList.RemoveFirst();
-                    if (movementList.Count == 0)
+                    if (currentState == playerState.DrownWalk)
+                    {
+                        currentState = playerState.Drowning;
+                        treatDrowningState();
+                    }
+                    else if (movementList.Count == 0)
                     {
                         currentState = playerState.Idle;
                     }
@@ -245,7 +324,12 @@ public class PlayerController : MonoBehaviour {
                 {
                     transform.position = movementList.First.Value.MovementDestination;
                     movementList.RemoveFirst();
-                    if (movementList.Count == 0)
+                    if (currentState == playerState.DrownWalk)
+                    {
+                        currentState = playerState.Drowning;
+                        treatDrowningState();
+                    }
+                    else if (movementList.Count == 0)
                     {
                         currentState = playerState.Idle;
                     }
@@ -254,5 +338,11 @@ public class PlayerController : MonoBehaviour {
                     transform.position = updatedPosition;
             }
         }
+    }
+
+    private void treatDrowningState()
+    {
+        currentState = playerState.Dead;
+        levelManager.GetComponent<LevelManager>().treatPlayerDrowned();
     }
 }

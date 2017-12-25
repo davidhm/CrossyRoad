@@ -58,6 +58,23 @@ class LevelGenerator : MonoBehaviour {
         }
     }
 
+    public rowType getRowTypeFromPosition(Vector3 position)
+    {
+        if (position.z >= levelManager.InitialPlayerPosition.z + 4 * unitCube.z &&
+            position.z >= rows.First.Value.FirstRowZ)
+        {
+            LinkedListNode<RowGroup> currentNode = rows.First;
+            while (currentNode != null && (position.z < currentNode.Value.FirstRowZ ||
+                position.z > currentNode.Value.LastRowZ))
+            {
+                currentNode = currentNode.Next;
+            }
+            if (currentNode != null)
+                return currentNode.Value.Type;
+        }
+        return rowType.Grass;
+    }
+
     public bool checkIfTrunkInPosition(Vector3 position)
     {
         int column = levelManager.GetComponent<LevelManager>().getColumnInCubeUnits(position);
