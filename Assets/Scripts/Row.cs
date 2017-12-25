@@ -468,8 +468,11 @@ public class Row : MonoBehaviour
             position.x > candidatePosition.x + offset))
         {
             current = current.Next;
-            candidatePosition = current.Value.transform.position;
-            offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+            if (current != null)
+            {
+                candidatePosition = current.Value.transform.position;
+                offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+            }
         }
         return current != null;
     }
