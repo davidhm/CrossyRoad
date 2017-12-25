@@ -22,6 +22,7 @@ public class Row : MonoBehaviour
     public static uint rowWidthInUnitCubes;
     public static float rightmostBorder;
     public static uint rowMarginInUnitCubes;
+    public static float grassHeight, roadHeight;
     private rowType currentType;
     private static Vector3 unitCube;
     private static float halfCube;
@@ -133,6 +134,8 @@ public class Row : MonoBehaviour
     void Start()
     {
         TrunkController.FastSpeed = 320.0f;
+        grassHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
+        roadHeight = roadPrefab.GetComponent<Renderer>().bounds.size.y;
     }
     void LateUpdate() {
         if (currentType == rowType.Road)
@@ -249,7 +252,9 @@ public class Row : MonoBehaviour
             lateralPosition = rightmostBorder + rowMarginInUnitCubes * unitCube.x;
             lateralPosition += trunkInstance.GetComponent<Renderer>().bounds.extents.x;
         }
-        trunkInstance.transform.position = new Vector3(lateralPosition, 0.0f, transform.position.z);
+        trunkInstance.transform.position = new Vector3(lateralPosition, 
+            waterPrefab.GetComponent<Renderer>().bounds.extents.y, 
+            transform.position.z);
         trunkInstance.GetComponent<TrunkController>().JustSpawned = true;
         trunksInWater.AddFirst(trunkInstance);
     }
@@ -267,7 +272,7 @@ public class Row : MonoBehaviour
             if (i < leftmostBorder || i > rightmostBorder)
             {
                 GameObject tree = (GameObject)Instantiate(treePrefab, transform);
-                float treeHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                float treeHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                 tree.transform.position = new Vector3(i, treeHeight, transform.position.z);
             }
             else if (UnityEngine.Random.value < treeProportion) 
@@ -275,13 +280,13 @@ public class Row : MonoBehaviour
                 if (UnityEngine.Random.value > 0.5)
                 {
                     GameObject tree = (GameObject)Instantiate(treePrefab, transform);
-                    float treeHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                    float treeHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                     tree.transform.position = new Vector3(i, treeHeight, transform.position.z);                    
                 }
                 else
                 {
                     GameObject boulder = (GameObject)Instantiate(boulderPrefab, transform);
-                    float boulderHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                    float boulderHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                     boulder.transform.position = new Vector3(i, boulderHeight, transform.position.z);
                 }
                 if (k >= 0 && k <= 9)
@@ -484,6 +489,20 @@ public class Row : MonoBehaviour
             current = current.Next;
         if (current != null)
             trunksInWater.Remove(current);        
+    }
+
+    public float getTargetHeight(Vector3 position)
+    {
+        if (currentType == rowType.Water)
+        {
+            if (isTrunkInPosition(position))
+                return trunkPrefab.GetComponent<Renderer>().bounds.size.y +
+                    waterPrefab.GetComponent<Renderer>().bounds.extents.y;
+            return 0.0f;
+        }
+        if (currentType == rowType.Grass)
+            return grassHeight;
+        return roadHeight;
     }
 }
 

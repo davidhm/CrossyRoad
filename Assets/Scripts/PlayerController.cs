@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 public class PlayerController : MonoBehaviour {
 
-    private enum playerState { Moving, Idle, Dead,DrownWalk,Drowning};
+    private enum playerState { Moving, Idle, Dead,DrownWalk,Drowning,MovingToTrunk};
     private playerState currentState;
     public float playerSpeed;
     public GameObject levelManager;
@@ -152,11 +152,15 @@ public class PlayerController : MonoBehaviour {
                 nextObjective.MovementOrigin = previousDestination;
                 nextObjective.OriginOrientation = originOrientation;
                 rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+                float targetHeight = levelManager.GetComponent<LevelManager>().getTargetPositionHeight(newDestination);
+                nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
+                    targetHeight,
+                    nextObjective.MovementDestination.z);
                 if (targetType == rowType.Water)
                 {
                     if (levelManager.GetComponent<LevelManager>().checkIfTrunkInPosition(nextObjective.MovementDestination))
                     {
-                        currentState = playerState.Moving;
+                        currentState = playerState.MovingToTrunk;
                     }
                     else
                     {
@@ -205,7 +209,7 @@ public class PlayerController : MonoBehaviour {
                 {
                     if (levelManager.GetComponent<LevelManager>().checkIfTrunkInPosition(nextObjective.MovementDestination))
                     {
-                        currentState = playerState.Moving;
+                        currentState = playerState.MovingToTrunk;
                     }
                     else
                     {
@@ -254,7 +258,7 @@ public class PlayerController : MonoBehaviour {
                 {
                     if (levelManager.GetComponent<LevelManager>().checkIfTrunkInPosition(nextObjective.MovementDestination))
                     {
-                        currentState = playerState.Moving;
+                        currentState = playerState.MovingToTrunk;
                     }
                     else
                     {
@@ -303,7 +307,7 @@ public class PlayerController : MonoBehaviour {
                 {
                     if (levelManager.GetComponent<LevelManager>().checkIfTrunkInPosition(nextObjective.MovementDestination))
                     {
-                        currentState = playerState.Moving;
+                        currentState = playerState.MovingToTrunk;
                     }
                     else
                     {
@@ -339,7 +343,7 @@ public class PlayerController : MonoBehaviour {
 
     private void updatePosition()
     {
-        if (currentState == playerState.Moving || currentState == playerState.DrownWalk)
+        if (currentState == playerState.Moving || currentState == playerState.DrownWalk || currentState == playerState.MovingToTrunk)
         {
             Vector3 updatedPosition = transform.position + movementList.First.Value.MovementDirection * LevelGenerator.UnitCube.x * playerSpeed * Time.deltaTime;            
             if (movementList.First.Value.MovementDirection == new Vector3(0,0,1))

@@ -193,6 +193,24 @@ class RowGroup
         return false;
     }
 
+    public float getTargetHeight(Vector3 position)
+    {
+        if (type == rowType.Grass)
+            return Row.grassHeight;
+        if (type == rowType.Road)
+            return Row.roadHeight;
+        float targetRowZ = Mathf.Round((position.z - firstRowZ) / LevelGenerator.UnitCube.z);
+        for(int i = 0; i < rowGroup.transform.childCount; ++i)
+        {
+            if (rowGroup.transform.GetChild(i).transform.position.z ==
+                targetRowZ * LevelGenerator.UnitCube.z + firstRowZ)
+            {
+                return rowGroup.transform.GetChild(i).gameObject.GetComponent<Row>().getTargetHeight(position);
+            }
+        }
+        return 0;
+    }
+
     public static RowGroup generateRowGroup(float firstRowZ,rowType previousGroupType,uint numberOfRows)
     {
         return new RowGroup(firstRowZ,previousGroupType,numberOfRows);

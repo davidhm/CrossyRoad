@@ -93,7 +93,28 @@ class LevelGenerator : MonoBehaviour {
                 return currentNode.Value.checkIfTrunkInPosition(position);
         }
         return false;
-    } 
+    }
+
+    public float getTargetHeight(Vector3 position)
+    {
+        if (position.z >= levelManager.InitialPlayerPosition.z + 4 * unitCube.z &&
+            position.z >= rows.First.Value.FirstRowZ)
+        {
+            LinkedListNode<RowGroup> currentNode = rows.First;
+            while (currentNode != null && (position.z < currentNode.Value.FirstRowZ ||
+                position.z > currentNode.Value.LastRowZ))
+            {
+                currentNode = currentNode.Next;
+            }
+            if (currentNode != null && currentNode.Value.Type == rowType.Water)
+                return currentNode.Value.getTargetHeight(position);
+            if (currentNode != null && currentNode.Value.Type == rowType.Grass)
+                return Row.grassHeight;
+            if (currentNode != null && currentNode.Value.Type == rowType.Road)
+                return Row.roadHeight;
+        }
+        return Row.grassHeight;
+    }
 
     public bool checkPositionIsFree(Vector3 position)
     {
@@ -163,7 +184,7 @@ class LevelGenerator : MonoBehaviour {
                 if (j.x < leftBoundary.x || j.x > rightBoundary.x || i < -3*unitCube.z)
                 {
                     Vector3 treeCoordinates = j + offset;
-                    treeCoordinates.y = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                    treeCoordinates.y = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                     GameObject tree = (GameObject) Instantiate(treePrefab, initialArea.transform);
                     tree.transform.position = treeCoordinates;
                 }

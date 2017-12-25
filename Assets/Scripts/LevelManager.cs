@@ -82,4 +82,9 @@ public sealed class LevelManager : MonoBehaviour {
     {
         generalLoss();
     }
+
+    public float getTargetPositionHeight(Vector3 newDestination)
+    {
+        return generatorRuntime.GetComponent<LevelGenerator>().getTargetHeight(newDestination);
+    }
 }
