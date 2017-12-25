@@ -16,6 +16,9 @@ public class PlayerController : MonoBehaviour {
     {
         private Vector3 movementDirection;
         private Vector3 movementDestination;
+        private Quaternion targetOrientation;
+        private Vector3 movementOrigin;
+        private Quaternion originOrientation;
 
         public Vector3 MovementDirection
         {
@@ -40,6 +43,45 @@ public class PlayerController : MonoBehaviour {
             set
             {
                 movementDestination = value;
+            }
+        }
+
+        public Quaternion TargetOrientation
+        {
+            get
+            {
+                return targetOrientation;
+            }
+
+            set
+            {
+                targetOrientation = value;
+            }
+        }
+
+        public Vector3 MovementOrigin
+        {
+            get
+            {
+                return movementOrigin;
+            }
+
+            set
+            {
+                movementOrigin = value;
+            }
+        }
+
+        public Quaternion OriginOrientation
+        {
+            get
+            {
+                return originOrientation;
+            }
+
+            set
+            {
+                originOrientation = value;
             }
         }
     }
@@ -88,18 +130,28 @@ public class PlayerController : MonoBehaviour {
                 MovementObjective nextObjective = new MovementObjective();
                 nextObjective.MovementDirection = new Vector3(0, 0, 1);
                 Vector3 newDestination;
+                Quaternion targetOrientation = Quaternion.identity;
+                Quaternion originOrientation;
+                Vector3 previousDestination;
                 if (movementList.Count == 0)
                 {
                     if (currentState != playerState.Idle)
                         throw new InvalidOperationException("The player state should be idle if the movement list is empty");
                     newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                    previousDestination = transform.position;
+                    originOrientation = transform.rotation;
                 }
                 else
                 {
                     newDestination = movementList.Last.Value.MovementDestination;
                     newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                    previousDestination = movementList.Last.Value.MovementDestination;
+                    originOrientation = movementList.Last.Value.TargetOrientation;
                 }
                 nextObjective.MovementDestination = newDestination;
+                nextObjective.TargetOrientation = targetOrientation;
+                nextObjective.MovementOrigin = previousDestination;
+                nextObjective.OriginOrientation = originOrientation;
                 rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
                 if (targetType == rowType.Water)
                 {
@@ -127,18 +179,28 @@ public class PlayerController : MonoBehaviour {
                 MovementObjective nextObjective = new MovementObjective();
                 nextObjective.MovementDirection = new Vector3(0, 0, -1);
                 Vector3 newDestination;
+                Quaternion targetOrientation = Quaternion.Euler(0, 180, 0);
+                Quaternion originOrientation;
+                Vector3 previousDestination;
                 if (movementList.Count == 0)
                 {
                     if (currentState != playerState.Idle)
                         throw new InvalidOperationException("The player state should be idle if the movement list is empty");
                     newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                    previousDestination = transform.position;
+                    originOrientation = transform.rotation;
                 }
                 else
                 {
                     newDestination = movementList.Last.Value.MovementDestination;
                     newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                    previousDestination = movementList.Last.Value.MovementDestination;
+                    originOrientation = movementList.Last.Value.TargetOrientation;
                 }
                 nextObjective.MovementDestination = newDestination;
+                nextObjective.TargetOrientation = targetOrientation;
+                nextObjective.MovementOrigin = previousDestination;
+                nextObjective.OriginOrientation = originOrientation;
                 rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
                 if (targetType == rowType.Water)
                 {
@@ -166,18 +228,28 @@ public class PlayerController : MonoBehaviour {
                 MovementObjective nextObjective = new MovementObjective();
                 nextObjective.MovementDirection = new Vector3(1, 0, 0);
                 Vector3 newDestination;
+                Quaternion targetOrientation = Quaternion.Euler(0, 90, 0);
+                Quaternion originOrientation;
+                Vector3 previousDestination;
                 if (movementList.Count == 0)
                 {
                     if (currentState != playerState.Idle)
                         throw new InvalidOperationException("The player state should be idle if the movement list is empty");
-                    newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
+                    newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                    previousDestination = transform.position;
+                    originOrientation = transform.rotation;
                 }
                 else
                 {
                     newDestination = movementList.Last.Value.MovementDestination;
-                    newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
+                    newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                    previousDestination = movementList.Last.Value.MovementDestination;
+                    originOrientation = movementList.Last.Value.TargetOrientation;
                 }
                 nextObjective.MovementDestination = newDestination;
+                nextObjective.TargetOrientation = targetOrientation;
+                nextObjective.MovementOrigin = previousDestination;
+                nextObjective.OriginOrientation = originOrientation;
                 rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
                 if (targetType == rowType.Water)
                 {
@@ -205,18 +277,28 @@ public class PlayerController : MonoBehaviour {
                 MovementObjective nextObjective = new MovementObjective();
                 nextObjective.MovementDirection = new Vector3(-1, 0, 0);
                 Vector3 newDestination;
+                Quaternion targetOrientation = Quaternion.Euler(0, -90, 0);
+                Quaternion originOrientation;
+                Vector3 previousDestination;
                 if (movementList.Count == 0)
                 {
                     if (currentState != playerState.Idle)
                         throw new InvalidOperationException("The player state should be idle if the movement list is empty");
-                    newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
+                    newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                    previousDestination = transform.position;
+                    originOrientation = transform.rotation;
                 }
                 else
                 {
                     newDestination = movementList.Last.Value.MovementDestination;
-                    newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
+                    newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                    previousDestination = movementList.Last.Value.MovementDestination;
+                    originOrientation = movementList.Last.Value.TargetOrientation;
                 }
                 nextObjective.MovementDestination = newDestination;
+                nextObjective.TargetOrientation = targetOrientation;
+                nextObjective.MovementOrigin = previousDestination;
+                nextObjective.OriginOrientation = originOrientation;
                 rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
                 if (targetType == rowType.Water)
                 {
@@ -266,6 +348,7 @@ public class PlayerController : MonoBehaviour {
                 if (updatedPosition.z >= movementList.First.Value.MovementDestination.z)
                 {
                     transform.position = movementList.First.Value.MovementDestination;
+                    transform.rotation = movementList.First.Value.TargetOrientation;
                     movementList.RemoveFirst();
                     if (currentState == playerState.DrownWalk)
                     {
@@ -278,7 +361,12 @@ public class PlayerController : MonoBehaviour {
                     }
                 }
                 else
+                {
                     transform.position = updatedPosition;
+                    float distance = (transform.position.z - movementList.First.Value.MovementOrigin.z)/LevelGenerator.UnitCube.z;
+                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
+                        movementList.First.Value.TargetOrientation, distance);
+                }
             }  
             else if (movementList.First.Value.MovementDirection == new Vector3(0,0,-1))
             {
@@ -297,7 +385,12 @@ public class PlayerController : MonoBehaviour {
                     }                    
                 }
                 else
+                {
                     transform.position = updatedPosition;
+                    float distance = (movementList.First.Value.MovementOrigin.z - transform.position.z)/LevelGenerator.UnitCube.z;
+                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
+                        movementList.First.Value.TargetOrientation, distance);
+                }
             }
             else if (movementList.First.Value.MovementDirection == new Vector3(1, 0, 0))
             {
@@ -316,7 +409,12 @@ public class PlayerController : MonoBehaviour {
                     }
                 }
                 else
+                {
                     transform.position = updatedPosition;
+                    float distance = (transform.position.x - movementList.First.Value.MovementOrigin.x)/LevelGenerator.UnitCube.z;
+                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
+                        movementList.First.Value.TargetOrientation, distance);
+                }
             }
             else if (movementList.First.Value.MovementDirection == new Vector3(-1, 0, 0))
             {
@@ -335,7 +433,12 @@ public class PlayerController : MonoBehaviour {
                     }
                 }
                 else
+                {
                     transform.position = updatedPosition;
+                    float distance = (movementList.First.Value.MovementOrigin.x - transform.position.x)/LevelGenerator.UnitCube.z;
+                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
+                        movementList.First.Value.TargetOrientation, distance);
+                }
             }
         }
     }
