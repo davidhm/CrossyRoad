@@ -325,6 +325,9 @@ public class PlayerController : MonoBehaviour {
             {
                 godMode = true;
             }
+            else if (Input.GetKeyDown(KeyCode.Z))
+            {
+            }
         }        
     }
 
@@ -342,7 +345,7 @@ public class PlayerController : MonoBehaviour {
     {
         if (currentState == playerState.Moving || currentState == playerState.DrownWalk)
         {
-            Vector3 updatedPosition = transform.position + movementList.First.Value.MovementDirection * unit * unitsPerSecond * Time.deltaTime;
+            Vector3 updatedPosition = transform.position + movementList.First.Value.MovementDirection * unit * unitsPerSecond * Time.deltaTime;            
             if (movementList.First.Value.MovementDirection == new Vector3(0,0,1))
             {
                 if (updatedPosition.z >= movementList.First.Value.MovementDestination.z)
@@ -362,8 +365,10 @@ public class PlayerController : MonoBehaviour {
                 }
                 else
                 {
-                    transform.position = updatedPosition;
                     float distance = (transform.position.z - movementList.First.Value.MovementOrigin.z)/LevelGenerator.UnitCube.z;
+                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
+                    transform.position = new Vector3(updatedPosition.x, 
+                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
                     transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
                         movementList.First.Value.TargetOrientation, distance);
                 }
@@ -386,8 +391,10 @@ public class PlayerController : MonoBehaviour {
                 }
                 else
                 {
-                    transform.position = updatedPosition;
                     float distance = (movementList.First.Value.MovementOrigin.z - transform.position.z)/LevelGenerator.UnitCube.z;
+                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
+                    transform.position = new Vector3(updatedPosition.x,
+                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
                     transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
                         movementList.First.Value.TargetOrientation, distance);
                 }
@@ -410,8 +417,10 @@ public class PlayerController : MonoBehaviour {
                 }
                 else
                 {
-                    transform.position = updatedPosition;
                     float distance = (transform.position.x - movementList.First.Value.MovementOrigin.x)/LevelGenerator.UnitCube.z;
+                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
+                    transform.position = new Vector3(updatedPosition.x,
+                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
                     transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
                         movementList.First.Value.TargetOrientation, distance);
                 }
@@ -434,8 +443,10 @@ public class PlayerController : MonoBehaviour {
                 }
                 else
                 {
-                    transform.position = updatedPosition;
                     float distance = (movementList.First.Value.MovementOrigin.x - transform.position.x)/LevelGenerator.UnitCube.z;
+                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
+                    transform.position = new Vector3(updatedPosition.x,
+                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
                     transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
                         movementList.First.Value.TargetOrientation, distance);
                 }
