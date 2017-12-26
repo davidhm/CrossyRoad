@@ -221,7 +221,7 @@ public class Row : MonoBehaviour
     {
         trunkTimer = 2.5f + UnityEngine.Random.Range(0, 0.5f);
         incomingFromLeft = UnityEngine.Random.value > 0.5;
-        trunkSlowSpeed = 40.0f + UnityEngine.Random.Range(0.0f, 80.0f);        
+        trunkSlowSpeed = 200.0f + UnityEngine.Random.Range(0.0f, 80.0f);        
         for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
             i <= rightmostBorder + rowMarginInUnitCubes * unitCube.x - halfCube;
             i += unitCube.x)
