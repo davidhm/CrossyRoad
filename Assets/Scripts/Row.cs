@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 public enum rowType { Grass, Road, Water}
 
@@ -185,7 +186,7 @@ public class Row : MonoBehaviour
         {
             trunkTimer -= Time.deltaTime;
             if (trunkTimer <= 0) {
-                trunkTimer = 2.5f + Random.Range(0.0f, 0.5f);
+                trunkTimer = 2.5f + UnityEngine.Random.Range(0.0f, 0.5f);
                 generateOneTrunk();
             }
         }
@@ -218,9 +219,9 @@ public class Row : MonoBehaviour
 
     private void generateWaterRow()
     {
-        trunkTimer = 2.5f + Random.Range(0, 0.5f);
-        incomingFromLeft = Random.value > 0.5;
-        trunkSlowSpeed = 40.0f + Random.Range(0.0f, 80.0f);        
+        trunkTimer = 2.5f + UnityEngine.Random.Range(0, 0.5f);
+        incomingFromLeft = UnityEngine.Random.value > 0.5;
+        trunkSlowSpeed = 40.0f + UnityEngine.Random.Range(0.0f, 80.0f);        
         for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
             i <= rightmostBorder + rowMarginInUnitCubes * unitCube.x - halfCube;
             i += unitCube.x)
@@ -234,7 +235,7 @@ public class Row : MonoBehaviour
             waterInstance.transform.position = new Vector3(i, waterHeight, transform.position.z);
         }
         generateOneTrunk();
-    }
+    }    
 
     private void generateOneTrunk()
     {
@@ -480,6 +481,26 @@ public class Row : MonoBehaviour
             }
         }
         return current != null;
+    }
+
+    public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
+    {
+        LinkedListNode<GameObject> current = trunksInWater.First;
+        Vector3 candidatePosition = current.Value.transform.position;
+        float offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+        while (current != null && (
+            movementDestination.x < candidatePosition.x - offset ||
+            movementDestination.x > candidatePosition.x + offset))
+        {
+            current = current.Next;
+            if (current != null)
+            {
+                candidatePosition = current.Value.transform.position;
+                offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+            }
+        }
+        movementDestination.x += incomingFromLeft ? trunkSlowSpeed * timeToCollision : -trunkSlowSpeed * timeToCollision;
+        return movementDestination;
     }
 
     public void notifyTrunkDestroyed(GameObject trunk)

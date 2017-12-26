@@ -87,4 +87,9 @@ public sealed class LevelManager : MonoBehaviour {
     {
         return generatorRuntime.GetComponent<LevelGenerator>().getTargetHeight(newDestination);
     }
+
+    public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
+    {
+        return generatorRuntime.GetComponent<LevelGenerator>().getFutureTrunkPosition(movementDestination, timeToCollision);
+    }
 }

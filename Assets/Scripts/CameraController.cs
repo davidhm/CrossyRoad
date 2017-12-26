@@ -40,7 +40,7 @@ public class CameraController : MonoBehaviour {
     
     void computeState()
     {
-        if (currentState == cameraStates.InitialState && player.GetComponent<PlayerController>().isMoving())
+        if (currentState == cameraStates.InitialState && player.GetComponent<PlayerController>().PlayerMoved)
         {
             currentState = cameraStates.GameStarted;
             currentForwardSpeed = idleForwardSpeed;

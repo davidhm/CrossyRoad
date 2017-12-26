@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
+
 class RowGroup
 {
     private uint numberOfRows;
@@ -40,7 +42,7 @@ class RowGroup
     {
         for (int k = 0; k < numberOfRows; ++k)
         {
-            GameObject nextRow = Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+            GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
             nextRow.transform.position = new Vector3(0, 0, nextRowZ);
             nextRowZ += LevelGenerator.UnitCube.z;
@@ -53,11 +55,11 @@ class RowGroup
 
     private void createGroupWithPreviousTypeRoad()
     {
-        if (Random.value > 0.5)
+        if (UnityEngine.Random.value > 0.5)
         {
             for (int k = 0; k < numberOfRows; ++k)
             {
-                GameObject nextRow = Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+                GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
                 nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
                 nextRowZ += LevelGenerator.UnitCube.z;
@@ -71,7 +73,7 @@ class RowGroup
         {
             for (int k = 0; k < numberOfRows; ++k)
             {
-                GameObject nextRow = Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+                GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
                 nextRow.GetComponent<Row>().CurrentType = rowType.Water;
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
                 nextRowZ += LevelGenerator.UnitCube.z;
@@ -86,7 +88,7 @@ class RowGroup
     {
         for (int k = 0; k < numberOfRows; ++k)
         {
-            GameObject nextRow = Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+            GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             if (numberOfRows > 1)
             {
                 if (k == 0)
@@ -112,17 +114,17 @@ class RowGroup
             occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
         }
         type = rowType.Road;
-    }
+    }    
 
     private void setRandomRoadParameters(Row roadRow)
     {
-        roadRow.IncomingFromLeft = Random.value > 0.5;
-        roadRow.TruckProportion = Random.value;
+        roadRow.IncomingFromLeft = UnityEngine.Random.value > 0.5;
+        roadRow.TruckProportion = UnityEngine.Random.value;
     }
 
     private void setRandomGrassParameters(Row grassRow)
     {
-        grassRow.TreeProportion = Random.Range(0,0.3f);
+        grassRow.TreeProportion = UnityEngine.Random.Range(0,0.3f);
     }
 
     public float NextRowZ
@@ -193,6 +195,20 @@ class RowGroup
         return false;
     }
 
+    public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
+    {
+        float targetRowZ = Mathf.Round((movementDestination.z - firstRowZ) / LevelGenerator.UnitCube.z);
+        for (int i = 0; i < rowGroup.transform.childCount; ++i)
+        {
+            if (rowGroup.transform.GetChild(i).transform.position.z ==
+                targetRowZ * LevelGenerator.UnitCube.z + firstRowZ)
+            {
+                return rowGroup.transform.GetChild(i).gameObject.GetComponent<Row>().getFutureTrunkPosition(movementDestination,timeToCollision);
+            }
+        }
+        throw new InvalidOperationException("There should always be a candidate for future trunk position");
+    }
+
     public float getTargetHeight(Vector3 position)
     {
         if (type == rowType.Grass)
@@ -231,7 +247,7 @@ class RowGroup
 
     public void destroyGroup()
     {
-        Object.Destroy(rowGroup);
+        UnityEngine.Object.Destroy(rowGroup);
     }
 }
 
