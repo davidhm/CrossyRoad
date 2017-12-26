@@ -95,6 +95,7 @@ class LevelGenerator : MonoBehaviour {
         return false;
     }
 
+   
     public void attachPlayerToTrunk(GameObject gameObject)
     {
         Vector3 position = gameObject.transform.position;
@@ -111,6 +112,7 @@ class LevelGenerator : MonoBehaviour {
         }
         throw new InvalidOperationException("There should always be a trunk to get attached to.");
     }
+
 
     public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
     {

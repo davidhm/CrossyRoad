@@ -189,10 +189,15 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementType = MovementObjective.movType.Forwards;
             nextObjective.TargetType = MovementObjective.targType.Rest;
             rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+            rowType currentType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position);
             float targetHeight = levelManager.GetComponent<LevelManager>().getTargetPositionHeight(newDestination);
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
+            if (currentType == rowType.Water)
+            {
+                transform.parent = null;
+            }
             if (targetType == rowType.Water)
             {               
                 nextObjective.TargetType = MovementObjective.targType.Water;
@@ -206,6 +211,7 @@ public class PlayerController : MonoBehaviour {
                     movementList.AddLast(nextObjective);
                 }
             }
+            playerMoved = true;
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
@@ -235,10 +241,15 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementType = MovementObjective.movType.Backwards;
             nextObjective.TargetType = MovementObjective.targType.Rest;
             rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+            rowType currentType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position);
             float targetHeight = levelManager.GetComponent<LevelManager>().getTargetPositionHeight(newDestination);
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
+            if (currentType == rowType.Water)
+            {
+                transform.parent = null;
+            }
             if (targetType == rowType.Water)
             {
                 nextObjective.TargetType = MovementObjective.targType.Water;
@@ -252,6 +263,7 @@ public class PlayerController : MonoBehaviour {
                     movementList.AddLast(nextObjective);
                 }
             }
+            playerMoved = true;
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
@@ -283,6 +295,7 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementType = MovementObjective.movType.RightStrafe;
             nextObjective.TargetType = MovementObjective.targType.Rest;
             rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+            rowType currentType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position);
             float targetHeight = levelManager.GetComponent<LevelManager>().getTargetPositionHeight(newDestination);
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
@@ -293,6 +306,10 @@ public class PlayerController : MonoBehaviour {
                 mustCheckTrunk = true;
                 movementList.AddLast(nextObjective);
             }
+            if (currentType == rowType.Water)
+            {
+                transform.parent = null;
+            }
             else
             {
                 if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
@@ -300,6 +317,7 @@ public class PlayerController : MonoBehaviour {
                     movementList.AddLast(nextObjective);
                 }
             }
+            playerMoved = true;
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -331,6 +349,7 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementType = MovementObjective.movType.LeftStrafe;
             nextObjective.TargetType = MovementObjective.targType.Rest;
             rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+            rowType currentType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position);
             float targetHeight = levelManager.GetComponent<LevelManager>().getTargetPositionHeight(newDestination);
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
@@ -341,6 +360,10 @@ public class PlayerController : MonoBehaviour {
                 mustCheckTrunk = true;
                 movementList.AddLast(nextObjective);
             }
+            if (currentType == rowType.Water)
+            {
+                transform.parent = null;
+            }
             else
             {
                 if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
@@ -348,12 +371,12 @@ public class PlayerController : MonoBehaviour {
                     movementList.AddLast(nextObjective);
                 }
             }
+            playerMoved = true;
         }
         else if (Input.GetKeyDown(KeyCode.G))
         {
             godMode = true;
-        }
-        playerMoved = true;
+        }        
     }
 
     private void backToNormalMode()

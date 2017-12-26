@@ -219,7 +219,7 @@ public class Row : MonoBehaviour
 
     private void generateWaterRow()
     {
-        trunkTimer = 2.5f + UnityEngine.Random.Range(0, 0.5f);
+        trunkTimer = 1.5f + UnityEngine.Random.Range(0, 0.5f);
         incomingFromLeft = UnityEngine.Random.value > 0.5;
         trunkSlowSpeed = 40.0f + UnityEngine.Random.Range(0.0f, 80.0f);        
         for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;

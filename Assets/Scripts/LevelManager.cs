@@ -3,7 +3,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public sealed class LevelManager : MonoBehaviour {
+public sealed class LevelManager : MonoBehaviour
+{
 
     public GameObject mainMenu, player, cameraObject;
     public GameObject generatorPrefab;
