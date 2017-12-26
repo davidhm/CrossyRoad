@@ -114,7 +114,7 @@ class RowGroup
             occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
         }
         type = rowType.Road;
-    }    
+    }
 
     private void setRandomRoadParameters(Row roadRow)
     {
@@ -207,6 +207,24 @@ class RowGroup
             }
         }
         throw new InvalidOperationException("There should always be a candidate for future trunk position");
+    }
+
+    public void attachPlayerToTrunk(GameObject gameObject)
+    {
+        Vector3 position = gameObject.transform.position;
+        float targetRowZ = Mathf.Round((position.z - firstRowZ) / LevelGenerator.UnitCube.z);
+        int i;
+        for (i = 0; i < rowGroup.transform.childCount; ++i)
+        {
+            if (rowGroup.transform.GetChild(i).transform.position.z ==
+                targetRowZ * LevelGenerator.UnitCube.z + firstRowZ)
+            {
+                rowGroup.transform.GetChild(i).gameObject.GetComponent<Row>().attachPlayerToTrunk(gameObject);
+                return;
+            }
+        }
+        if (i == rowGroup.transform.childCount)
+            throw new InvalidOperationException("There should always be a trunk to get attached to.");
     }
 
     public float getTargetHeight(Vector3 position)

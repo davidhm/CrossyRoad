@@ -221,7 +221,7 @@ public class Row : MonoBehaviour
     {
         trunkTimer = 2.5f + UnityEngine.Random.Range(0, 0.5f);
         incomingFromLeft = UnityEngine.Random.value > 0.5;
-        trunkSlowSpeed = 200.0f + UnityEngine.Random.Range(0.0f, 80.0f);        
+        trunkSlowSpeed = 40.0f + UnityEngine.Random.Range(0.0f, 80.0f);        
         for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
             i <= rightmostBorder + rowMarginInUnitCubes * unitCube.x - halfCube;
             i += unitCube.x)
@@ -488,9 +488,18 @@ public class Row : MonoBehaviour
         LinkedListNode<GameObject> current = trunksInWater.First;
         Vector3 candidatePosition = current.Value.transform.position;
         float offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+        movementDestination.x += incomingFromLeft ? trunkSlowSpeed * timeToCollision : -trunkSlowSpeed * timeToCollision;
+        return movementDestination;
+    }
+
+    public void attachPlayerToTrunk(GameObject gameObject)
+    {
+        LinkedListNode<GameObject> current = trunksInWater.First;
+        Vector3 candidatePosition = current.Value.transform.position;
+        float offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
         while (current != null && (
-            movementDestination.x < candidatePosition.x - offset ||
-            movementDestination.x > candidatePosition.x + offset))
+            gameObject.transform.position.x < candidatePosition.x - offset ||
+            gameObject.transform.position.x > candidatePosition.x + offset))
         {
             current = current.Next;
             if (current != null)
@@ -499,8 +508,9 @@ public class Row : MonoBehaviour
                 offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
             }
         }
-        movementDestination.x += incomingFromLeft ? trunkSlowSpeed * timeToCollision : -trunkSlowSpeed * timeToCollision;
-        return movementDestination;
+        if (current == null)
+            throw new InvalidOperationException("No trunk found to get attached to.");
+        gameObject.transform.SetParent(current.Value.transform);
     }
 
     public void notifyTrunkDestroyed(GameObject trunk)

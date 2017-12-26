@@ -95,6 +95,23 @@ class LevelGenerator : MonoBehaviour {
         return false;
     }
 
+    public void attachPlayerToTrunk(GameObject gameObject)
+    {
+        Vector3 position = gameObject.transform.position;
+        LinkedListNode<RowGroup> currentNode = rows.First;
+        while (currentNode != null && (position.z < currentNode.Value.FirstRowZ ||
+            position.z > currentNode.Value.LastRowZ || currentNode.Value.Type != rowType.Water))
+        {
+            currentNode = currentNode.Next;
+        }
+        if (currentNode != null)
+        {
+            currentNode.Value.attachPlayerToTrunk(gameObject);
+            return;
+        }
+        throw new InvalidOperationException("There should always be a trunk to get attached to.");
+    }
+
     public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
     {
         LinkedListNode<RowGroup> currentNode = rows.First;

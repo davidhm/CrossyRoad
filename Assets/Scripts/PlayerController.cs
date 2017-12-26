@@ -156,6 +156,7 @@ public class PlayerController : MonoBehaviour {
     void OnBecameInvisible()
     {
         currentState = playerState.Dead;
+        if (levelManager != null)
         levelManager.GetComponent<LevelManager>().treatPlayerInvisible();
     }
 
@@ -390,8 +391,12 @@ public class PlayerController : MonoBehaviour {
                 if (updatedPosition.z >= movementList.First.Value.MovementDestination.z)
                 {
                     transform.position = movementList.First.Value.MovementDestination;
-                    transform.rotation = movementList.First.Value.TargetOrientation;                    
-                    if (willDrown)
+                    transform.rotation = movementList.First.Value.TargetOrientation; 
+                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
+                    {
+                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                    }                   
+                    else if (willDrown)
                     {
                         currentState = playerState.Dead;
                         treatDrowningState();
@@ -414,7 +419,11 @@ public class PlayerController : MonoBehaviour {
                 {
                     transform.position = movementList.First.Value.MovementDestination;
                     transform.rotation = movementList.First.Value.TargetOrientation;
-                    if (willDrown)
+                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
+                    {
+                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                    }
+                    else if (willDrown)
                     {
                         currentState = playerState.Dead;
                         treatDrowningState();
@@ -437,7 +446,11 @@ public class PlayerController : MonoBehaviour {
                 {
                     transform.position = movementList.First.Value.MovementDestination;
                     transform.rotation = movementList.First.Value.TargetOrientation;
-                    if (willDrown)
+                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
+                    {
+                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                    }
+                    else if (willDrown)
                     {
                         currentState = playerState.Dead;
                         treatDrowningState();
@@ -460,7 +473,11 @@ public class PlayerController : MonoBehaviour {
                 {
                     transform.position = movementList.First.Value.MovementDestination;
                     transform.rotation = movementList.First.Value.TargetOrientation;
-                    if (willDrown)
+                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
+                    {
+                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                    }
+                    else if (willDrown)
                     {
                         currentState = playerState.Dead;
                         treatDrowningState();
