@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour {
     public GameObject levelManager;
     //private static float godModeSpeed = 160.0f;
     private Vector3 initialPosition;
-    private bool godMode, playerMoved, willDrown, mustCheckTrunk;
+    private bool godMode, playerMoved, willDrown, mustCheckTrunk, justDeletedMovement;
     private class MovementObjective
     {
         public enum movType { Forwards, Backwards, LeftStrafe, RightStrafe}
@@ -147,6 +147,7 @@ public class PlayerController : MonoBehaviour {
         playerMoved = false;
         willDrown = false;
         mustCheckTrunk = false;
+        justDeletedMovement = true;
 	}
 	
 	// Update is called once per frame
@@ -212,7 +213,7 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
-            if (currentType == rowType.Water)
+            if (movementList.Count == 0 && currentType == rowType.Water)
             {
                 transform.parent = null;
             }
@@ -244,6 +245,8 @@ public class PlayerController : MonoBehaviour {
                 newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 previousDestination = transform.position;
                 originOrientation = transform.rotation;
+                nextObjective.OriginType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position) == rowType.Water ?
+                    MovementObjective.targType.Water : MovementObjective.targType.Rest;
             }
             else
             {
@@ -251,6 +254,8 @@ public class PlayerController : MonoBehaviour {
                 newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 previousDestination = movementList.Last.Value.MovementDestination;
                 originOrientation = movementList.Last.Value.TargetOrientation;
+                nextObjective.OriginType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(previousDestination) == rowType.Water ?
+                    MovementObjective.targType.Water : MovementObjective.targType.Rest;
             }
             nextObjective.MovementDestination = newDestination;
             nextObjective.TargetOrientation = targetOrientation;
@@ -264,7 +269,7 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
-            if (currentType == rowType.Water)
+            if (movementList.Count == 0 && currentType == rowType.Water)
             {
                 transform.parent = null;
             }
@@ -298,6 +303,8 @@ public class PlayerController : MonoBehaviour {
                 newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 previousDestination = transform.position;
                 originOrientation = transform.rotation;
+                nextObjective.OriginType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position) == rowType.Water ?
+                    MovementObjective.targType.Water : MovementObjective.targType.Rest;
             }
             else
             {
@@ -305,6 +312,8 @@ public class PlayerController : MonoBehaviour {
                 newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 previousDestination = movementList.Last.Value.MovementDestination;
                 originOrientation = movementList.Last.Value.TargetOrientation;
+                nextObjective.OriginType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(previousDestination) == rowType.Water ?
+                    MovementObjective.targType.Water : MovementObjective.targType.Rest;
             }
             nextObjective.MovementDestination = newDestination;
             nextObjective.TargetOrientation = targetOrientation;
@@ -324,7 +333,7 @@ public class PlayerController : MonoBehaviour {
                 mustCheckTrunk = true;
                 movementList.AddLast(nextObjective);
             }
-            if (currentType == rowType.Water)
+            if (movementList.Count == 0 && currentType == rowType.Water)
             {
                 transform.parent = null;
             }
@@ -352,6 +361,8 @@ public class PlayerController : MonoBehaviour {
                 newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 previousDestination = transform.position;
                 originOrientation = transform.rotation;
+                nextObjective.OriginType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position) == rowType.Water ?
+                    MovementObjective.targType.Water : MovementObjective.targType.Rest;
             }
             else
             {
@@ -359,6 +370,8 @@ public class PlayerController : MonoBehaviour {
                 newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 previousDestination = movementList.Last.Value.MovementDestination;
                 originOrientation = movementList.Last.Value.TargetOrientation;
+                nextObjective.OriginType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(previousDestination) == rowType.Water ?
+                    MovementObjective.targType.Water : MovementObjective.targType.Rest;
             }
             nextObjective.MovementDestination = newDestination;
             nextObjective.TargetOrientation = targetOrientation;
@@ -378,7 +391,7 @@ public class PlayerController : MonoBehaviour {
                 mustCheckTrunk = true;
                 movementList.AddLast(nextObjective);
             }
-            if (currentType == rowType.Water)
+            if (movementList.Count == 0 && currentType == rowType.Water)
             {
                 transform.parent = null;
             }
@@ -409,13 +422,18 @@ public class PlayerController : MonoBehaviour {
 
     private Vector3 getDiscretePosition(Vector3 continousPosition)
     {
-        return continousPosition;
+        float discreteX = Mathf.Round((continousPosition.x - levelManager.GetComponent<LevelManager>().InitialPlayerPosition.x)/
+            LevelGenerator.UnitCube.x);
+        discreteX = discreteX * LevelGenerator.UnitCube.x + levelManager.GetComponent<LevelManager>().InitialPlayerPosition.x;
+        float discreteZ = Mathf.Round((continousPosition.z - levelManager.GetComponent<LevelManager>().InitialPlayerPosition.z) /
+            LevelGenerator.UnitCube.z);
+        discreteZ = discreteZ * LevelGenerator.UnitCube.z + levelManager.GetComponent<LevelManager>().InitialPlayerPosition.z;
+        return new Vector3(discreteX,continousPosition.y,discreteZ);
     }
 
     private void treatReachedTarget()
     {
-        Vector3 discretePosition = getDiscretePosition(movementList.First.Value.MovementDestination);
-        transform.position = discretePosition;
+        transform.position = movementList.First.Value.MovementDestination;
         transform.rotation = movementList.First.Value.TargetOrientation;
         if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
         {
@@ -427,6 +445,14 @@ public class PlayerController : MonoBehaviour {
             treatDrowningState();
         }
         movementList.RemoveFirst();
+        justDeletedMovement = true;
+        if (movementList.Count > 0)
+        {
+            if (movementList.First.Value.OriginType == MovementObjective.targType.Water)
+            {
+                transform.parent = null;
+            }
+        }
     }
 
     private void treatTargetNotReachedYet(Vector3 updatedPosition, MovementObjective.movType movementType)
@@ -472,6 +498,14 @@ public class PlayerController : MonoBehaviour {
             {
                 willDrown = true;
                 mustCheckTrunk = false;
+            }
+            if (justDeletedMovement &&
+                nextObjective.TargetType == MovementObjective.targType.Rest && 
+                nextObjective.OriginType == MovementObjective.targType.Water)
+            {
+                justDeletedMovement = false;
+                nextObjective.MovementDestination = getDiscretePosition(nextObjective.MovementDestination);
+                nextObjective.MovementDirection = (nextObjective.MovementDestination - nextObjective.MovementOrigin).normalized;
             }
             Vector3 updatedPosition = transform.position + movementList.First.Value.MovementDirection * LevelGenerator.UnitCube.x * playerSpeed * Time.deltaTime;
             if (movementList.First.Value.MovementType == MovementObjective.movType.Forwards)

@@ -40,45 +40,54 @@ class RowGroup
 
     private void createGroupWithPreviousTypeWater()
     {
+        GameObject previousRow, nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+        previousRow = null;
         for (int k = 0; k < numberOfRows; ++k)
         {
-            GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
             nextRow.transform.position = new Vector3(0, 0, nextRowZ);
             nextRowZ += LevelGenerator.UnitCube.z;
             setRandomGrassParameters(nextRow.GetComponent<Row>());
-            nextRow.GetComponent<Row>().generateInitialElements();
+            nextRow.GetComponent<Row>().generateInitialElements(previousRow == null ? null : previousRow.GetComponent<Row>());
             occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
+            previousRow = nextRow;
+            nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
         }
         type = rowType.Grass;
     }
 
     private void createGroupWithPreviousTypeRoad()
     {
-        if (UnityEngine.Random.value > 0.5)
+        if (UnityEngine.Random.value > 0.8)
         {
+            GameObject previousRow, nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+            previousRow = null;
             for (int k = 0; k < numberOfRows; ++k)
             {
-                GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
                 nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
                 nextRowZ += LevelGenerator.UnitCube.z;
                 setRandomGrassParameters(nextRow.GetComponent<Row>());
-                nextRow.GetComponent<Row>().generateInitialElements();
+                nextRow.GetComponent<Row>().generateInitialElements(previousRow == null ? null : previousRow.GetComponent<Row>());
                 occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
+                previousRow = nextRow;
+                nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             }
             type = rowType.Grass;
         }
         else
         {
+            GameObject previousRow, nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+            previousRow = null;
             for (int k = 0; k < numberOfRows; ++k)
             {
-                GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
                 nextRow.GetComponent<Row>().CurrentType = rowType.Water;
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
                 nextRowZ += LevelGenerator.UnitCube.z;
-                nextRow.GetComponent<Row>().generateInitialElements();
+                nextRow.GetComponent<Row>().generateInitialElements(previousRow == null ? null : previousRow.GetComponent<Row>());
                 occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
+                previousRow = nextRow;
+                nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             }
             type = rowType.Water;
         }
@@ -110,7 +119,7 @@ class RowGroup
             nextRow.transform.position = new Vector3(0, 0, nextRowZ);
             nextRowZ += LevelGenerator.UnitCube.z;
             setRandomRoadParameters(nextRow.GetComponent<Row>());
-            nextRow.GetComponent<Row>().generateInitialElements();
+            nextRow.GetComponent<Row>().generateInitialElements(null);
             occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
         }
         type = rowType.Road;

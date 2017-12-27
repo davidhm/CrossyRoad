@@ -34,6 +34,8 @@ public class Row : MonoBehaviour
     private float trunkTimer, trunkSlowSpeed;
     private List<bool> occupableRow;
     private LinkedList<GameObject> trunksInWater;
+    public enum TrunkSpeed { Slow, Fast}
+    private TrunkSpeed trunkSpeed;
 
     public static float VehicleMaxSpeed
     {
@@ -126,6 +128,19 @@ public class Row : MonoBehaviour
         }
     }
 
+    public TrunkSpeed TrunkSpeedProperty
+    {
+        get
+        {
+            return trunkSpeed;
+        }
+
+        set
+        {
+            trunkSpeed = value;
+        }
+    }
+
     public static void setUnitCube(Vector3 unitCube)
     {
         Row.unitCube = unitCube;
@@ -186,7 +201,14 @@ public class Row : MonoBehaviour
         {
             trunkTimer -= Time.deltaTime;
             if (trunkTimer <= 0) {
-                trunkTimer = 2.5f + UnityEngine.Random.Range(0.0f, 0.5f);
+                if (trunkSpeed == TrunkSpeed.Slow)
+                {
+                    trunkTimer = 2.5f + UnityEngine.Random.Range(0, 0.5f);
+                }
+                else
+                {
+                    trunkTimer = 1.5f + UnityEngine.Random.Range(0, 0.5f);
+                }            
                 generateOneTrunk();
             }
         }
@@ -197,7 +219,7 @@ public class Row : MonoBehaviour
         return occupableRow;
     }
 
-    public void generateInitialElements()
+    public void generateInitialElements(Row previousRow)
     {
         occupableRow = new List<bool>(9);
         trunksInWater = new LinkedList<GameObject>();
@@ -213,15 +235,45 @@ public class Row : MonoBehaviour
         }
         else if (currentType == rowType.Water)
         {
-            generateWaterRow();
+            generateWaterRow(previousRow);
         }
     }
 
-    private void generateWaterRow()
+
+    private void generateWaterRowParameters(TrunkSpeed speed)
     {
-        trunkTimer = 1.5f + UnityEngine.Random.Range(0, 0.5f);
-        incomingFromLeft = UnityEngine.Random.value > 0.5;
-        trunkSlowSpeed = 40.0f + UnityEngine.Random.Range(0.0f, 80.0f);        
+        if (speed == TrunkSpeed.Slow)
+        {
+            trunkTimer = 2.0f + UnityEngine.Random.Range(0, 0.5f);
+            trunkSlowSpeed = 40.0f + UnityEngine.Random.Range(0, 40);
+        }
+        else
+        {
+            trunkTimer = 1.5f + UnityEngine.Random.Range(0, 0.5f);
+            trunkSlowSpeed = 80.0f + UnityEngine.Random.Range(0, 40);
+        }
+    }
+
+    private void generateWaterRow(Row previousRow)
+    {
+        if (previousRow == null || previousRow.TrunkSpeedProperty == TrunkSpeed.Slow)
+        {
+            incomingFromLeft = UnityEngine.Random.value > 0.5;
+            generateWaterRowParameters(UnityEngine.Random.value > 0.5 ? TrunkSpeed.Fast : TrunkSpeed.Slow);
+        }
+        else if (previousRow.TrunkSpeedProperty == TrunkSpeed.Fast)
+        {
+            if (UnityEngine.Random.value > 0.5)
+            {
+                incomingFromLeft = !previousRow.IncomingFromLeft;
+                generateWaterRowParameters(UnityEngine.Random.value > 0.5 ? TrunkSpeed.Fast : TrunkSpeed.Slow);
+            }
+            else
+            {
+                incomingFromLeft = previousRow.IncomingFromLeft;
+                generateWaterRowParameters(TrunkSpeed.Fast);
+            }
+        }
         for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
             i <= rightmostBorder + rowMarginInUnitCubes * unitCube.x - halfCube;
             i += unitCube.x)
@@ -237,11 +289,24 @@ public class Row : MonoBehaviour
         generateOneTrunk();
     }    
 
+    private Mesh getRandomTrunkMesh()
+    {
+        float randValue = UnityEngine.Random.value;
+        if (randValue < 0.1)
+        {
+            return smallTrunkMesh;
+        }
+        else if (randValue >= 0.1 && randValue < 0.6) {
+            return mediumTrunkMesh;
+        }
+        return largeTrunkMesh;
+    }
     private void generateOneTrunk()
     {
         GameObject trunkInstance = (GameObject)Instantiate(trunkPrefab, transform);
         trunkInstance.GetComponent<TrunkController>().SlowSpeed = trunkSlowSpeed;
         trunkInstance.GetComponent<TrunkController>().IncomingFromLeft = incomingFromLeft;
+        trunkInstance.GetComponent<MeshFilter>().mesh = getRandomTrunkMesh();
         float lateralPosition;
         if (incomingFromLeft)
         {
