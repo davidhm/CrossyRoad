@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour {
         private Quaternion originOrientation;
         private movType movementType;
         private targType targetType;
+        private targType originType;
 
         public Vector3 MovementDirection
         {
@@ -112,6 +113,19 @@ public class PlayerController : MonoBehaviour {
                 targetType = value;
             }
         }
+
+        public targType OriginType
+        {
+            get
+            {
+                return originType;
+            }
+
+            set
+            {
+                originType = value;
+            }
+        }
     }
 
     private LinkedList<MovementObjective> movementList;
@@ -174,6 +188,8 @@ public class PlayerController : MonoBehaviour {
                 newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 previousDestination = transform.position;
                 originOrientation = transform.rotation;
+                nextObjective.OriginType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position) == rowType.Water ?
+                    MovementObjective.targType.Water : MovementObjective.targType.Rest;
             }
             else
             {
@@ -181,6 +197,8 @@ public class PlayerController : MonoBehaviour {
                 newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
                 previousDestination = movementList.Last.Value.MovementDestination;
                 originOrientation = movementList.Last.Value.TargetOrientation;
+                nextObjective.OriginType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(previousDestination) == rowType.Water ?
+                    MovementObjective.targType.Water : MovementObjective.targType.Rest;
             }
             nextObjective.MovementDestination = newDestination;
             nextObjective.TargetOrientation = targetOrientation;
@@ -389,6 +407,53 @@ public class PlayerController : MonoBehaviour {
         transform.position = new Vector3(intXTile, transform.position.y, intZTile);
     }
 
+    private Vector3 getDiscretePosition(Vector3 continousPosition)
+    {
+        return continousPosition;
+    }
+
+    private void treatReachedTarget()
+    {
+        Vector3 discretePosition = getDiscretePosition(movementList.First.Value.MovementDestination);
+        transform.position = discretePosition;
+        transform.rotation = movementList.First.Value.TargetOrientation;
+        if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
+        {
+            levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+        }
+        else if (willDrown)
+        {
+            currentState = playerState.Dead;
+            treatDrowningState();
+        }
+        movementList.RemoveFirst();
+    }
+
+    private void treatTargetNotReachedYet(Vector3 updatedPosition, MovementObjective.movType movementType)
+    {
+        float distance = 0.0f;
+        switch (movementType)
+        {
+            case MovementObjective.movType.Forwards:
+                distance = (transform.position.z - movementList.First.Value.MovementOrigin.z) / LevelGenerator.UnitCube.z;
+                break;
+            case MovementObjective.movType.Backwards:
+                distance = (movementList.First.Value.MovementOrigin.z - transform.position.z) / LevelGenerator.UnitCube.z;
+                break;
+            case MovementObjective.movType.LeftStrafe:
+                distance = (movementList.First.Value.MovementOrigin.x - transform.position.x) / LevelGenerator.UnitCube.z;
+                break;
+            case MovementObjective.movType.RightStrafe:
+                distance = (transform.position.x - movementList.First.Value.MovementOrigin.x) / LevelGenerator.UnitCube.z;
+                break;
+        }        
+        float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
+        transform.position = new Vector3(updatedPosition.x,
+            movementList.First.Value.MovementOrigin.y + heightOffset, updatedPosition.z);
+        transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
+            movementList.First.Value.TargetOrientation, distance);
+    }
+
     private void updatePosition()
     {
         if (movementList.Count > 0)
@@ -412,109 +477,45 @@ public class PlayerController : MonoBehaviour {
             if (movementList.First.Value.MovementType == MovementObjective.movType.Forwards)
             {
                 if (updatedPosition.z >= movementList.First.Value.MovementDestination.z)
-                {
-                    transform.position = movementList.First.Value.MovementDestination;
-                    transform.rotation = movementList.First.Value.TargetOrientation; 
-                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
-                    {
-                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
-                    }                   
-                    else if (willDrown)
-                    {
-                        currentState = playerState.Dead;
-                        treatDrowningState();
-                    }
-                    movementList.RemoveFirst();
+                {                    
+                    treatReachedTarget();
                 }
                 else
-                {
-                    float distance = (transform.position.z - movementList.First.Value.MovementOrigin.z)/LevelGenerator.UnitCube.z;
-                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
-                    transform.position = new Vector3(updatedPosition.x, 
-                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
-                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
-                        movementList.First.Value.TargetOrientation, distance);
+                {                    
+                    treatTargetNotReachedYet(updatedPosition,movementList.First.Value.MovementType);
                 }
             }  
             else if (movementList.First.Value.MovementType == MovementObjective.movType.Backwards)
             {
                 if (updatedPosition.z <= movementList.First.Value.MovementDestination.z)
                 {
-                    transform.position = movementList.First.Value.MovementDestination;
-                    transform.rotation = movementList.First.Value.TargetOrientation;
-                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
-                    {
-                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
-                    }
-                    else if (willDrown)
-                    {
-                        currentState = playerState.Dead;
-                        treatDrowningState();
-                    }           
-                    movementList.RemoveFirst();
+                    treatReachedTarget();
                 }
                 else
                 {
-                    float distance = (movementList.First.Value.MovementOrigin.z - transform.position.z)/LevelGenerator.UnitCube.z;
-                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
-                    transform.position = new Vector3(updatedPosition.x,
-                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
-                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
-                        movementList.First.Value.TargetOrientation, distance);
+                    treatTargetNotReachedYet(updatedPosition, movementList.First.Value.MovementType);
                 }
             }
             else if (movementList.First.Value.MovementType == MovementObjective.movType.RightStrafe)
             {
                 if (updatedPosition.x >= movementList.First.Value.MovementDestination.x)
                 {
-                    transform.position = movementList.First.Value.MovementDestination;
-                    transform.rotation = movementList.First.Value.TargetOrientation;
-                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
-                    {
-                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
-                    }
-                    else if (willDrown)
-                    {
-                        currentState = playerState.Dead;
-                        treatDrowningState();
-                    }
-                    movementList.RemoveFirst();
+                    treatReachedTarget();
                 }
                 else
                 {
-                    float distance = (transform.position.x - movementList.First.Value.MovementOrigin.x)/LevelGenerator.UnitCube.z;
-                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
-                    transform.position = new Vector3(updatedPosition.x,
-                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
-                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
-                        movementList.First.Value.TargetOrientation, distance);
+                    treatTargetNotReachedYet(updatedPosition, movementList.First.Value.MovementType);
                 }
             }
             else if (movementList.First.Value.MovementType == MovementObjective.movType.LeftStrafe)
             {
                 if (updatedPosition.x <= movementList.First.Value.MovementDestination.x)
                 {
-                    transform.position = movementList.First.Value.MovementDestination;
-                    transform.rotation = movementList.First.Value.TargetOrientation;
-                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
-                    {
-                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
-                    }
-                    else if (willDrown)
-                    {
-                        currentState = playerState.Dead;
-                        treatDrowningState();
-                    }
-                    movementList.RemoveFirst();
+                    treatReachedTarget();
                 }
                 else
                 {
-                    float distance = (movementList.First.Value.MovementOrigin.x - transform.position.x)/LevelGenerator.UnitCube.z;
-                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
-                    transform.position = new Vector3(updatedPosition.x,
-                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
-                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
-                        movementList.First.Value.TargetOrientation, distance);
+                    treatTargetNotReachedYet(updatedPosition, movementList.First.Value.MovementType);
                 }
             }
         }
