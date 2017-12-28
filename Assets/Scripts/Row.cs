@@ -287,26 +287,33 @@ public class Row : MonoBehaviour
             waterInstance.transform.position = new Vector3(i, waterHeight, transform.position.z);
         }
         generateOneTrunk();
-    }    
+    }
+       
 
-    private Mesh getRandomTrunkMesh()
+    private void assignTrunkMesh(GameObject trunkInstance)
     {
         float randValue = UnityEngine.Random.value;
         if (randValue < 0.1)
         {
-            return smallTrunkMesh;
+            trunkInstance.GetComponent<MeshFilter>().mesh = smallTrunkMesh;
+            trunkInstance.GetComponent<TrunkController>().TrunkSizeProperty = TrunkController.TrunkSize.Small;
         }
         else if (randValue >= 0.1 && randValue < 0.6) {
-            return mediumTrunkMesh;
+            trunkInstance.GetComponent<MeshFilter>().mesh = mediumTrunkMesh;
+            trunkInstance.GetComponent<TrunkController>().TrunkSizeProperty = TrunkController.TrunkSize.Medium;
         }
-        return largeTrunkMesh;
+        else
+        {
+            trunkInstance.GetComponent<MeshFilter>().mesh = largeTrunkMesh;
+            trunkInstance.GetComponent<TrunkController>().TrunkSizeProperty = TrunkController.TrunkSize.Large;
+        }
     }
     private void generateOneTrunk()
     {
         GameObject trunkInstance = (GameObject)Instantiate(trunkPrefab, transform);
         trunkInstance.GetComponent<TrunkController>().SlowSpeed = trunkSlowSpeed;
         trunkInstance.GetComponent<TrunkController>().IncomingFromLeft = incomingFromLeft;
-        trunkInstance.GetComponent<MeshFilter>().mesh = getRandomTrunkMesh();
+        assignTrunkMesh(trunkInstance);
         float lateralPosition;
         if (incomingFromLeft)
         {
@@ -535,7 +542,7 @@ public class Row : MonoBehaviour
         Vector3 candidatePosition = current.Value.transform.position;
         float offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
         while (current != null && (
-            position.x < candidatePosition.x - offset||
+            position.x < candidatePosition.x - offset ||
             position.x > candidatePosition.x + offset))
         {
             current = current.Next;
@@ -548,23 +555,15 @@ public class Row : MonoBehaviour
         return current != null;
     }
 
-    public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
-    {
-        LinkedListNode<GameObject> current = trunksInWater.First;
-        Vector3 candidatePosition = current.Value.transform.position;
-        float offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
-        movementDestination.x += incomingFromLeft ? trunkSlowSpeed * timeToCollision : -trunkSlowSpeed * timeToCollision;
-        return movementDestination;
-    }
-
     public void attachPlayerToTrunk(GameObject gameObject)
     {
         LinkedListNode<GameObject> current = trunksInWater.First;
         Vector3 candidatePosition = current.Value.transform.position;
+        Vector3 position = gameObject.transform.position;
         float offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
         while (current != null && (
-            gameObject.transform.position.x < candidatePosition.x - offset ||
-            gameObject.transform.position.x > candidatePosition.x + offset))
+            position.x < candidatePosition.x - offset ||
+            position.x > candidatePosition.x + offset))
         {
             current = current.Next;
             if (current != null)
@@ -573,10 +572,31 @@ public class Row : MonoBehaviour
                 offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
             }
         }
-        if (current == null)
-            throw new InvalidOperationException("No trunk found to get attached to.");
-        gameObject.transform.SetParent(current.Value.transform);
+        if (current != null)
+            gameObject.transform.parent = current.Value.transform;
+        else 
+            throw new InvalidOperationException("Didn't find a trunk to get attached to.");
     }
+
+    public GameObject getTrunkInPosition(Vector3 position)
+    {
+        LinkedListNode<GameObject> current = trunksInWater.First;
+        Vector3 candidatePosition = current.Value.transform.position;
+        float offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+        while (current != null && (
+            position.x < candidatePosition.x - offset||
+            position.x > candidatePosition.x + offset))
+        {
+            current = current.Next;
+            if (current != null)
+            {
+                candidatePosition = current.Value.transform.position;
+                offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+            }
+        }
+        return current == null ? null : current.Value;
+    } 
+     
 
     public void notifyTrunkDestroyed(GameObject trunk)
     {

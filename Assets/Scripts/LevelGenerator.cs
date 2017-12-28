@@ -95,7 +95,23 @@ class LevelGenerator : MonoBehaviour {
         return false;
     }
 
-   
+    public GameObject getTrunkInPosition(Vector3 position)
+    {
+        if (position.z >= levelManager.InitialPlayerPosition.z + 4 * unitCube.z &&
+            position.z >= rows.First.Value.FirstRowZ)
+        {
+            LinkedListNode<RowGroup> currentNode = rows.First;
+            while (currentNode != null && (position.z < currentNode.Value.FirstRowZ ||
+                position.z > currentNode.Value.LastRowZ || currentNode.Value.Type != rowType.Water))
+            {
+                currentNode = currentNode.Next;
+            }
+            if (currentNode != null)
+                return currentNode.Value.getTrunkInPosition(position);
+        }
+        return null;
+    }
+
     public void attachPlayerToTrunk(GameObject gameObject)
     {
         Vector3 position = gameObject.transform.position;
@@ -111,20 +127,6 @@ class LevelGenerator : MonoBehaviour {
             return;
         }
         throw new InvalidOperationException("There should always be a trunk to get attached to.");
-    }
-
-
-    public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
-    {
-        LinkedListNode<RowGroup> currentNode = rows.First;
-        while (currentNode != null && (movementDestination.z < currentNode.Value.FirstRowZ ||
-            movementDestination.z > currentNode.Value.LastRowZ || currentNode.Value.Type != rowType.Water))
-        {
-            currentNode = currentNode.Next;
-        }
-        if (currentNode != null)
-            return currentNode.Value.getFutureTrunkPosition(movementDestination, timeToCollision);
-        throw new InvalidOperationException("There should always be a candidate row group for future trunk position.");
     }
 
     public float getTargetHeight(Vector3 position)

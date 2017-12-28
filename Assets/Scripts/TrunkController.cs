@@ -1,6 +1,9 @@
-﻿using UnityEngine;
-class TrunkController : MonoBehaviour
+﻿using System;
+using UnityEngine;
+public class TrunkController : MonoBehaviour
 {
+    public enum TrunkSize {Small, Medium, Large}
+    private TrunkSize trunkSize;
     private bool overflowedRow;
     private float slowSpeed, currentSpeed;
     private static float fastSpeed;
@@ -58,6 +61,27 @@ class TrunkController : MonoBehaviour
         }
     }
 
+    public float CurrentSpeed
+    {
+        get
+        {
+            return currentSpeed;
+        }
+    }
+
+    public TrunkSize TrunkSizeProperty
+    {
+        get
+        {
+            return trunkSize;
+        }
+
+        set
+        {
+            trunkSize = value;
+        }
+    }
+
     void Update()
     {
         currentSpeed = getCorrectSpeed();
@@ -98,5 +122,13 @@ class TrunkController : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+    }
+
+    public bool willFallOutOfLimits(float timeToCollision)
+    {
+        float offset = gameObject.GetComponent<Renderer>().bounds.extents.x;
+        return incomingFromLeft ? (transform.position.x + offset + slowSpeed * timeToCollision)
+            > Row.rightmostBorder : (transform.position.x - offset - slowSpeed * timeToCollision)
+            < Row.leftmostBorder;
     }
 }

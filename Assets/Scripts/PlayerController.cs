@@ -9,7 +9,9 @@ public class PlayerController : MonoBehaviour {
     public GameObject levelManager;
     //private static float godModeSpeed = 160.0f;
     private Vector3 initialPosition;
-    private bool godMode, playerMoved, willDrown, mustCheckTrunk, justDeletedMovement;
+    private bool godMode, playerMoved, willDrown, mustCheckTrunk, justDeletedMovement, inTrunk;
+    private GameObject attachedTrunk;
+    private bool[] playerPositionInTrunk;
     private class MovementObjective
     {
         public enum movType { Forwards, Backwards, LeftStrafe, RightStrafe}
@@ -148,6 +150,8 @@ public class PlayerController : MonoBehaviour {
         willDrown = false;
         mustCheckTrunk = false;
         justDeletedMovement = true;
+        inTrunk = false;
+        playerPositionInTrunk = new bool[] { false, false, false };
 	}
 	
 	// Update is called once per frame
@@ -213,15 +217,20 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
-            if (movementList.Count == 0 && currentType == rowType.Water)
+            bool addedTarget = false;
+            if (targetType == rowType.Water)
+            {
+                nextObjective.TargetType = MovementObjective.targType.Water;
+                if (checkWithinLimits(nextObjective))
+                {
+                    addedTarget = true;
+                    mustCheckTrunk = true;
+                    movementList.AddLast(nextObjective);
+                }
+            }
+            if (addedTarget && currentType == rowType.Water)
             {
                 transform.parent = null;
-            }
-            if (targetType == rowType.Water)
-            {               
-                nextObjective.TargetType = MovementObjective.targType.Water;
-                mustCheckTrunk = true;
-                movementList.AddLast(nextObjective);
             }
             else
             {
@@ -269,15 +278,20 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
-            if (movementList.Count == 0 && currentType == rowType.Water)
-            {
-                transform.parent = null;
-            }
+            bool addedTarget = false;
             if (targetType == rowType.Water)
             {
                 nextObjective.TargetType = MovementObjective.targType.Water;
-                mustCheckTrunk = true;
-                movementList.AddLast(nextObjective);
+                if (checkWithinLimits(nextObjective))
+                {
+                    addedTarget = true;
+                    mustCheckTrunk = true;
+                    movementList.AddLast(nextObjective);
+                }
+            }
+            if (addedTarget && currentType == rowType.Water)
+            {
+                transform.parent = null;
             }
             else
             {
@@ -327,13 +341,18 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
+            bool addedTarget = false;
             if (targetType == rowType.Water)
             {
                 nextObjective.TargetType = MovementObjective.targType.Water;
-                mustCheckTrunk = true;
-                movementList.AddLast(nextObjective);
+                if (checkWithinLimits(nextObjective))
+                {
+                    addedTarget = true;
+                    mustCheckTrunk = true;
+                    movementList.AddLast(nextObjective);
+                }
             }
-            if (movementList.Count == 0 && currentType == rowType.Water)
+            if (addedTarget && currentType == rowType.Water)
             {
                 transform.parent = null;
             }
@@ -385,13 +404,18 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
+            bool addedTarget = false;
             if (targetType == rowType.Water)
             {
                 nextObjective.TargetType = MovementObjective.targType.Water;
-                mustCheckTrunk = true;
-                movementList.AddLast(nextObjective);
+                if (checkWithinLimits(nextObjective))
+                {
+                    addedTarget = true;
+                    mustCheckTrunk = true;
+                    movementList.AddLast(nextObjective);
+                }
             }
-            if (movementList.Count == 0 && currentType == rowType.Water)
+            if (addedTarget && currentType == rowType.Water)
             {
                 transform.parent = null;
             }
@@ -408,6 +432,12 @@ public class PlayerController : MonoBehaviour {
         {
             godMode = true;
         }        
+    }
+
+    private bool checkWithinLimits(MovementObjective nextObjective)
+    {
+        GameObject trunk = levelManager.GetComponent<LevelManager>().getTrunkInPosition(nextObjective.MovementDestination);
+        return trunk.GetComponent<TrunkController>().willFallOutOfLimits(1.0f/playerSpeed);
     }
 
     private void backToNormalMode()
@@ -457,6 +487,7 @@ public class PlayerController : MonoBehaviour {
 
     private void treatTargetNotReachedYet(Vector3 updatedPosition, MovementObjective.movType movementType)
     {
+        justDeletedMovement = false;
         float distance = 0.0f;
         switch (movementType)
         {
@@ -478,6 +509,243 @@ public class PlayerController : MonoBehaviour {
             movementList.First.Value.MovementOrigin.y + heightOffset, updatedPosition.z);
         transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
             movementList.First.Value.TargetOrientation, distance);
+    }   
+
+    private void treatMustCheckTrunk()
+    {
+        if (inTrunk)
+        {
+            treatAlreadyHaveTrunk();
+        }
+        else
+        {
+            treatHaveToFindTrunk();
+        }
+    }
+
+    private void treatHaveToFindTrunk()
+    {
+        GameObject trunk = levelManager.GetComponent<LevelManager>().getTrunkInPosition(movementList.First.Value.MovementDestination);
+        if (trunk == null)
+            treatNoTrunkAvailable();
+        else
+            treatNewfoundTrunk(trunk);
+    }
+
+    private void treatAlreadyHaveTrunk()
+    {
+        TrunkController.TrunkSize currentSize = attachedTrunk.GetComponent<TrunkController>().TrunkSizeProperty;
+        if (currentSize == TrunkController.TrunkSize.Small)
+        {             
+            treatHaveToFindTrunk();
+        }
+        else if (currentSize == TrunkController.TrunkSize.Medium)
+        {
+
+                if (playerPositionInTrunk[1] && movementList.First.Value.MovementType != MovementObjective.movType.RightStrafe ||
+                    playerPositionInTrunk[2] && movementList.First.Value.MovementType != MovementObjective.movType.LeftStrafe)
+                    treatHaveToFindTrunk();
+                else if (playerPositionInTrunk[1] && movementList.First.Value.MovementType == MovementObjective.movType.RightStrafe)
+                {
+                    playerPositionInTrunk[1] = false;
+                    playerPositionInTrunk[2] = true;
+                    findFuturePositionInTrunk();
+                }
+                else if (playerPositionInTrunk[2] && movementList.First.Value.MovementType == MovementObjective.movType.LeftStrafe)
+                {
+                    playerPositionInTrunk[1] = true;
+                    playerPositionInTrunk[2] = false;
+                    findFuturePositionInTrunk();
+                }
+            
+        }
+        else if (currentSize == TrunkController.TrunkSize.Large)
+        {
+            if (movementList.First.Value.MovementType == MovementObjective.movType.LeftStrafe)
+            {
+                if (playerPositionInTrunk[1])
+                {
+                    playerPositionInTrunk[1] = false;
+                    playerPositionInTrunk[0] = true;
+                    findFuturePositionInTrunk();
+                }
+                else if (playerPositionInTrunk[2])
+                {
+                    playerPositionInTrunk[2] = false;
+                    playerPositionInTrunk[1] = true;
+                    findFuturePositionInTrunk();
+                }
+                else
+                {
+                    treatHaveToFindTrunk();
+                }
+            }
+            else if (movementList.First.Value.MovementType == MovementObjective.movType.RightStrafe)
+            {
+                if (playerPositionInTrunk[0])
+                {
+                    playerPositionInTrunk[0] = false;
+                    playerPositionInTrunk[1] = true;
+                    findFuturePositionInTrunk();
+                }
+                else if (playerPositionInTrunk[1])
+                {
+                    playerPositionInTrunk[1] = false;
+                    playerPositionInTrunk[2] = true;
+                    findFuturePositionInTrunk();
+                }
+                else
+                {
+                    treatHaveToFindTrunk();
+                }
+            }
+        }
+    }
+
+    private float findFuturePositionInTrunk()
+    {
+        Vector3 continousPosition = movementList.First.Value.MovementDestination;
+        float newPositionX = 
+            Mathf.Round((continousPosition.x - attachedTrunk.transform.position.x) / LevelGenerator.UnitCube.x);
+        newPositionX = newPositionX * LevelGenerator.UnitCube.x + attachedTrunk.transform.position.x;        
+        if (attachedTrunk.GetComponent<TrunkController>().TrunkSizeProperty == TrunkController.TrunkSize.Medium)
+        {
+            if (newPositionX >= attachedTrunk.transform.position.x)
+                newPositionX -= LevelGenerator.UnitCube.x / 2.0f ;
+            else
+            {
+                newPositionX += LevelGenerator.UnitCube.x / 2.0f;
+            }
+        }
+        float res = newPositionX;
+        if (attachedTrunk.GetComponent<TrunkController>().IncomingFromLeft)
+        {
+            newPositionX += attachedTrunk.GetComponent<TrunkController>().SlowSpeed * (1 / playerSpeed);
+        }
+        else
+        {
+            newPositionX -= attachedTrunk.GetComponent<TrunkController>().SlowSpeed * (1 / playerSpeed);
+        }
+        Vector3 targetDestination = movementList.First.Value.MovementDestination;
+        targetDestination = new Vector3(newPositionX, targetDestination.y, targetDestination.z);
+        movementList.First.Value.MovementDirection = (targetDestination - movementList.First.Value.MovementOrigin).normalized;
+        return res;
+    }
+
+    private void treatNoTrunkAvailable()
+    {
+        willDrown = true;
+        inTrunk = false;
+    }
+
+    private void treatNewfoundTrunk(GameObject trunk)
+    {
+        attachedTrunk = trunk;
+        inTrunk = true;
+        treatJustFoundTrunk();                
+    }
+
+    private void treatJustFoundTrunk()
+    {
+        if (attachedTrunk.GetComponent<TrunkController>().TrunkSizeProperty == TrunkController.TrunkSize.Small)
+        {
+            playerPositionInTrunk[0] = false;
+            playerPositionInTrunk[1] = true;
+            playerPositionInTrunk[2] = false;
+            findFuturePositionInTrunk(); 
+        }
+        else if (attachedTrunk.GetComponent<TrunkController>().TrunkSizeProperty == TrunkController.TrunkSize.Medium) {
+            float position = findFuturePositionInTrunk();
+            if (position < attachedTrunk.transform.position.x)
+            {
+                playerPositionInTrunk[0] = false;
+                playerPositionInTrunk[1] = true;
+                playerPositionInTrunk[2] = false;
+            }
+            else
+            {
+                playerPositionInTrunk[0] = false;
+                playerPositionInTrunk[1] = false;
+                playerPositionInTrunk[2] = true;
+            }
+        }
+        else
+        {
+            float position = findFuturePositionInTrunk();
+            if (position < attachedTrunk.transform.position.x)
+            {
+                playerPositionInTrunk[0] = true;
+                playerPositionInTrunk[1] = false;
+                playerPositionInTrunk[2] = false;
+            }
+            else if (position > attachedTrunk.transform.position.x)
+            {
+                playerPositionInTrunk[0] = false;
+                playerPositionInTrunk[1] = false;
+                playerPositionInTrunk[2] = true;
+            }
+            else
+            {
+                playerPositionInTrunk[0] = false;
+                playerPositionInTrunk[1] = true;
+                playerPositionInTrunk[2] = false;
+            }
+        }
+    }
+
+    private void treatCameBackFromWater()
+    {
+        MovementObjective nextObjective = movementList.First.Value;
+        nextObjective.MovementDestination = getDiscretePosition(nextObjective.MovementDestination);
+        nextObjective.MovementDirection = (nextObjective.MovementDestination - nextObjective.MovementOrigin).normalized;
+    }
+
+    private void updatePositionDependingOnMovementType(MovementObjective.movType type, Vector3 updatedPosition)
+    {
+        if (type == MovementObjective.movType.Forwards)
+        {
+            if (updatedPosition.z >= movementList.First.Value.MovementDestination.z)
+            {
+                treatReachedTarget();
+            }
+            else
+            {
+                treatTargetNotReachedYet(updatedPosition, type);
+            }
+        }
+        else if (type == MovementObjective.movType.Backwards)
+        {
+            if (updatedPosition.z <= movementList.First.Value.MovementDestination.z)
+            {
+                treatReachedTarget();
+            }
+            else
+            {
+                treatTargetNotReachedYet(updatedPosition, type);
+            }
+        }
+        else if (type == MovementObjective.movType.RightStrafe)
+        {
+            if (updatedPosition.x >= movementList.First.Value.MovementDestination.x)
+            {
+                treatReachedTarget();
+            }
+            else
+            {
+                treatTargetNotReachedYet(updatedPosition, type);
+            }
+        }
+        else if (type == MovementObjective.movType.LeftStrafe)
+        {
+            if (updatedPosition.x <= movementList.First.Value.MovementDestination.x)
+            {
+                treatReachedTarget();
+            }
+            else
+            {
+                treatTargetNotReachedYet(updatedPosition, type);
+            }
+        }
     }
 
     private void updatePosition()
@@ -485,73 +753,18 @@ public class PlayerController : MonoBehaviour {
         if (movementList.Count > 0)
         {
             MovementObjective nextObjective = movementList.First.Value;
-            if (mustCheckTrunk && nextObjective.TargetType == MovementObjective.targType.Water &&
-                levelManager.GetComponent<LevelManager>().checkIfTrunkInPosition(nextObjective.MovementDestination))
+            if (justDeletedMovement && nextObjective.TargetType == MovementObjective.targType.Water)
             {
-                Vector3 futurePosition = levelManager.GetComponent<LevelManager>().getFutureTrunkPosition(nextObjective.MovementDestination,
-                    1.0f / playerSpeed);
-                nextObjective.MovementDestination = futurePosition;
-                nextObjective.MovementDirection = (futurePosition - transform.position).normalized;
-                mustCheckTrunk = false;
-            }
-            else if (mustCheckTrunk && nextObjective.TargetType == MovementObjective.targType.Water)
-            {
-                willDrown = true;
-                mustCheckTrunk = false;
+                treatMustCheckTrunk();
             }
             if (justDeletedMovement &&
                 nextObjective.TargetType == MovementObjective.targType.Rest && 
                 nextObjective.OriginType == MovementObjective.targType.Water)
             {
-                justDeletedMovement = false;
-                nextObjective.MovementDestination = getDiscretePosition(nextObjective.MovementDestination);
-                nextObjective.MovementDirection = (nextObjective.MovementDestination - nextObjective.MovementOrigin).normalized;
+                treatCameBackFromWater();                
             }
             Vector3 updatedPosition = transform.position + movementList.First.Value.MovementDirection * LevelGenerator.UnitCube.x * playerSpeed * Time.deltaTime;
-            if (movementList.First.Value.MovementType == MovementObjective.movType.Forwards)
-            {
-                if (updatedPosition.z >= movementList.First.Value.MovementDestination.z)
-                {                    
-                    treatReachedTarget();
-                }
-                else
-                {                    
-                    treatTargetNotReachedYet(updatedPosition,movementList.First.Value.MovementType);
-                }
-            }  
-            else if (movementList.First.Value.MovementType == MovementObjective.movType.Backwards)
-            {
-                if (updatedPosition.z <= movementList.First.Value.MovementDestination.z)
-                {
-                    treatReachedTarget();
-                }
-                else
-                {
-                    treatTargetNotReachedYet(updatedPosition, movementList.First.Value.MovementType);
-                }
-            }
-            else if (movementList.First.Value.MovementType == MovementObjective.movType.RightStrafe)
-            {
-                if (updatedPosition.x >= movementList.First.Value.MovementDestination.x)
-                {
-                    treatReachedTarget();
-                }
-                else
-                {
-                    treatTargetNotReachedYet(updatedPosition, movementList.First.Value.MovementType);
-                }
-            }
-            else if (movementList.First.Value.MovementType == MovementObjective.movType.LeftStrafe)
-            {
-                if (updatedPosition.x <= movementList.First.Value.MovementDestination.x)
-                {
-                    treatReachedTarget();
-                }
-                else
-                {
-                    treatTargetNotReachedYet(updatedPosition, movementList.First.Value.MovementType);
-                }
-            }
+            updatePositionDependingOnMovementType(movementList.First.Value.MovementType, updatedPosition);            
         }
     }
 

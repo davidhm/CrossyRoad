@@ -89,13 +89,13 @@ public sealed class LevelManager : MonoBehaviour
         return generatorRuntime.GetComponent<LevelGenerator>().getTargetHeight(newDestination);
     }
 
-    public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
-    {
-        return generatorRuntime.GetComponent<LevelGenerator>().getFutureTrunkPosition(movementDestination, timeToCollision);
-    }
-
     public void attachPlayerToTrunk(GameObject gameObject)
     {
         generatorRuntime.GetComponent<LevelGenerator>().attachPlayerToTrunk(gameObject);
+    }
+
+    public GameObject getTrunkInPosition(Vector3 position)
+    {
+        return generatorRuntime.GetComponent<LevelGenerator>().getTrunkInPosition(position);
     }
 }

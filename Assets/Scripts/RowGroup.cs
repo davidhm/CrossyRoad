@@ -58,7 +58,7 @@ class RowGroup
 
     private void createGroupWithPreviousTypeRoad()
     {
-        if (UnityEngine.Random.value > 0.8)
+        if (UnityEngine.Random.value > 1)
         {
             GameObject previousRow, nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             previousRow = null;
@@ -91,7 +91,7 @@ class RowGroup
             }
             type = rowType.Water;
         }
-    }
+    }  
 
     private void createGroupWithPreviousTypeGrass()
     {
@@ -204,18 +204,18 @@ class RowGroup
         return false;
     }
 
-    public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
+    public GameObject getTrunkInPosition(Vector3 position)
     {
-        float targetRowZ = Mathf.Round((movementDestination.z - firstRowZ) / LevelGenerator.UnitCube.z);
+        float targetRowZ = Mathf.Round((position.z - firstRowZ) / LevelGenerator.UnitCube.z);
         for (int i = 0; i < rowGroup.transform.childCount; ++i)
         {
             if (rowGroup.transform.GetChild(i).transform.position.z ==
                 targetRowZ * LevelGenerator.UnitCube.z + firstRowZ)
             {
-                return rowGroup.transform.GetChild(i).gameObject.GetComponent<Row>().getFutureTrunkPosition(movementDestination,timeToCollision);
+                return rowGroup.transform.GetChild(i).gameObject.GetComponent<Row>().getTrunkInPosition(position);
             }
         }
-        throw new InvalidOperationException("There should always be a candidate for future trunk position");
+        return null;
     }
 
     public void attachPlayerToTrunk(GameObject gameObject)
