@@ -219,9 +219,8 @@ public class Row : MonoBehaviour
 
     private void generateWaterRow()
     {
-        trunkTimer = 1.5f + UnityEngine.Random.Range(0, 0.5f);
-        incomingFromLeft = UnityEngine.Random.value > 0.5;
-        trunkSlowSpeed = 40.0f + UnityEngine.Random.Range(0.0f, 80.0f);        
+        trunkTimer = 2.0f + UnityEngine.Random.Range(0, 0.5f);
+        trunkSlowSpeed = 40.0f + UnityEngine.Random.Range(0.0f, 40.0f);        
         for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
             i <= rightmostBorder + rowMarginInUnitCubes * unitCube.x - halfCube;
             i += unitCube.x)
@@ -242,6 +241,7 @@ public class Row : MonoBehaviour
         GameObject trunkInstance = (GameObject)Instantiate(trunkPrefab, transform);
         trunkInstance.GetComponent<TrunkController>().SlowSpeed = trunkSlowSpeed;
         trunkInstance.GetComponent<TrunkController>().IncomingFromLeft = incomingFromLeft;
+        trunkInstance.GetComponent<MeshFilter>().mesh = getRandomTrunkMesh();
         float lateralPosition;
         if (incomingFromLeft)
         {
@@ -258,6 +258,23 @@ public class Row : MonoBehaviour
             transform.position.z);
         trunkInstance.GetComponent<TrunkController>().JustSpawned = true;
         trunksInWater.AddFirst(trunkInstance);
+    }
+
+    private Mesh getRandomTrunkMesh()
+    {
+        float randValue = UnityEngine.Random.value;
+        if (randValue < 0.1f)
+        {
+            return smallTrunkMesh;
+        }
+        else if (randValue >= 0.1f && randValue < 0.6f)
+        {
+            return mediumTrunkMesh;
+        }
+        else
+        {
+            return largeTrunkMesh;
+        }
     }
 
     private void generateGrassRow()

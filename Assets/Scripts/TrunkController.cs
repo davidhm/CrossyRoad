@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-class TrunkController : MonoBehaviour
+public class TrunkController : MonoBehaviour
 {
     private bool overflowedRow;
     private float slowSpeed, currentSpeed;

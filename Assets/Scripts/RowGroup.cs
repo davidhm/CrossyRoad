@@ -57,10 +57,11 @@ class RowGroup
     {
         if (UnityEngine.Random.value > 0.5)
         {
+            
             for (int k = 0; k < numberOfRows; ++k)
             {
                 GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
-                nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
+                nextRow.GetComponent<Row>().CurrentType = rowType.Grass;                
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
                 nextRowZ += LevelGenerator.UnitCube.z;
                 setRandomGrassParameters(nextRow.GetComponent<Row>());
@@ -71,10 +72,13 @@ class RowGroup
         }
         else
         {
+            bool incomingFromLeft = UnityEngine.Random.value > 0.5;
             for (int k = 0; k < numberOfRows; ++k)
             {
                 GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
                 nextRow.GetComponent<Row>().CurrentType = rowType.Water;
+                nextRow.GetComponent<Row>().IncomingFromLeft = incomingFromLeft;
+                incomingFromLeft = !incomingFromLeft;
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
                 nextRowZ += LevelGenerator.UnitCube.z;
                 nextRow.GetComponent<Row>().generateInitialElements();

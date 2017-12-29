@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour {
     public GameObject levelManager;
     //private static float godModeSpeed = 160.0f;
     private Vector3 initialPosition;
-    private bool godMode, playerMoved, willDrown, mustCheckTrunk;
+    private bool godMode, playerMoved, willDrown, mustCheckTrunk, justDeletedMovement;
     private class MovementObjective
     {
         public enum movType { Forwards, Backwards, LeftStrafe, RightStrafe}
@@ -133,6 +133,7 @@ public class PlayerController : MonoBehaviour {
         playerMoved = false;
         willDrown = false;
         mustCheckTrunk = false;
+        justDeletedMovement = false;
 	}
 	
 	// Update is called once per frame
@@ -401,7 +402,18 @@ public class PlayerController : MonoBehaviour {
         transform.position = new Vector3(intXTile, transform.position.y, intZTile);
     }
 
-    private void updatePosition()
+    private Vector3 getDiscretePosition(Vector3 continousPosition)
+    {
+        float discreteX = Mathf.Round((continousPosition.x - levelManager.GetComponent<LevelManager>().InitialPlayerPosition.x) /
+                LevelGenerator.UnitCube.x);
+        discreteX = discreteX* LevelGenerator.UnitCube.x + levelManager.GetComponent<LevelManager>().InitialPlayerPosition.x; 
+            float discreteZ = Mathf.Round((continousPosition.z - levelManager.GetComponent<LevelManager>().InitialPlayerPosition.z) /
+                LevelGenerator.UnitCube.z);
+        discreteZ = discreteZ* LevelGenerator.UnitCube.z + levelManager.GetComponent<LevelManager>().InitialPlayerPosition.z; 
+            return new Vector3(discreteX, continousPosition.y, discreteZ);
+    }
+
+private void updatePosition()
     {
         if (movementList.Count > 0)
         {
@@ -420,6 +432,12 @@ public class PlayerController : MonoBehaviour {
                 willDrown = true;
                 mustCheckTrunk = false;
             }
+            if (justDeletedMovement && movementList.First.Value.TargetType == MovementObjective.targType.Rest)
+            {
+                justDeletedMovement = false;
+                movementList.First.Value.MovementDestination = getDiscretePosition(movementList.First.Value.MovementDestination);
+                movementList.First.Value.MovementDirection = (movementList.First.Value.MovementDestination - movementList.First.Value.MovementOrigin).normalized;
+            }
             Vector3 updatedPosition = transform.position + movementList.First.Value.MovementDirection * LevelGenerator.UnitCube.x * playerSpeed * Time.deltaTime;
             if (movementList.First.Value.MovementType == MovementObjective.movType.Forwards)
             {
@@ -437,6 +455,7 @@ public class PlayerController : MonoBehaviour {
                         treatDrowningState();
                     }
                     movementList.RemoveFirst();
+                    justDeletedMovement = true;
                 }
                 else
                 {
@@ -464,6 +483,7 @@ public class PlayerController : MonoBehaviour {
                         treatDrowningState();
                     }           
                     movementList.RemoveFirst();
+                    justDeletedMovement = true;
                 }
                 else
                 {
@@ -491,6 +511,7 @@ public class PlayerController : MonoBehaviour {
                         treatDrowningState();
                     }
                     movementList.RemoveFirst();
+                    justDeletedMovement = true;
                 }
                 else
                 {
@@ -518,6 +539,7 @@ public class PlayerController : MonoBehaviour {
                         treatDrowningState();
                     }
                     movementList.RemoveFirst();
+                    justDeletedMovement = true;
                 }
                 else
                 {
