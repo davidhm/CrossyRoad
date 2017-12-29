@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-public enum cameraStates { GameStarted, PlayerDead, InitialState };
+public enum cameraStates { GameStarted, PlayerDead, InitialState, CameraPaused };
 
 public class CameraController : MonoBehaviour {
     public GameObject player;
@@ -29,7 +29,7 @@ public class CameraController : MonoBehaviour {
         transform.LookAt(player.transform.position + playerLookAtOffset);
         currentState = cameraStates.InitialState;
         playerToCenterDistance = playerLookAtOffset.z;
-        maxForwardSpeed = player.GetComponent<PlayerController>().unit * player.GetComponent<PlayerController>().unitsPerSecond;
+        maxForwardSpeed = LevelGenerator.UnitCube.x * player.GetComponent<PlayerController>().playerSpeed;
 	}
 	
 	// Update is called once per frame
@@ -40,21 +40,28 @@ public class CameraController : MonoBehaviour {
     
     void computeState()
     {
-        if (currentState == cameraStates.InitialState && player.GetComponent<PlayerController>().isMoving())
+        if (currentState == cameraStates.InitialState && player.GetComponent<PlayerController>().PlayerMoved)
         {
             currentState = cameraStates.GameStarted;
             currentForwardSpeed = idleForwardSpeed;
         }
         else if (currentState == cameraStates.GameStarted)
         {
-            if (player.transform.position.z + playerToCenterDistance > (transform.position + cameraLookAt).z)
+            if (Input.GetKeyDown(KeyCode.Z))
             {
-                float difference = (player.transform.position.z + playerToCenterDistance) - (transform.position + cameraLookAt).z;
-                currentForwardSpeed = Mathf.Lerp(idleForwardSpeed, maxForwardSpeed, difference / maxPlayerForwardDistance);
+                currentState = cameraStates.CameraPaused;
             }
             else
             {
-                currentForwardSpeed = idleForwardSpeed;
+                if (player.transform.position.z + playerToCenterDistance > (transform.position + cameraLookAt).z)
+                {
+                    float difference = (player.transform.position.z + playerToCenterDistance) - (transform.position + cameraLookAt).z;
+                    currentForwardSpeed = Mathf.Lerp(idleForwardSpeed, maxForwardSpeed, difference / maxPlayerForwardDistance);
+                }
+                else
+                {
+                    currentForwardSpeed = idleForwardSpeed;
+                }
             }
         }
     }

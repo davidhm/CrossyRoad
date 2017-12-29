@@ -12,12 +12,18 @@ public class Row : MonoBehaviour
 {
     public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab,boulderPrefab;
     public GameObject truckPrefab;
+    public GameObject waterPrefab, trunkPrefab;
     public Mesh redCarMesh, blueCarMesh, greenCarMesh;
     public Mesh redTruckMesh, blueTruckMesh, greenTruckMesh;
+    public Mesh darkGrassMesh, clearGrassMesh;
+    public Mesh smallTrunkMesh, mediumTrunkMesh, largeTrunkMesh;
+    public Mesh darkWaterMesh, clearWaterMesh;
+    private Mesh stripedRoadMesh;
     public static float leftmostBorder;
     public static uint rowWidthInUnitCubes;
     public static float rightmostBorder;
     public static uint rowMarginInUnitCubes;
+    public static float grassHeight, roadHeight;
     private rowType currentType;
     private static Vector3 unitCube;
     private static float halfCube;
@@ -25,7 +31,9 @@ public class Row : MonoBehaviour
     private float truckProportion;
     private static float vehicleMaxSpeed,vehicleMinSpeed;
     private float treeProportion;
+    private float trunkTimer, trunkSlowSpeed;
     private List<bool> occupableRow;
+    private LinkedList<GameObject> trunksInWater;
 
     public static float VehicleMaxSpeed
     {
@@ -105,58 +113,81 @@ public class Row : MonoBehaviour
         }
     }
 
+    public Mesh StripedRoadMesh
+    {
+        get
+        {
+            return stripedRoadMesh;
+        }
+
+        set
+        {
+            stripedRoadMesh = value;
+        }
+    }
+
     public static void setUnitCube(Vector3 unitCube)
     {
         Row.unitCube = unitCube;
         halfCube = unitCube.z / 2.0f;
     }
 
+    void Start()
+    {
+        TrunkController.FastSpeed = 320.0f;
+        grassHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
+        roadHeight = roadPrefab.GetComponent<Renderer>().bounds.size.y;
+    }
     void LateUpdate() {
         if (currentType == rowType.Road)
-        {
-            if (transform.Find("Vehicle") == null)
-                generateOneVehicle();
-            else
+        {            
+            LinkedList<CollisionInfo> collisions = new LinkedList<CollisionInfo>();
+            for (int i = 0; i < transform.childCount; ++i)
             {
-                LinkedList<CollisionInfo> collisions = new LinkedList<CollisionInfo>();
-                for (int i = 0; i < transform.childCount; ++i)
+                Transform currentVehicle = transform.GetChild(i);
+                if (transform.GetChild(i).name == "Vehicle")
                 {
-                    Transform currentVehicle = transform.GetChild(i);
-                    if (transform.GetChild(i).name == "Vehicle")
+                    float initialPosition;
+                    float offset = currentVehicle.gameObject.GetComponent<Renderer>().bounds.extents.x;
+                    if (incomingFromLeft)
                     {
-                        float initialPosition;
-                        float offset = currentVehicle.gameObject.GetComponent<Renderer>().bounds.extents.x;
-                        if (incomingFromLeft)
-                        {
-                            initialPosition = currentVehicle.position.x - (leftmostBorder - rowMarginInUnitCubes * unitCube.x);
-                            initialPosition -= offset;
-                        }
-                        else
-                        {
-                            initialPosition = currentVehicle.position.x - (rightmostBorder + rowMarginInUnitCubes * unitCube.x);
-                            initialPosition += offset;
-                        }
-                        if (initialPosition > 0)
-                        {
-                            float maxAllowedCollision = (rightmostBorder - leftmostBorder) + 2 * rowMarginInUnitCubes * unitCube.x;
-                            float vehicleSpeed = Mathf.Abs(currentVehicle.gameObject.GetComponent<VehicleController>().Speed.x);
-                            float timeForCollision = initialPosition / (vehicleMaxSpeed - vehicleSpeed);
-                            if (vehicleSpeed*timeForCollision < maxAllowedCollision)
-                                return;                            
-                            else
-                            {
-                                CollisionInfo current = new CollisionInfo();
-                                current.collisionPoint = vehicleSpeed * timeForCollision;
-                                current.maxCollisionPossible = rightmostBorder + rowMarginInUnitCubes * unitCube.x;
-                                current.maxCollisionPossible -= leftmostBorder - rowMarginInUnitCubes * unitCube.x;
-                                collisions.AddLast(current);
-                            }
-                        }
-                        else
-                            return;                    
+                        initialPosition = currentVehicle.position.x - (leftmostBorder - rowMarginInUnitCubes * unitCube.x);
+                        initialPosition -= offset;
                     }
+                    else
+                    {
+                        initialPosition = currentVehicle.position.x - (rightmostBorder + rowMarginInUnitCubes * unitCube.x);
+                        initialPosition += offset;
+                    }
+                    if (initialPosition > 0)
+                    {
+                        float maxAllowedCollision = (rightmostBorder - leftmostBorder) + 2 * rowMarginInUnitCubes * unitCube.x;
+                        float vehicleSpeed = Mathf.Abs(currentVehicle.gameObject.GetComponent<VehicleController>().Speed.x);
+                        float timeForCollision = initialPosition / (vehicleMaxSpeed - vehicleSpeed);
+                        if (vehicleSpeed*timeForCollision < maxAllowedCollision)
+                            return;                            
+                        else
+                        {
+                            CollisionInfo current = new CollisionInfo();
+                            current.collisionPoint = vehicleSpeed * timeForCollision;
+                            current.maxCollisionPossible = rightmostBorder + rowMarginInUnitCubes * unitCube.x;
+                            current.maxCollisionPossible -= leftmostBorder - rowMarginInUnitCubes * unitCube.x;
+                            collisions.AddLast(current);
+                        }
+                    }
+                    else
+                        return;                    
                 }
-                generateOneVehicle(collisions);
+            }
+            generateOneVehicle(collisions);
+            
+        }
+        else if (currentType == rowType.Water)
+        {
+            trunkTimer -= Time.deltaTime;
+            if (trunkTimer <= 0) {
+                trunkTimer = 2.5f + UnityEngine.Random.Range(0.0f, 0.5f);
+                generateOneTrunk();
             }
         }
     }
@@ -169,6 +200,7 @@ public class Row : MonoBehaviour
     public void generateInitialElements()
     {
         occupableRow = new List<bool>(9);
+        trunksInWater = new LinkedList<GameObject>();
         for (int i = 0; i < 9; ++i)
             occupableRow.Add(true);
         if (currentType == rowType.Road)
@@ -178,6 +210,70 @@ public class Row : MonoBehaviour
         else if (currentType == rowType.Grass)
         {
             generateGrassRow();
+        }
+        else if (currentType == rowType.Water)
+        {
+            generateWaterRow();
+        }
+    }
+
+    private void generateWaterRow()
+    {
+        trunkTimer = 2.0f + UnityEngine.Random.Range(0, 0.5f);
+        trunkSlowSpeed = 40.0f + UnityEngine.Random.Range(0.0f, 40.0f);        
+        for (float i = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
+            i <= rightmostBorder + rowMarginInUnitCubes * unitCube.x - halfCube;
+            i += unitCube.x)
+        {
+            GameObject waterInstance = (GameObject)Instantiate(waterPrefab, transform);
+            if (i < leftmostBorder || i > rightmostBorder)
+            {
+                waterInstance.GetComponent<MeshFilter>().mesh = darkWaterMesh;
+            }
+            float waterHeight = -waterPrefab.GetComponent<Renderer>().bounds.extents.y;
+            waterInstance.transform.position = new Vector3(i, waterHeight, transform.position.z);
+        }
+        generateOneTrunk();
+    }    
+
+    private void generateOneTrunk()
+    {
+        GameObject trunkInstance = (GameObject)Instantiate(trunkPrefab, transform);
+        trunkInstance.GetComponent<TrunkController>().SlowSpeed = trunkSlowSpeed;
+        trunkInstance.GetComponent<TrunkController>().IncomingFromLeft = incomingFromLeft;
+        trunkInstance.GetComponent<MeshFilter>().mesh = getRandomTrunkMesh();
+        float lateralPosition;
+        if (incomingFromLeft)
+        {
+            lateralPosition = leftmostBorder - rowMarginInUnitCubes * unitCube.x;
+            lateralPosition -= trunkInstance.GetComponent<Renderer>().bounds.extents.x;
+        }
+        else
+        {
+            lateralPosition = rightmostBorder + rowMarginInUnitCubes * unitCube.x;
+            lateralPosition += trunkInstance.GetComponent<Renderer>().bounds.extents.x;
+        }
+        trunkInstance.transform.position = new Vector3(lateralPosition, 
+            waterPrefab.GetComponent<Renderer>().bounds.extents.y, 
+            transform.position.z);
+        trunkInstance.GetComponent<TrunkController>().JustSpawned = true;
+        trunksInWater.AddFirst(trunkInstance);
+    }
+
+    private Mesh getRandomTrunkMesh()
+    {
+        float randValue = UnityEngine.Random.value;
+        if (randValue < 0.1f)
+        {
+            return smallTrunkMesh;
+        }
+        else if (randValue >= 0.1f && randValue < 0.6f)
+        {
+            return mediumTrunkMesh;
+        }
+        else
+        {
+            return largeTrunkMesh;
         }
     }
 
@@ -194,7 +290,7 @@ public class Row : MonoBehaviour
             if (i < leftmostBorder || i > rightmostBorder)
             {
                 GameObject tree = (GameObject)Instantiate(treePrefab, transform);
-                float treeHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                float treeHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                 tree.transform.position = new Vector3(i, treeHeight, transform.position.z);
             }
             else if (UnityEngine.Random.value < treeProportion) 
@@ -202,13 +298,13 @@ public class Row : MonoBehaviour
                 if (UnityEngine.Random.value > 0.5)
                 {
                     GameObject tree = (GameObject)Instantiate(treePrefab, transform);
-                    float treeHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                    float treeHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                     tree.transform.position = new Vector3(i, treeHeight, transform.position.z);                    
                 }
                 else
                 {
                     GameObject boulder = (GameObject)Instantiate(boulderPrefab, transform);
-                    float boulderHeight = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                    float boulderHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                     boulder.transform.position = new Vector3(i, boulderHeight, transform.position.z);
                 }
                 if (k >= 0 && k <= 9)
@@ -225,8 +321,9 @@ public class Row : MonoBehaviour
             j <= rowMarginInUnitCubes*unitCube.x + rightmostBorder - halfCube; j += unitCube.x)
         {
             GameObject roadSlab = (GameObject) Instantiate(roadPrefab, transform);
-            float slabY = roadSlab.GetComponent<Renderer>().bounds.extents.y;
-            roadSlab.transform.position = new Vector3(j,slabY,
+            if (Mathf.RoundToInt((j - (leftmostBorder - rowMarginInUnitCubes * unitCube.x + halfCube)) / unitCube.x) % 2 == 0)
+                roadSlab.GetComponent<MeshFilter>().mesh = stripedRoadMesh;
+            roadSlab.transform.position = new Vector3(j,0.0f,
                 transform.position.z);
         }
         generateOneVehicle();
@@ -382,6 +479,78 @@ public class Row : MonoBehaviour
         {
             carInstance.GetComponent<MeshFilter>().mesh = blueCarMesh;
         }
+    }
+
+    public bool isTrunkInPosition(Vector3 position)
+    {
+        LinkedListNode<GameObject> current = trunksInWater.First;
+        Vector3 candidatePosition = current.Value.transform.position;
+        float offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+        while (current != null && (
+            position.x < candidatePosition.x - offset||
+            position.x > candidatePosition.x + offset))
+        {
+            current = current.Next;
+            if (current != null)
+            {
+                candidatePosition = current.Value.transform.position;
+                offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+            }
+        }
+        return current != null;
+    }
+
+    public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
+    {
+        LinkedListNode<GameObject> current = trunksInWater.First;
+        Vector3 candidatePosition = current.Value.transform.position;
+        float offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+        movementDestination.x += incomingFromLeft ? trunkSlowSpeed * timeToCollision : -trunkSlowSpeed * timeToCollision;
+        return movementDestination;
+    }
+
+    public void attachPlayerToTrunk(GameObject gameObject)
+    {
+        LinkedListNode<GameObject> current = trunksInWater.First;
+        Vector3 candidatePosition = current.Value.transform.position;
+        float offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+        while (current != null && (
+            gameObject.transform.position.x < candidatePosition.x - offset ||
+            gameObject.transform.position.x > candidatePosition.x + offset))
+        {
+            current = current.Next;
+            if (current != null)
+            {
+                candidatePosition = current.Value.transform.position;
+                offset = current.Value.gameObject.GetComponent<Renderer>().bounds.extents.x;
+            }
+        }
+        if (current == null)
+            throw new InvalidOperationException("No trunk found to get attached to.");
+        gameObject.transform.SetParent(current.Value.transform);
+    }
+
+    public void notifyTrunkDestroyed(GameObject trunk)
+    {
+        LinkedListNode<GameObject> current = trunksInWater.First;
+        while (current != null && current.Value != trunk)        
+            current = current.Next;
+        if (current != null)
+            trunksInWater.Remove(current);        
+    }
+
+    public float getTargetHeight(Vector3 position)
+    {
+        if (currentType == rowType.Water)
+        {
+            if (isTrunkInPosition(position))
+                return trunkPrefab.GetComponent<Renderer>().bounds.size.y +
+                    waterPrefab.GetComponent<Renderer>().bounds.extents.y;
+            return 0.0f;
+        }
+        if (currentType == rowType.Grass)
+            return grassHeight;
+        return roadHeight;
     }
 }
 

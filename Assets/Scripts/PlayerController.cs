@@ -3,19 +3,24 @@ using System;
 using System.Collections.Generic;
 public class PlayerController : MonoBehaviour {
 
-    private enum playerState { Moving, Idle, Dead,GodModeMoving,GodModeStatic};
+    private enum playerState { Moving, Idle, Dead};
     private playerState currentState;
-    public float unitsPerSecond;
-    public float unit;
+    public float playerSpeed;
     public GameObject levelManager;
     //private static float godModeSpeed = 160.0f;
     private Vector3 initialPosition;
-    private bool debugIdle;
-    private bool godMode;
+    private bool godMode, playerMoved, willDrown, mustCheckTrunk, justDeletedMovement;
     private class MovementObjective
     {
-        private Vector3 movementDirection;
+        public enum movType { Forwards, Backwards, LeftStrafe, RightStrafe}
+        public enum targType { Water, Rest}
+        private Vector3 movementDirection;        
         private Vector3 movementDestination;
+        private Quaternion targetOrientation;
+        private Vector3 movementOrigin;
+        private Quaternion originOrientation;
+        private movType movementType;
+        private targType targetType;
 
         public Vector3 MovementDirection
         {
@@ -42,28 +47,102 @@ public class PlayerController : MonoBehaviour {
                 movementDestination = value;
             }
         }
+
+        public Quaternion TargetOrientation
+        {
+            get
+            {
+                return targetOrientation;
+            }
+
+            set
+            {
+                targetOrientation = value;
+            }
+        }
+
+        public Vector3 MovementOrigin
+        {
+            get
+            {
+                return movementOrigin;
+            }
+
+            set
+            {
+                movementOrigin = value;
+            }
+        }
+
+        public Quaternion OriginOrientation
+        {
+            get
+            {
+                return originOrientation;
+            }
+
+            set
+            {
+                originOrientation = value;
+            }
+        }
+
+        public movType MovementType
+        {
+            get
+            {
+                return movementType;
+            }
+
+            set
+            {
+                movementType = value;
+            }
+        }
+
+        public targType TargetType
+        {
+            get
+            {
+                return targetType;
+            }
+
+            set
+            {
+                targetType = value;
+            }
+        }
     }
 
     private LinkedList<MovementObjective> movementList;
-	// Use this for initialization
-	void Start () {
+
+    public bool PlayerMoved
+    {
+        get
+        {
+            return playerMoved;
+        }
+    }
+
+    // Use this for initialization
+    void Start () {
         currentState = playerState.Idle;
         initialPosition = transform.position;
-        movementList = new LinkedList<MovementObjective>();
-        debugIdle = true;
+        movementList = new LinkedList<MovementObjective>();        
         godMode = false;
+        playerMoved = false;
+        willDrown = false;
+        mustCheckTrunk = false;
+        justDeletedMovement = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        processInput();
-        updatePosition();
-        /*if (currentState == playerState.Idle && debugIdle)
+        if (currentState != playerState.Dead)
         {
-            Debug.Log("Position is " + levelManager.GetComponent<LevelManager>().getColumnInCubeUnits(transform.position));
-            debugIdle = false;
+            processInput();
+            updatePosition();
         }
-        debugIdle = currentState != playerState.Idle;*/
 	}
 
     void OnTriggerEnter(Collider other)
@@ -78,164 +157,239 @@ public class PlayerController : MonoBehaviour {
     void OnBecameInvisible()
     {
         currentState = playerState.Dead;
+        if (levelManager != null)
         levelManager.GetComponent<LevelManager>().treatPlayerInvisible();
     }
 
-    public bool isMoving()
-    {
-        return currentState == playerState.Moving;
-    }
-
-    private void processInput() {
-        if (currentState != playerState.Dead)
+    private void processInput() {        
+        if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            MovementObjective nextObjective = new MovementObjective();
+            nextObjective.MovementDirection = new Vector3(0, 0, 1);
+            Vector3 newDestination;
+            Quaternion targetOrientation = Quaternion.identity;
+            Quaternion originOrientation;
+            Vector3 previousDestination;
+            if (movementList.Count == 0)
             {
-                MovementObjective nextObjective = new MovementObjective();
-                nextObjective.MovementDirection = new Vector3(0, 0, 1);
-                Vector3 newDestination;
-                if (movementList.Count == 0)
-                {
-                    if (currentState != playerState.Idle)
-                        throw new InvalidOperationException("The player state should be idle if the movement list is empty");
-                    newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
-                }
-                else
-                {
-                    newDestination = movementList.Last.Value.MovementDestination;
-                    newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
-                }
-                nextObjective.MovementDestination = newDestination;
-                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
-                {
-                    movementList.AddLast(nextObjective);
-                    currentState = playerState.Moving;
-                }
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                MovementObjective nextObjective = new MovementObjective();
-                nextObjective.MovementDirection = new Vector3(0, 0, -1);
-                Vector3 newDestination;
-                if (movementList.Count == 0)
-                {
-                    if (currentState != playerState.Idle)
-                        throw new InvalidOperationException("The player state should be idle if the movement list is empty");
-                    newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
-                }
-                else
-                {
-                    newDestination = movementList.Last.Value.MovementDestination;
-                    newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
-                }
-                nextObjective.MovementDestination = newDestination;
-                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
-                {
-                    movementList.AddLast(nextObjective);
-                    currentState = playerState.Moving;
-                }
-            }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                MovementObjective nextObjective = new MovementObjective();
-                nextObjective.MovementDirection = new Vector3(1, 0, 0);
-                Vector3 newDestination;
-                if (movementList.Count == 0)
-                {
-                    if (currentState != playerState.Idle)
-                        throw new InvalidOperationException("The player state should be idle if the movement list is empty");
-                    newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
-                }
-                else
-                {
-                    newDestination = movementList.Last.Value.MovementDestination;
-                    newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
-                }
-                nextObjective.MovementDestination = newDestination;
-                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
-                {
-                    movementList.AddLast(nextObjective);
-                    currentState = playerState.Moving;
-                }
-            }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                MovementObjective nextObjective = new MovementObjective();
-                nextObjective.MovementDirection = new Vector3(-1, 0, 0);
-                Vector3 newDestination;
-                if (movementList.Count == 0)
-                {
-                    if (currentState != playerState.Idle)
-                        throw new InvalidOperationException("The player state should be idle if the movement list is empty");
-                    newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
-                }
-                else
-                {
-                    newDestination = movementList.Last.Value.MovementDestination;
-                    newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.x;
-                }
-                nextObjective.MovementDestination = newDestination;
-                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
-                {
-                    movementList.AddLast(nextObjective);
-                    currentState = playerState.Moving;
-                }
-            }
-            else if (Input.GetKeyDown(KeyCode.G))
-            {
-                godMode = true;
-            }
-        }
-        /*if (currentState == playerState.GodModeStatic)
-        {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                movingDirection = new Vector3(0, 0, 1);
-                currentState = playerState.GodModeMoving;
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                movingDirection = new Vector3(0, 0, -1);
-                currentState = playerState.GodModeMoving;
-            }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                movingDirection = new Vector3(-1, 0, 0);
-                currentState = playerState.GodModeMoving;
-            }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                movingDirection = new Vector3(1, 0, 0);
-                currentState = playerState.GodModeMoving;
-            }
-            else if (Input.GetKeyDown(KeyCode.G))
-            {
-                backToNormalMode();
-            }
-        }
-        else if (currentState == playerState.GodModeMoving)
-        {
-            if (Input.GetKey(KeyCode.UpArrow))
-            {
-                movingDirection = new Vector3(0, 0, 1);
-            }
-            else if (Input.GetKey(KeyCode.DownArrow))
-            {
-                movingDirection = new Vector3(0, 0, -1);
-            }
-            else if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                movingDirection = new Vector3(-1, 0, 0);
-            }
-            else if (Input.GetKey(KeyCode.RightArrow))
-            {
-                movingDirection = new Vector3(1, 0, 0);
+                newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                previousDestination = transform.position;
+                originOrientation = transform.rotation;
             }
             else
             {
-                currentState = playerState.GodModeStatic;
+                newDestination = movementList.Last.Value.MovementDestination;
+                newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                previousDestination = movementList.Last.Value.MovementDestination;
+                originOrientation = movementList.Last.Value.TargetOrientation;
             }
-        }*/
+            nextObjective.MovementDestination = newDestination;
+            nextObjective.TargetOrientation = targetOrientation;
+            nextObjective.MovementOrigin = previousDestination;
+            nextObjective.OriginOrientation = originOrientation;
+            nextObjective.MovementType = MovementObjective.movType.Forwards;
+            nextObjective.TargetType = MovementObjective.targType.Rest;
+            rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+            rowType currentType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position);
+            float targetHeight = levelManager.GetComponent<LevelManager>().getTargetPositionHeight(newDestination);
+            nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
+                targetHeight,
+                nextObjective.MovementDestination.z);
+            bool addedTarget = false;            
+            if (targetType == rowType.Water)
+            {               
+                nextObjective.TargetType = MovementObjective.targType.Water;
+                mustCheckTrunk = true;
+                movementList.AddLast(nextObjective);
+                addedTarget = true;
+            }
+            else
+            {
+                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                {
+                    movementList.AddLast(nextObjective);
+                    addedTarget = true;
+                }
+            }
+            if (addedTarget && currentType == rowType.Water)
+            {
+                transform.parent = null;
+            }
+            playerMoved = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            MovementObjective nextObjective = new MovementObjective();
+            nextObjective.MovementDirection = new Vector3(0, 0, -1);
+            Vector3 newDestination;
+            Quaternion targetOrientation = Quaternion.Euler(0, 180, 0);
+            Quaternion originOrientation;
+            Vector3 previousDestination;
+            if (movementList.Count == 0)
+            {
+                newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                previousDestination = transform.position;
+                originOrientation = transform.rotation;
+            }
+            else
+            {
+                newDestination = movementList.Last.Value.MovementDestination;
+                newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                previousDestination = movementList.Last.Value.MovementDestination;
+                originOrientation = movementList.Last.Value.TargetOrientation;
+            }
+            nextObjective.MovementDestination = newDestination;
+            nextObjective.TargetOrientation = targetOrientation;
+            nextObjective.MovementOrigin = previousDestination;
+            nextObjective.OriginOrientation = originOrientation;
+            nextObjective.MovementType = MovementObjective.movType.Backwards;
+            nextObjective.TargetType = MovementObjective.targType.Rest;
+            rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+            rowType currentType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position);
+            float targetHeight = levelManager.GetComponent<LevelManager>().getTargetPositionHeight(newDestination);
+            nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
+                targetHeight,
+                nextObjective.MovementDestination.z);
+            bool addedTarget = false;
+            if (targetType == rowType.Water)
+            {
+                nextObjective.TargetType = MovementObjective.targType.Water;
+                mustCheckTrunk = true;
+                movementList.AddLast(nextObjective);
+                addedTarget = true;
+            }
+            else
+            {
+                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                {
+                    movementList.AddLast(nextObjective);
+                    addedTarget = true;
+                }
+            }
+            if (addedTarget && currentType == rowType.Water)
+            {
+                transform.parent = null;
+            }
+            playerMoved = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            MovementObjective nextObjective = new MovementObjective();
+            nextObjective.MovementDirection = new Vector3(1, 0, 0);
+            Vector3 newDestination;
+            Quaternion targetOrientation = Quaternion.Euler(0, 90, 0);
+            Quaternion originOrientation;
+            Vector3 previousDestination;
+            if (movementList.Count == 0)
+            {
+                if (currentState != playerState.Idle)
+                    throw new InvalidOperationException("The player state should be idle if the movement list is empty");
+                newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                previousDestination = transform.position;
+                originOrientation = transform.rotation;
+            }
+            else
+            {
+                newDestination = movementList.Last.Value.MovementDestination;
+                newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                previousDestination = movementList.Last.Value.MovementDestination;
+                originOrientation = movementList.Last.Value.TargetOrientation;
+            }
+            nextObjective.MovementDestination = newDestination;
+            nextObjective.TargetOrientation = targetOrientation;
+            nextObjective.MovementOrigin = previousDestination;
+            nextObjective.OriginOrientation = originOrientation;
+            nextObjective.MovementType = MovementObjective.movType.RightStrafe;
+            nextObjective.TargetType = MovementObjective.targType.Rest;
+            rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+            rowType currentType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position);
+            float targetHeight = levelManager.GetComponent<LevelManager>().getTargetPositionHeight(newDestination);
+            nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
+                targetHeight,
+                nextObjective.MovementDestination.z);
+            bool addedTarget = false;
+            if (targetType == rowType.Water)
+            {
+                nextObjective.TargetType = MovementObjective.targType.Water;
+                mustCheckTrunk = true;
+                movementList.AddLast(nextObjective);
+                addedTarget = true;
+            }
+            else
+            {
+                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                {
+                    movementList.AddLast(nextObjective);
+                    addedTarget = true;
+                }
+            }
+            if (addedTarget && currentType == rowType.Water)
+            {
+                transform.parent = null;
+            }
+            playerMoved = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            MovementObjective nextObjective = new MovementObjective();
+            nextObjective.MovementDirection = new Vector3(-1, 0, 0);
+            Vector3 newDestination;
+            Quaternion targetOrientation = Quaternion.Euler(0, -90, 0);
+            Quaternion originOrientation;
+            Vector3 previousDestination;
+            if (movementList.Count == 0)
+            {
+                if (currentState != playerState.Idle)
+                    throw new InvalidOperationException("The player state should be idle if the movement list is empty");
+                newDestination = transform.position + nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                previousDestination = transform.position;
+                originOrientation = transform.rotation;
+            }
+            else
+            {
+                newDestination = movementList.Last.Value.MovementDestination;
+                newDestination += nextObjective.MovementDirection * LevelGenerator.UnitCube.z;
+                previousDestination = movementList.Last.Value.MovementDestination;
+                originOrientation = movementList.Last.Value.TargetOrientation;
+            }
+            nextObjective.MovementDestination = newDestination;
+            nextObjective.TargetOrientation = targetOrientation;
+            nextObjective.MovementOrigin = previousDestination;
+            nextObjective.OriginOrientation = originOrientation;
+            nextObjective.MovementType = MovementObjective.movType.LeftStrafe;
+            nextObjective.TargetType = MovementObjective.targType.Rest;
+            rowType targetType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(nextObjective.MovementDestination);
+            rowType currentType = levelManager.GetComponent<LevelManager>().getRowTypeFromPosition(transform.position);
+            float targetHeight = levelManager.GetComponent<LevelManager>().getTargetPositionHeight(newDestination);
+            nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
+                targetHeight,
+                nextObjective.MovementDestination.z);
+            bool addedTarget = false;
+            if (targetType == rowType.Water)
+            {
+                nextObjective.TargetType = MovementObjective.targType.Water;
+                mustCheckTrunk = true;
+                movementList.AddLast(nextObjective);
+                addedTarget = true;
+            }
+            else
+            {
+                if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
+                {
+                    movementList.AddLast(nextObjective);
+                    addedTarget = true;
+                }
+            }
+            if (addedTarget && currentType == rowType.Water)
+            {
+                transform.parent = null;
+            }
+            playerMoved = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.G))
+        {
+            godMode = true;
+        }        
     }
 
     private void backToNormalMode()
@@ -248,71 +402,161 @@ public class PlayerController : MonoBehaviour {
         transform.position = new Vector3(intXTile, transform.position.y, intZTile);
     }
 
-    private void updatePosition()
+    private Vector3 getDiscretePosition(Vector3 continousPosition)
     {
-        if (currentState == playerState.Moving)
+        float discreteX = Mathf.Round((continousPosition.x - levelManager.GetComponent<LevelManager>().InitialPlayerPosition.x) /
+                LevelGenerator.UnitCube.x);
+        discreteX = discreteX* LevelGenerator.UnitCube.x + levelManager.GetComponent<LevelManager>().InitialPlayerPosition.x; 
+            float discreteZ = Mathf.Round((continousPosition.z - levelManager.GetComponent<LevelManager>().InitialPlayerPosition.z) /
+                LevelGenerator.UnitCube.z);
+        discreteZ = discreteZ* LevelGenerator.UnitCube.z + levelManager.GetComponent<LevelManager>().InitialPlayerPosition.z; 
+            return new Vector3(discreteX, continousPosition.y, discreteZ);
+    }
+
+private void updatePosition()
+    {
+        if (movementList.Count > 0)
         {
-            Vector3 updatedPosition = transform.position + movementList.First.Value.MovementDirection * unit * unitsPerSecond * Time.deltaTime;
-            if (movementList.First.Value.MovementDirection == new Vector3(0,0,1))
+            MovementObjective nextObjective = movementList.First.Value;
+            if (mustCheckTrunk && nextObjective.TargetType == MovementObjective.targType.Water &&
+                levelManager.GetComponent<LevelManager>().checkIfTrunkInPosition(nextObjective.MovementDestination))
+            {
+                Vector3 futurePosition = levelManager.GetComponent<LevelManager>().getFutureTrunkPosition(nextObjective.MovementDestination,
+                    1.0f / playerSpeed);
+                nextObjective.MovementDestination = futurePosition;
+                nextObjective.MovementDirection = (futurePosition - transform.position).normalized;
+                mustCheckTrunk = false;
+            }
+            else if (mustCheckTrunk && nextObjective.TargetType == MovementObjective.targType.Water)
+            {
+                willDrown = true;
+                mustCheckTrunk = false;
+            }
+            if (justDeletedMovement && movementList.First.Value.TargetType == MovementObjective.targType.Rest)
+            {
+                justDeletedMovement = false;
+                movementList.First.Value.MovementDestination = getDiscretePosition(movementList.First.Value.MovementDestination);
+                movementList.First.Value.MovementDirection = (movementList.First.Value.MovementDestination - movementList.First.Value.MovementOrigin).normalized;
+            }
+            Vector3 updatedPosition = transform.position + movementList.First.Value.MovementDirection * LevelGenerator.UnitCube.x * playerSpeed * Time.deltaTime;
+            if (movementList.First.Value.MovementType == MovementObjective.movType.Forwards)
             {
                 if (updatedPosition.z >= movementList.First.Value.MovementDestination.z)
                 {
                     transform.position = movementList.First.Value.MovementDestination;
-                    movementList.RemoveFirst();
-                    if (movementList.Count == 0)
+                    transform.rotation = movementList.First.Value.TargetOrientation; 
+                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
-                        currentState = playerState.Idle;
+                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                    }                   
+                    else if (willDrown)
+                    {
+                        currentState = playerState.Dead;
+                        treatDrowningState();
                     }
+                    movementList.RemoveFirst();
+                    justDeletedMovement = true;
                 }
                 else
-                    transform.position = updatedPosition;
+                {
+                    float distance = (transform.position.z - movementList.First.Value.MovementOrigin.z)/LevelGenerator.UnitCube.z;
+                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
+                    transform.position = new Vector3(updatedPosition.x, 
+                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
+                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
+                        movementList.First.Value.TargetOrientation, distance);
+                }
             }  
-            else if (movementList.First.Value.MovementDirection == new Vector3(0,0,-1))
+            else if (movementList.First.Value.MovementType == MovementObjective.movType.Backwards)
             {
                 if (updatedPosition.z <= movementList.First.Value.MovementDestination.z)
                 {
                     transform.position = movementList.First.Value.MovementDestination;
-                    movementList.RemoveFirst();
-                    if (movementList.Count == 0)
+                    transform.rotation = movementList.First.Value.TargetOrientation;
+                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
-                        currentState = playerState.Idle;
+                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
                     }
+                    else if (willDrown)
+                    {
+                        currentState = playerState.Dead;
+                        treatDrowningState();
+                    }           
+                    movementList.RemoveFirst();
+                    justDeletedMovement = true;
                 }
                 else
-                    transform.position = updatedPosition;
+                {
+                    float distance = (movementList.First.Value.MovementOrigin.z - transform.position.z)/LevelGenerator.UnitCube.z;
+                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
+                    transform.position = new Vector3(updatedPosition.x,
+                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
+                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
+                        movementList.First.Value.TargetOrientation, distance);
+                }
             }
-            else if (movementList.First.Value.MovementDirection == new Vector3(1, 0, 0))
+            else if (movementList.First.Value.MovementType == MovementObjective.movType.RightStrafe)
             {
                 if (updatedPosition.x >= movementList.First.Value.MovementDestination.x)
                 {
                     transform.position = movementList.First.Value.MovementDestination;
-                    movementList.RemoveFirst();
-                    if (movementList.Count == 0)
+                    transform.rotation = movementList.First.Value.TargetOrientation;
+                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
-                        currentState = playerState.Idle;
+                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
                     }
+                    else if (willDrown)
+                    {
+                        currentState = playerState.Dead;
+                        treatDrowningState();
+                    }
+                    movementList.RemoveFirst();
+                    justDeletedMovement = true;
                 }
                 else
-                    transform.position = updatedPosition;
+                {
+                    float distance = (transform.position.x - movementList.First.Value.MovementOrigin.x)/LevelGenerator.UnitCube.z;
+                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
+                    transform.position = new Vector3(updatedPosition.x,
+                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
+                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
+                        movementList.First.Value.TargetOrientation, distance);
+                }
             }
-            else if (movementList.First.Value.MovementDirection == new Vector3(-1, 0, 0))
+            else if (movementList.First.Value.MovementType == MovementObjective.movType.LeftStrafe)
             {
                 if (updatedPosition.x <= movementList.First.Value.MovementDestination.x)
                 {
                     transform.position = movementList.First.Value.MovementDestination;
-                    movementList.RemoveFirst();
-                    if (movementList.Count == 0)
+                    transform.rotation = movementList.First.Value.TargetOrientation;
+                    if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
-                        currentState = playerState.Idle;
+                        levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
                     }
+                    else if (willDrown)
+                    {
+                        currentState = playerState.Dead;
+                        treatDrowningState();
+                    }
+                    movementList.RemoveFirst();
+                    justDeletedMovement = true;
                 }
                 else
-                    transform.position = updatedPosition;
+                {
+                    float distance = (movementList.First.Value.MovementOrigin.x - transform.position.x)/LevelGenerator.UnitCube.z;
+                    float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
+                    transform.position = new Vector3(updatedPosition.x,
+                        levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
+                    transform.rotation = Quaternion.Slerp(movementList.First.Value.OriginOrientation,
+                        movementList.First.Value.TargetOrientation, distance);
+                }
             }
         }
-        /*else if (currentState == playerState.GodModeMoving)
-        {
-            transform.Translate(movingDirection * godModeSpeed * Time.deltaTime);
-        }*/
+    }
+
+    private void treatDrowningState()
+    {
+        currentState = playerState.Dead;
+        levelManager.GetComponent<LevelManager>().treatPlayerDrowned();
     }
 }

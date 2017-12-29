@@ -60,9 +60,20 @@ MonoBehaviour:
     type: 2}
   truckPrefab: {fileID: 1707955449329638, guid: ce3868f96c9b72641ab22e6e0159bdc2,
     type: 2}
+  waterPrefab: {fileID: 1159878761326362, guid: 060a6831378692a449d0169da66d9927,
+    type: 2}
+  trunkPrefab: {fileID: 1862792014223552, guid: b3a232bdbc49db74e8414d6197632057,
+    type: 2}
   redCarMesh: {fileID: 4300000, guid: 60cd672bf913d3c4783312cf650b61c5, type: 3}
   blueCarMesh: {fileID: 4300000, guid: d2fb526fd57e96544835a97281b36448, type: 3}
   greenCarMesh: {fileID: 4300000, guid: 34f8b2e3777aef442a234aefd728b91e, type: 3}
   redTruckMesh: {fileID: 4300000, guid: dea9be5378b47a844aee79ee05b07810, type: 3}
   blueTruckMesh: {fileID: 4300000, guid: 00af49985ee2e7b46acbb5420c4a5519, type: 3}
   greenTruckMesh: {fileID: 4300000, guid: 3c4055f2cb862da4ab9c86a93cd02bf2, type: 3}
+  darkGrassMesh: {fileID: 4300000, guid: 0a45c2f4d46a4cc44bf8ef63c95f197c, type: 3}
+  clearGrassMesh: {fileID: 4300000, guid: fdf7a4ba89162a24e9ab8e6485de0817, type: 3}
+  smallTrunkMesh: {fileID: 4300000, guid: cf2212283267f2d4fb4ad8ce1042ffd8, type: 3}
+  mediumTrunkMesh: {fileID: 4300000, guid: c12a51ef1b7afb343a5712ac579ed53e, type: 3}
+  largeTrunkMesh: {fileID: 4300000, guid: 9fec0c03842daa64eb882372d6d140d2, type: 3}
+  darkWaterMesh: {fileID: 4300000, guid: 3ff041e3bcf894643814e5cccbfb24b1, type: 3}
+  clearWaterMesh: {fileID: 4300000, guid: 305cb0bbc8db8064a9af09447af0fd42, type: 3}
