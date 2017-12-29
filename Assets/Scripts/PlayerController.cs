@@ -194,22 +194,25 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
-            if (currentType == rowType.Water)
-            {
-                transform.parent = null;
-            }
+            bool addedTarget = false;            
             if (targetType == rowType.Water)
             {               
                 nextObjective.TargetType = MovementObjective.targType.Water;
                 mustCheckTrunk = true;
                 movementList.AddLast(nextObjective);
+                addedTarget = true;
             }
             else
             {
                 if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
                 {
                     movementList.AddLast(nextObjective);
+                    addedTarget = true;
                 }
+            }
+            if (addedTarget && currentType == rowType.Water)
+            {
+                transform.parent = null;
             }
             playerMoved = true;
         }
@@ -246,22 +249,25 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
-            if (currentType == rowType.Water)
-            {
-                transform.parent = null;
-            }
+            bool addedTarget = false;
             if (targetType == rowType.Water)
             {
                 nextObjective.TargetType = MovementObjective.targType.Water;
                 mustCheckTrunk = true;
                 movementList.AddLast(nextObjective);
+                addedTarget = true;
             }
             else
             {
                 if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
                 {
                     movementList.AddLast(nextObjective);
+                    addedTarget = true;
                 }
+            }
+            if (addedTarget && currentType == rowType.Water)
+            {
+                transform.parent = null;
             }
             playerMoved = true;
         }
@@ -300,22 +306,25 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
+            bool addedTarget = false;
             if (targetType == rowType.Water)
             {
                 nextObjective.TargetType = MovementObjective.targType.Water;
                 mustCheckTrunk = true;
                 movementList.AddLast(nextObjective);
-            }
-            if (currentType == rowType.Water)
-            {
-                transform.parent = null;
+                addedTarget = true;
             }
             else
             {
                 if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
                 {
                     movementList.AddLast(nextObjective);
+                    addedTarget = true;
                 }
+            }
+            if (addedTarget && currentType == rowType.Water)
+            {
+                transform.parent = null;
             }
             playerMoved = true;
         }
@@ -354,22 +363,25 @@ public class PlayerController : MonoBehaviour {
             nextObjective.MovementDestination = new Vector3(nextObjective.MovementDestination.x,
                 targetHeight,
                 nextObjective.MovementDestination.z);
+            bool addedTarget = false;
             if (targetType == rowType.Water)
             {
                 nextObjective.TargetType = MovementObjective.targType.Water;
                 mustCheckTrunk = true;
                 movementList.AddLast(nextObjective);
-            }
-            if (currentType == rowType.Water)
-            {
-                transform.parent = null;
+                addedTarget = true;
             }
             else
             {
                 if (levelManager.GetComponent<LevelManager>().checkPositionIsOccupable(nextObjective.MovementDestination))
                 {
                     movementList.AddLast(nextObjective);
+                    addedTarget = true;
                 }
+            }
+            if (addedTarget && currentType == rowType.Water)
+            {
+                transform.parent = null;
             }
             playerMoved = true;
         }
