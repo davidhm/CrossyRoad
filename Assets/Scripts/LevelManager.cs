@@ -3,7 +3,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public sealed class LevelManager : MonoBehaviour {
+public sealed class LevelManager : MonoBehaviour
+{
 
     public GameObject mainMenu, player, cameraObject;
     public GameObject generatorPrefab;
@@ -81,5 +82,20 @@ public sealed class LevelManager : MonoBehaviour {
     public void treatPlayerDrowned()
     {
         generalLoss();
+    }
+
+    public float getTargetPositionHeight(Vector3 newDestination)
+    {
+        return generatorRuntime.GetComponent<LevelGenerator>().getTargetHeight(newDestination);
+    }
+
+    public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
+    {
+        return generatorRuntime.GetComponent<LevelGenerator>().getFutureTrunkPosition(movementDestination, timeToCollision);
+    }
+
+    public void attachPlayerToTrunk(GameObject gameObject)
+    {
+        generatorRuntime.GetComponent<LevelGenerator>().attachPlayerToTrunk(gameObject);
     }
 }

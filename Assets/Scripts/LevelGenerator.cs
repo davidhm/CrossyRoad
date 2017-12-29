@@ -93,7 +93,60 @@ class LevelGenerator : MonoBehaviour {
                 return currentNode.Value.checkIfTrunkInPosition(position);
         }
         return false;
-    } 
+    }
+
+   
+    public void attachPlayerToTrunk(GameObject gameObject)
+    {
+        Vector3 position = gameObject.transform.position;
+        LinkedListNode<RowGroup> currentNode = rows.First;
+        while (currentNode != null && (position.z < currentNode.Value.FirstRowZ ||
+            position.z > currentNode.Value.LastRowZ || currentNode.Value.Type != rowType.Water))
+        {
+            currentNode = currentNode.Next;
+        }
+        if (currentNode != null)
+        {
+            currentNode.Value.attachPlayerToTrunk(gameObject);
+            return;
+        }
+        throw new InvalidOperationException("There should always be a trunk to get attached to.");
+    }
+
+
+    public Vector3 getFutureTrunkPosition(Vector3 movementDestination, float timeToCollision)
+    {
+        LinkedListNode<RowGroup> currentNode = rows.First;
+        while (currentNode != null && (movementDestination.z < currentNode.Value.FirstRowZ ||
+            movementDestination.z > currentNode.Value.LastRowZ || currentNode.Value.Type != rowType.Water))
+        {
+            currentNode = currentNode.Next;
+        }
+        if (currentNode != null)
+            return currentNode.Value.getFutureTrunkPosition(movementDestination, timeToCollision);
+        throw new InvalidOperationException("There should always be a candidate row group for future trunk position.");
+    }
+
+    public float getTargetHeight(Vector3 position)
+    {
+        if (position.z >= levelManager.InitialPlayerPosition.z + 4 * unitCube.z &&
+            position.z >= rows.First.Value.FirstRowZ)
+        {
+            LinkedListNode<RowGroup> currentNode = rows.First;
+            while (currentNode != null && (position.z < currentNode.Value.FirstRowZ ||
+                position.z > currentNode.Value.LastRowZ))
+            {
+                currentNode = currentNode.Next;
+            }
+            if (currentNode != null && currentNode.Value.Type == rowType.Water)
+                return currentNode.Value.getTargetHeight(position);
+            if (currentNode != null && currentNode.Value.Type == rowType.Grass)
+                return Row.grassHeight;
+            if (currentNode != null && currentNode.Value.Type == rowType.Road)
+                return Row.roadHeight;
+        }
+        return Row.grassHeight;
+    }
 
     public bool checkPositionIsFree(Vector3 position)
     {
@@ -163,7 +216,7 @@ class LevelGenerator : MonoBehaviour {
                 if (j.x < leftBoundary.x || j.x > rightBoundary.x || i < -3*unitCube.z)
                 {
                     Vector3 treeCoordinates = j + offset;
-                    treeCoordinates.y = grassPrefab.GetComponent<Renderer>().bounds.size.y;
+                    treeCoordinates.y = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                     GameObject tree = (GameObject) Instantiate(treePrefab, initialArea.transform);
                     tree.transform.position = treeCoordinates;
                 }
