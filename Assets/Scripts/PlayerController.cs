@@ -220,13 +220,15 @@ public class PlayerController : MonoBehaviour {
             bool addedTarget = false;
             if (targetType == rowType.Water)
             {
-                nextObjective.TargetType = MovementObjective.targType.Water;
-                if (checkWithinLimits(nextObjective))
-                {
-                    addedTarget = true;
-                    mustCheckTrunk = true;
-                    movementList.AddLast(nextObjective);
-                }
+                nextObjective.TargetType = MovementObjective.targType.Water;                
+                addedTarget = true;
+                mustCheckTrunk = true;
+                movementList.AddLast(nextObjective);                
+            }
+            else
+            {
+                addedTarget = true;
+                movementList.AddLast(nextObjective);
             }
             if (addedTarget && currentType == rowType.Water)
             {
@@ -281,13 +283,15 @@ public class PlayerController : MonoBehaviour {
             bool addedTarget = false;
             if (targetType == rowType.Water)
             {
-                nextObjective.TargetType = MovementObjective.targType.Water;
-                if (checkWithinLimits(nextObjective))
-                {
-                    addedTarget = true;
-                    mustCheckTrunk = true;
-                    movementList.AddLast(nextObjective);
-                }
+                nextObjective.TargetType = MovementObjective.targType.Water;                
+                addedTarget = true;
+                mustCheckTrunk = true;
+                movementList.AddLast(nextObjective);                
+            }
+            else
+            {
+                addedTarget = true;
+                movementList.AddLast(nextObjective);
             }
             if (addedTarget && currentType == rowType.Water)
             {
@@ -344,13 +348,15 @@ public class PlayerController : MonoBehaviour {
             bool addedTarget = false;
             if (targetType == rowType.Water)
             {
-                nextObjective.TargetType = MovementObjective.targType.Water;
-                if (checkWithinLimits(nextObjective))
-                {
-                    addedTarget = true;
-                    mustCheckTrunk = true;
-                    movementList.AddLast(nextObjective);
-                }
+                nextObjective.TargetType = MovementObjective.targType.Water;                
+                addedTarget = true;
+                mustCheckTrunk = true;
+                movementList.AddLast(nextObjective);
+            }
+            else
+            {
+                addedTarget = true;
+                movementList.AddLast(nextObjective);
             }
             if (addedTarget && currentType == rowType.Water)
             {
@@ -408,12 +414,14 @@ public class PlayerController : MonoBehaviour {
             if (targetType == rowType.Water)
             {
                 nextObjective.TargetType = MovementObjective.targType.Water;
-                if (checkWithinLimits(nextObjective))
-                {
-                    addedTarget = true;
-                    mustCheckTrunk = true;
-                    movementList.AddLast(nextObjective);
-                }
+                addedTarget = true;
+                mustCheckTrunk = true;
+                movementList.AddLast(nextObjective);                
+            }
+            else
+            {
+                addedTarget = true;
+                movementList.AddLast(nextObjective);
             }
             if (addedTarget && currentType == rowType.Water)
             {
@@ -473,6 +481,11 @@ public class PlayerController : MonoBehaviour {
         {
             currentState = playerState.Dead;
             treatDrowningState();
+        }
+        if (movementList.First.Value.TargetType == MovementObjective.targType.Rest)
+        {
+            inTrunk = false;
+            attachedTrunk = null;
         }
         movementList.RemoveFirst();
         justDeletedMovement = true;
@@ -541,23 +554,21 @@ public class PlayerController : MonoBehaviour {
         }
         else if (currentSize == TrunkController.TrunkSize.Medium)
         {
-
-                if (playerPositionInTrunk[1] && movementList.First.Value.MovementType != MovementObjective.movType.RightStrafe ||
-                    playerPositionInTrunk[2] && movementList.First.Value.MovementType != MovementObjective.movType.LeftStrafe)
-                    treatHaveToFindTrunk();
-                else if (playerPositionInTrunk[1] && movementList.First.Value.MovementType == MovementObjective.movType.RightStrafe)
-                {
-                    playerPositionInTrunk[1] = false;
-                    playerPositionInTrunk[2] = true;
-                    findFuturePositionInTrunk();
-                }
-                else if (playerPositionInTrunk[2] && movementList.First.Value.MovementType == MovementObjective.movType.LeftStrafe)
-                {
-                    playerPositionInTrunk[1] = true;
-                    playerPositionInTrunk[2] = false;
-                    findFuturePositionInTrunk();
-                }
-            
+            if (playerPositionInTrunk[1] && movementList.First.Value.MovementType != MovementObjective.movType.RightStrafe ||
+                playerPositionInTrunk[2] && movementList.First.Value.MovementType != MovementObjective.movType.LeftStrafe)
+                treatHaveToFindTrunk();
+            else if (playerPositionInTrunk[1] && movementList.First.Value.MovementType == MovementObjective.movType.RightStrafe)
+            {
+                playerPositionInTrunk[1] = false;
+                playerPositionInTrunk[2] = true;
+                findFuturePositionInTrunk();
+            }
+            else if (playerPositionInTrunk[2] && movementList.First.Value.MovementType == MovementObjective.movType.LeftStrafe)
+            {
+                playerPositionInTrunk[1] = true;
+                playerPositionInTrunk[2] = false;
+                findFuturePositionInTrunk();
+            }            
         }
         else if (currentSize == TrunkController.TrunkSize.Large)
         {
