@@ -64,6 +64,9 @@ MonoBehaviour:
     type: 2}
   trunkPrefab: {fileID: 1862792014223552, guid: b3a232bdbc49db74e8414d6197632057,
     type: 2}
+  railPrefab: {fileID: 1865672929416770, guid: b8c8b439fac43fa4ea447f72dc6eb7d7, type: 2}
+  trainWagonPrefab: {fileID: 1269156179589952, guid: 1168784ebc502ab4a81797044f872c27,
+    type: 2}
   redCarMesh: {fileID: 4300000, guid: 60cd672bf913d3c4783312cf650b61c5, type: 3}
   blueCarMesh: {fileID: 4300000, guid: d2fb526fd57e96544835a97281b36448, type: 3}
   greenCarMesh: {fileID: 4300000, guid: 34f8b2e3777aef442a234aefd728b91e, type: 3}
