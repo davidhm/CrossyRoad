@@ -260,7 +260,11 @@ class RowGroup
         {
             for (int j = 0; j < rowGroup.transform.GetChild(i).childCount; ++j)
             {
-                if (rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.GetComponent<Renderer>().isVisible)
+                if (rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.name == "RailRoad")
+                {
+                    return rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.GetComponent<TrainRowManager>().isRailRoadVisible();
+                }
+                else if (rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.GetComponent<Renderer>().isVisible)
                     return true;
             }
         }

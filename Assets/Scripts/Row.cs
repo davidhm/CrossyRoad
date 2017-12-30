@@ -13,8 +13,7 @@ public class Row : MonoBehaviour
     public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab,boulderPrefab;
     public GameObject truckPrefab;
     public GameObject waterPrefab, trunkPrefab;
-    public GameObject railPrefab;
-    public GameObject trainWagonPrefab;
+    public GameObject trainRowPreab;    
     public Mesh redCarMesh, blueCarMesh, greenCarMesh;
     public Mesh redTruckMesh, blueTruckMesh, greenTruckMesh;
     public Mesh darkGrassMesh, clearGrassMesh;
@@ -324,7 +323,7 @@ public class Row : MonoBehaviour
 
     private void generateRoadRow()
     {
-        railRoad = UnityEngine.Random.value > 0.8;
+        railRoad = UnityEngine.Random.value > 0.2;
         for (float j = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
             j <= rowMarginInUnitCubes*unitCube.x + rightmostBorder - halfCube; j += unitCube.x)
         {
@@ -333,15 +332,17 @@ public class Row : MonoBehaviour
                 roadSlab.GetComponent<MeshFilter>().mesh = stripedRoadMesh;
             roadSlab.transform.position = new Vector3(j,0.0f,
                 transform.position.z);
-            if (railRoad)
-            {
-                GameObject railInstance = (GameObject)Instantiate(railPrefab, transform);
-                railInstance.transform.position = new Vector3(j,
-                    roadSlab.GetComponent<Renderer>().bounds.extents.y,
-                    transform.position.z);
-            }
+        }
+        if (railRoad)
+        {
+            GameObject trainRowInstance = (GameObject)Instantiate(trainRowPreab, transform);
+            trainRowInstance.name = "RailRoad";
+            trainRowInstance.GetComponent<TrainRowManager>().RoadHeight =
+                roadPrefab.GetComponent<Renderer>().bounds.size.y;
+            trainRowInstance.GetComponent<TrainRowManager>().IncomingFromLeft = incomingFromLeft;
+            trainRowInstance.GetComponent<TrainRowManager>().generateInitialElements();        
         }        
-        if (!railRoad)
+        else 
             generateOneVehicle();
     }
 
