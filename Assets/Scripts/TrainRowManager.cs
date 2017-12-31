@@ -155,7 +155,8 @@ public class TrainRowManager : MonoBehaviour
 
     private void reproduceWarningSound()
     {
-
+        if (railSignal.GetComponent<Renderer>().isVisible)
+            railSignal.GetComponent<AudioSource>().Play();
     }
 
     private void designalTrain()

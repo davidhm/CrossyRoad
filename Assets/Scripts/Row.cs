@@ -322,7 +322,7 @@ public class Row : MonoBehaviour
 
     private void generateRoadRow()
     {
-        railRoad = UnityEngine.Random.value > 0.2;
+        railRoad = UnityEngine.Random.value > 0.9;
         for (float j = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
             j <= rowMarginInUnitCubes*unitCube.x + rightmostBorder - halfCube; j += unitCube.x)
         {
