@@ -21,7 +21,6 @@ public class Row : MonoBehaviour
     public Mesh darkWaterMesh, clearWaterMesh;
     private Mesh stripedRoadMesh;
     public static float leftmostBorder;
-    public static uint rowWidthInUnitCubes;
     public static float rightmostBorder;
     public static uint rowMarginInUnitCubes;
     public static float grassHeight, roadHeight;

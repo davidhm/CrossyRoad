@@ -194,7 +194,6 @@ class LevelGenerator : MonoBehaviour {
         Row.setUnitCube(UnitCube);
         Row.leftmostBorder = leftBoundary.x;
         Row.rightmostBorder = leftBoundary.x + 9 * UnitCube.x;
-        Row.rowWidthInUnitCubes = 9;
         Row.rowMarginInUnitCubes = 15;
         RowGroup.generator = this;
         Row.VehicleMaxSpeed = levelManager.vehicleMaxSpeed;
