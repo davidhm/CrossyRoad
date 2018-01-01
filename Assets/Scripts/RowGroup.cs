@@ -96,7 +96,7 @@ class RowGroup
     {
         for (int k = 0; k < numberOfRows; ++k)
         {
-            bool isRailRoad = UnityEngine.Random.value > 0.5;
+            bool isRailRoad = UnityEngine.Random.value > 0.9;
             GameObject nextRow = isRailRoad ? null : UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             if (!isRailRoad && numberOfRows > 1)
             {

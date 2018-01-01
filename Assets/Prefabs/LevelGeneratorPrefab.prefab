@@ -58,6 +58,8 @@ MonoBehaviour:
   grassPrefab: {fileID: 1330230353037966, guid: be823366ff69233418ea99094a761850,
     type: 2}
   rowPrefab: {fileID: 1082984153060740, guid: 6ca4f38072e76fc4f91064e0398868d3, type: 2}
+  trainRowPrefab: {fileID: 1962487224167520, guid: 732b3daf389d1254681e437f910006fb,
+    type: 2}
   darkGrassMesh: {fileID: 4300000, guid: 0a45c2f4d46a4cc44bf8ef63c95f197c, type: 3}
   clearRoadMesh: {fileID: 4300000, guid: 6a7b5ef63f8ac99459ce299de422a2da, type: 3}
   clearGrassMesh: {fileID: 4300000, guid: fdf7a4ba89162a24e9ab8e6485de0817, type: 3}

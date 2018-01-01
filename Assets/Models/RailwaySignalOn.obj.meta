@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 7298cee02e28970409905b5e1d3c7927
-timeCreated: 1514648442
+guid: 7711c533a1b4ca64698c2b5a0d1f123f
+timeCreated: 1514829731
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -17,7 +17,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: RailwaySignalOnMat
-    second: {fileID: 2100000, guid: 03b43fa7ded90364784f959a2f790226, type: 2}
+    second: {fileID: 2100000, guid: 5424cce5e804b244e8c7e4d963d0189e, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

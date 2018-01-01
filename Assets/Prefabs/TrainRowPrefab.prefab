@@ -56,10 +56,11 @@ MonoBehaviour:
     type: 2}
   railSignalPrefab: {fileID: 1427235056269000, guid: dab8aaff2d025cb4c8a41e791bb09c4e,
     type: 2}
+  roadPrefab: {fileID: 1412190525201568, guid: bb7144d39b41d6b4cab0fe33bfdba4f3, type: 2}
   trainWagon: {fileID: 4300000, guid: 4404d86c815ed174ba76b8efa7c647d4, type: 3}
   trainLocomotive: {fileID: 4300000, guid: 2564eb8607a20b2458cae684f5bc43d4, type: 3}
-  railSignalOn: {fileID: 4300000, guid: 7298cee02e28970409905b5e1d3c7927, type: 3}
-  railSignalOff: {fileID: 4300000, guid: 854fa5036d64a9b4b89fae61a4203f9e, type: 3}
+  railSignalOn: {fileID: 4300000, guid: 7711c533a1b4ca64698c2b5a0d1f123f, type: 3}
+  railSignalOff: {fileID: 4300000, guid: f2c6640e440a7014592fa0b24dc98cc9, type: 3}
   maxSecondsForTrain: 10
   minSecondsForTrain: 5
   trainSpeed: 800

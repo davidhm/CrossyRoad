@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 854fa5036d64a9b4b89fae61a4203f9e
-timeCreated: 1514648442
+guid: f2c6640e440a7014592fa0b24dc98cc9
+timeCreated: 1514829739
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -17,7 +17,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: RailwaySignalOffMat
-    second: {fileID: 2100000, guid: ff0bba34358065b4795286ea8cb33052, type: 2}
+    second: {fileID: 2100000, guid: e95f5bf1a7cd64b478812feade92085b, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
