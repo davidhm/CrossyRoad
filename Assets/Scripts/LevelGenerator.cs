@@ -4,6 +4,7 @@ using System;
 
 class LevelGenerator : MonoBehaviour {
     public GameObject carPrefab, truckPrefab,treePrefab,grassPrefab,rowPrefab;
+    public GameObject trainRowPrefab;
     public Mesh darkGrassMesh, clearRoadMesh;
     public Mesh clearGrassMesh, forwardStripeRoadMesh, backwardStripeRoadMesh;
     public Mesh bothStripeRoadMesh;
@@ -194,7 +195,6 @@ class LevelGenerator : MonoBehaviour {
         Row.setUnitCube(UnitCube);
         Row.leftmostBorder = leftBoundary.x;
         Row.rightmostBorder = leftBoundary.x + 9 * UnitCube.x;
-        Row.rowWidthInUnitCubes = 9;
         Row.rowMarginInUnitCubes = 15;
         RowGroup.generator = this;
         Row.VehicleMaxSpeed = levelManager.vehicleMaxSpeed;

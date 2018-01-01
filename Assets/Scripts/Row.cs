@@ -12,7 +12,7 @@ public class Row : MonoBehaviour
 {
     public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab,boulderPrefab;
     public GameObject truckPrefab;
-    public GameObject waterPrefab, trunkPrefab;
+    public GameObject waterPrefab, trunkPrefab;  
     public Mesh redCarMesh, blueCarMesh, greenCarMesh;
     public Mesh redTruckMesh, blueTruckMesh, greenTruckMesh;
     public Mesh darkGrassMesh, clearGrassMesh;
@@ -20,7 +20,6 @@ public class Row : MonoBehaviour
     public Mesh darkWaterMesh, clearWaterMesh;
     private Mesh stripedRoadMesh;
     public static float leftmostBorder;
-    public static uint rowWidthInUnitCubes;
     public static float rightmostBorder;
     public static uint rowMarginInUnitCubes;
     public static float grassHeight, roadHeight;
@@ -124,7 +123,7 @@ public class Row : MonoBehaviour
         {
             stripedRoadMesh = value;
         }
-    }
+    }    
 
     public static void setUnitCube(Vector3 unitCube)
     {
@@ -326,7 +325,6 @@ public class Row : MonoBehaviour
             roadSlab.transform.position = new Vector3(j,0.0f,
                 transform.position.z);
         }
-        generateOneVehicle();
     }
 
     private void generateOneVehicle()
