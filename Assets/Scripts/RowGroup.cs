@@ -22,6 +22,10 @@ class RowGroup
         for (int i = 0; i < numberOfRows; ++i)
         {
             occupableMatrix.Add(new List<bool>());
+            for (int j = 0; j < 9; ++j)
+            {
+                occupableMatrix[i].Add(true);
+            }
         }
         if (previousGroupType == rowType.Grass)
         {
@@ -92,8 +96,9 @@ class RowGroup
     {
         for (int k = 0; k < numberOfRows; ++k)
         {
-            GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
-            if (numberOfRows > 1)
+            bool isRailRoad = UnityEngine.Random.value > 0.5;
+            GameObject nextRow = isRailRoad ? null : UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
+            if (!isRailRoad && numberOfRows > 1)
             {
                 if (k == 0)
                 {
@@ -108,15 +113,29 @@ class RowGroup
                     nextRow.GetComponent<Row>().StripedRoadMesh = generator.bothStripeRoadMesh;
                 }
             }
-            else
+            else if (!isRailRoad)
                 nextRow.GetComponent<Row>().StripedRoadMesh = generator.clearRoadMesh;
-            nextRow.GetComponent<Row>().CurrentType = rowType.Road;
-            nextRow.transform.position = new Vector3(0, 0, nextRowZ);
-            nextRowZ += LevelGenerator.UnitCube.z;
-            setRandomRoadParameters(nextRow.GetComponent<Row>());
-            nextRow.GetComponent<Row>().generateInitialElements();
-            occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
-        }
+            if (!isRailRoad)
+            {
+                nextRow.transform.position = new Vector3(0, 0, nextRowZ);
+                nextRowZ += LevelGenerator.UnitCube.z;
+                setRandomRoadParameters(nextRow.GetComponent<Row>());
+                nextRow.GetComponent<Row>().CurrentType = rowType.Road;
+                nextRow.GetComponent<Row>().generateInitialElements();
+                occupableMatrix[k] = nextRow.GetComponent<Row>().getOccupableRow();
+            }
+            if (isRailRoad)
+            {
+                GameObject trainRow = UnityEngine.Object.Instantiate(generator.trainRowPrefab, rowGroup.transform);
+                trainRow.name = "RailRoad";
+                trainRow.transform.position = new Vector3(0, 0, nextRowZ);
+                nextRowZ += LevelGenerator.UnitCube.z;
+                trainRow.GetComponent<TrainRowManager>().IncomingFromLeft = UnityEngine.Random.value > 0.5;
+                trainRow.GetComponent<TrainRowManager>().RoadHeight = 
+                    generator.rowPrefab.GetComponent<Row>().roadPrefab.GetComponent<Renderer>().bounds.extents.y;
+                trainRow.GetComponent<TrainRowManager>().generateInitialElements();
+            }
+        }        
         type = rowType.Road;
     }
 
@@ -258,14 +277,17 @@ class RowGroup
     {
         for (int i = 0; i < rowGroup.transform.childCount; ++i)
         {
-            for (int j = 0; j < rowGroup.transform.GetChild(i).childCount; ++j)
+            if (rowGroup.transform.GetChild(i).name == "RailRoad")
             {
-                if (rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.name == "RailRoad")
+                return rowGroup.transform.GetChild(i).GetComponent<TrainRowManager>().isRailRoadVisible();
+            }
+            else
+            { 
+                for (int j = 0; j < rowGroup.transform.GetChild(i).childCount; ++j)
                 {
-                    return rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.GetComponent<TrainRowManager>().isRailRoadVisible();
+                    if (rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.GetComponent<Renderer>().isVisible)
+                        return true;
                 }
-                else if (rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.GetComponent<Renderer>().isVisible)
-                    return true;
             }
         }
         return false;

@@ -12,8 +12,7 @@ public class Row : MonoBehaviour
 {
     public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab,boulderPrefab;
     public GameObject truckPrefab;
-    public GameObject waterPrefab, trunkPrefab;
-    public GameObject trainRowPreab;    
+    public GameObject waterPrefab, trunkPrefab;  
     public Mesh redCarMesh, blueCarMesh, greenCarMesh;
     public Mesh redTruckMesh, blueTruckMesh, greenTruckMesh;
     public Mesh darkGrassMesh, clearGrassMesh;
@@ -32,7 +31,6 @@ public class Row : MonoBehaviour
     private static float vehicleMaxSpeed,vehicleMinSpeed;
     private float treeProportion;
     private float trunkTimer, trunkSlowSpeed;
-    private bool railRoad, calculatedRailroad;
     private List<bool> occupableRow;
     private LinkedList<GameObject> trunksInWater;
 
@@ -125,7 +123,7 @@ public class Row : MonoBehaviour
         {
             stripedRoadMesh = value;
         }
-    }
+    }    
 
     public static void setUnitCube(Vector3 unitCube)
     {
@@ -138,59 +136,50 @@ public class Row : MonoBehaviour
         TrunkController.FastSpeed = 320.0f;
         grassHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
         roadHeight = roadPrefab.GetComponent<Renderer>().bounds.size.y;
-        railRoad = false;
     }
-
-    private void updateVehicles()
-    {
-        LinkedList<CollisionInfo> collisions = new LinkedList<CollisionInfo>();
-        for (int i = 0; i < transform.childCount; ++i)
-        {
-            Transform currentVehicle = transform.GetChild(i);
-            if (transform.GetChild(i).name == "Vehicle")
-            {
-                float initialPosition;
-                float offset = currentVehicle.gameObject.GetComponent<Renderer>().bounds.extents.x;
-                if (incomingFromLeft)
-                {
-                    initialPosition = currentVehicle.position.x - (leftmostBorder - rowMarginInUnitCubes * unitCube.x);
-                    initialPosition -= offset;
-                }
-                else
-                {
-                    initialPosition = currentVehicle.position.x - (rightmostBorder + rowMarginInUnitCubes * unitCube.x);
-                    initialPosition += offset;
-                }
-                if (initialPosition > 0)
-                {
-                    float maxAllowedCollision = (rightmostBorder - leftmostBorder) + 2 * rowMarginInUnitCubes * unitCube.x;
-                    float vehicleSpeed = Mathf.Abs(currentVehicle.gameObject.GetComponent<VehicleController>().Speed.x);
-                    float timeForCollision = initialPosition / (vehicleMaxSpeed - vehicleSpeed);
-                    if (vehicleSpeed * timeForCollision < maxAllowedCollision)
-                        return;
-                    else
-                    {
-                        CollisionInfo current = new CollisionInfo();
-                        current.collisionPoint = vehicleSpeed * timeForCollision;
-                        current.maxCollisionPossible = rightmostBorder + rowMarginInUnitCubes * unitCube.x;
-                        current.maxCollisionPossible -= leftmostBorder - rowMarginInUnitCubes * unitCube.x;
-                        collisions.AddLast(current);
-                    }
-                }
-                else
-                    return;
-            }
-        }
-        generateOneVehicle(collisions);
-    }
-
     void LateUpdate() {
         if (currentType == rowType.Road)
         {            
-            if (!railRoad)
+            LinkedList<CollisionInfo> collisions = new LinkedList<CollisionInfo>();
+            for (int i = 0; i < transform.childCount; ++i)
             {
-                updateVehicles();
-            }            
+                Transform currentVehicle = transform.GetChild(i);
+                if (transform.GetChild(i).name == "Vehicle")
+                {
+                    float initialPosition;
+                    float offset = currentVehicle.gameObject.GetComponent<Renderer>().bounds.extents.x;
+                    if (incomingFromLeft)
+                    {
+                        initialPosition = currentVehicle.position.x - (leftmostBorder - rowMarginInUnitCubes * unitCube.x);
+                        initialPosition -= offset;
+                    }
+                    else
+                    {
+                        initialPosition = currentVehicle.position.x - (rightmostBorder + rowMarginInUnitCubes * unitCube.x);
+                        initialPosition += offset;
+                    }
+                    if (initialPosition > 0)
+                    {
+                        float maxAllowedCollision = (rightmostBorder - leftmostBorder) + 2 * rowMarginInUnitCubes * unitCube.x;
+                        float vehicleSpeed = Mathf.Abs(currentVehicle.gameObject.GetComponent<VehicleController>().Speed.x);
+                        float timeForCollision = initialPosition / (vehicleMaxSpeed - vehicleSpeed);
+                        if (vehicleSpeed*timeForCollision < maxAllowedCollision)
+                            return;                            
+                        else
+                        {
+                            CollisionInfo current = new CollisionInfo();
+                            current.collisionPoint = vehicleSpeed * timeForCollision;
+                            current.maxCollisionPossible = rightmostBorder + rowMarginInUnitCubes * unitCube.x;
+                            current.maxCollisionPossible -= leftmostBorder - rowMarginInUnitCubes * unitCube.x;
+                            collisions.AddLast(current);
+                        }
+                    }
+                    else
+                        return;                    
+                }
+            }
+            generateOneVehicle(collisions);
+            
         }
         else if (currentType == rowType.Water)
         {
@@ -327,7 +316,6 @@ public class Row : MonoBehaviour
 
     private void generateRoadRow()
     {
-        railRoad = UnityEngine.Random.value > 0.9;
         for (float j = leftmostBorder - rowMarginInUnitCubes*unitCube.x + halfCube;
             j <= rowMarginInUnitCubes*unitCube.x + rightmostBorder - halfCube; j += unitCube.x)
         {
@@ -337,23 +325,6 @@ public class Row : MonoBehaviour
             roadSlab.transform.position = new Vector3(j,0.0f,
                 transform.position.z);
         }
-        if (railRoad)
-        {
-            GameObject trainRowInstance = (GameObject)Instantiate(trainRowPreab, transform);
-            trainRowInstance.name = "RailRoad";
-            trainRowInstance.GetComponent<TrainRowManager>().RoadHeight =
-                roadPrefab.GetComponent<Renderer>().bounds.size.y;
-            trainRowInstance.GetComponent<TrainRowManager>().IncomingFromLeft = incomingFromLeft;
-            trainRowInstance.GetComponent<TrainRowManager>().generateInitialElements();
-            Transform vehicle = transform.Find("Vehicle");
-            while (vehicle != null)
-            {
-                Destroy(vehicle.gameObject);
-                vehicle = transform.Find("Vehicle");
-            }
-        }        
-        else 
-            generateOneVehicle();
     }
 
     private void generateOneVehicle()

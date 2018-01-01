@@ -1,8 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 public class TrainRowManager : MonoBehaviour
 {
     public GameObject railPrefab, trainPrefab, railSignalPrefab;
+    public GameObject roadPrefab;
     public Mesh trainWagon, trainLocomotive;
     public Mesh railSignalOn, railSignalOff;
     public float maxSecondsForTrain, minSecondsForTrain;
@@ -59,9 +59,23 @@ public class TrainRowManager : MonoBehaviour
     public void generateInitialElements()
     {
         generateRandomTimer();
+        generateRoadSlabs();
         generateRails();
         generateRailwaySignal();
     }
+
+    private void generateRoadSlabs()
+    {
+        float halfCube = LevelGenerator.UnitCube.x / 2.0f;
+        for (float j = Row.leftmostBorder - Row.rowMarginInUnitCubes * LevelGenerator. UnitCube.x + halfCube;
+            j <= Row.rowMarginInUnitCubes * LevelGenerator.UnitCube.x + Row.rightmostBorder - halfCube; j += LevelGenerator.UnitCube.x)
+        {
+            GameObject roadSlab = (GameObject)Instantiate(roadPrefab, transform);            
+            roadSlab.transform.position = new Vector3(j, 0.0f,
+                transform.position.z);
+        }
+    }
+
     private void generateRails()
     {
         float halfCube = LevelGenerator.UnitCube.x / 2.0f;

@@ -4,6 +4,7 @@ using System;
 
 class LevelGenerator : MonoBehaviour {
     public GameObject carPrefab, truckPrefab,treePrefab,grassPrefab,rowPrefab;
+    public GameObject trainRowPrefab;
     public Mesh darkGrassMesh, clearRoadMesh;
     public Mesh clearGrassMesh, forwardStripeRoadMesh, backwardStripeRoadMesh;
     public Mesh bothStripeRoadMesh;
