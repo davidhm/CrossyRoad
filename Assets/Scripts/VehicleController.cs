@@ -75,8 +75,8 @@ public class VehicleController : MonoBehaviour {
         }
     }
 
-    void OnTriggerEnter()
+    /*void OnTriggerEnter()
     {
         Time.timeScale = 0;
-    }
+    }*/
 }
