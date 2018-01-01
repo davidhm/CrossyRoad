@@ -61,6 +61,6 @@ MonoBehaviour:
   trainLocomotive: {fileID: 4300000, guid: 2564eb8607a20b2458cae684f5bc43d4, type: 3}
   railSignalOn: {fileID: 4300000, guid: 7711c533a1b4ca64698c2b5a0d1f123f, type: 3}
   railSignalOff: {fileID: 4300000, guid: f2c6640e440a7014592fa0b24dc98cc9, type: 3}
-  maxSecondsForTrain: 10
+  maxSecondsForTrain: 8
   minSecondsForTrain: 5
   trainSpeed: 800
