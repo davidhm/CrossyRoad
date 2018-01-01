@@ -174,8 +174,7 @@ public class Row : MonoBehaviour
         else if (currentType == rowType.Water)
         {
             trunkTimer -= Time.deltaTime;
-            if (trunkTimer <= 0) {
-                trunkTimer = 2.5f + UnityEngine.Random.Range(0.0f, 0.5f);
+            if (trunkTimer <= 0) {                
                 generateOneTrunk();
             }
         }
@@ -230,7 +229,7 @@ public class Row : MonoBehaviour
         GameObject trunkInstance = (GameObject)Instantiate(trunkPrefab, transform);
         trunkInstance.GetComponent<TrunkController>().SlowSpeed = trunkSlowSpeed;
         trunkInstance.GetComponent<TrunkController>().IncomingFromLeft = incomingFromLeft;
-        trunkInstance.GetComponent<MeshFilter>().mesh = getRandomTrunkMesh();
+        trunkInstance.GetComponent<MeshFilter>().mesh = getRandomTrunkMeshAndSetTimer();
         float lateralPosition;
         if (incomingFromLeft)
         {
@@ -246,12 +245,13 @@ public class Row : MonoBehaviour
             waterPrefab.GetComponent<Renderer>().bounds.extents.y, 
             transform.position.z);
         trunkInstance.GetComponent<TrunkController>().JustSpawned = true;
-        trunksInWater.AddFirst(trunkInstance);
+        trunksInWater.AddFirst(trunkInstance);        
     }
 
-    private Mesh getRandomTrunkMesh()
+    private Mesh getRandomTrunkMeshAndSetTimer()
     {
         float randValue = UnityEngine.Random.value;
+        trunkTimer = 2.5f + UnityEngine.Random.Range(0.0f, 0.5f);
         if (randValue < 0.1f)
         {
             return smallTrunkMesh;
@@ -262,6 +262,7 @@ public class Row : MonoBehaviour
         }
         else
         {
+            trunkTimer += 0.5f;
             return largeTrunkMesh;
         }
     }
