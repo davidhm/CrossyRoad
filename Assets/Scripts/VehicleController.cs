@@ -7,7 +7,6 @@ public class VehicleController : MonoBehaviour {
     private Vector3 speed;
     private bool justSpawned;
     private bool incomingFromLeft;
-    private LinkedList<CollisionInfo> collisionsDebug;
 
     public Vector3 Speed
     {
@@ -46,20 +45,7 @@ public class VehicleController : MonoBehaviour {
         {
             incomingFromLeft = value;
         }
-    }
-
-    public LinkedList<CollisionInfo> CollisionsDebug
-    {
-        get
-        {
-            return collisionsDebug;
-        }
-
-        set
-        {
-            collisionsDebug = value;
-        }
-    }
+    }  
 
     // Update is called once per frame
     void Update () {
@@ -89,7 +75,7 @@ public class VehicleController : MonoBehaviour {
         }
     }
 
-    void onTriggerEnter()
+    void OnTriggerEnter()
     {
         Time.timeScale = 0;
     }
