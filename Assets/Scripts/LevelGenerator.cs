@@ -8,6 +8,7 @@ class LevelGenerator : MonoBehaviour {
     public Mesh darkGrassMesh, clearRoadMesh;
     public Mesh clearGrassMesh, forwardStripeRoadMesh, backwardStripeRoadMesh;
     public Mesh bothStripeRoadMesh;
+    public static uint numberOfRowsPassed;
     private LevelManager levelManager;
     private Vector3 leftBoundary, rightBoundary;
     private static float halfCube;
@@ -34,7 +35,7 @@ class LevelGenerator : MonoBehaviour {
     void Awake()
     {
         timer = 0.0f;
-        
+        numberOfRowsPassed = 0;
     }
     public GameObject getRowPrefab()
     {
@@ -49,6 +50,7 @@ class LevelGenerator : MonoBehaviour {
             {
                 rows.First.Value.destroyGroup();
                 rows.RemoveFirst();
+                ++numberOfRowsPassed;
             }
             if (rows.Last.Value.isGroupVisible())
             {

@@ -31,6 +31,8 @@ public class Row : MonoBehaviour
     private static float vehicleMaxSpeed,vehicleMinSpeed;
     private float treeProportion;
     private float trunkTimer, trunkSlowSpeed;
+    public float startingMaxAllowedBias;
+    private float maxAllowedDistanceBias;
     private List<bool> occupableRow;
     private LinkedList<GameObject> trunksInWater;
 
@@ -136,6 +138,7 @@ public class Row : MonoBehaviour
         TrunkController.FastSpeed = 320.0f;
         grassHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
         roadHeight = roadPrefab.GetComponent<Renderer>().bounds.size.y;
+        maxAllowedDistanceBias = startingMaxAllowedBias * (Mathf.Pow(1.1f,-LevelGenerator.numberOfRowsPassed)) + 1.0f; 
     }
     void LateUpdate() {
         if (currentType == rowType.Road)
@@ -160,6 +163,7 @@ public class Row : MonoBehaviour
                     if (initialPosition > 0)
                     {
                         float maxAllowedCollision = (rightmostBorder - leftmostBorder) + 2 * rowMarginInUnitCubes * unitCube.x;
+                        maxAllowedCollision *= maxAllowedDistanceBias;
                         float vehicleSpeed = Mathf.Abs(currentVehicle.gameObject.GetComponent<VehicleController>().Speed.x);
                         float collisionPoint = initialPosition / (1 - vehicleSpeed / vehicleMaxSpeed);
                         if (collisionPoint < maxAllowedCollision)
@@ -169,7 +173,7 @@ public class Row : MonoBehaviour
                         return;                    
                 }
             }
-            generateOneVehicle();            
+            generateOneVehicle();           
         }
         else if (currentType == rowType.Water)
         {
