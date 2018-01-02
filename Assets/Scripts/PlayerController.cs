@@ -11,7 +11,8 @@ public class PlayerController : MonoBehaviour {
     private Vector3 initialPosition;
     private bool godMode, playerMoved, willDrown, mustCheckTrunk, justDeletedMovement;
     private float soundTimer, whenToPlay;
-    private bool playSound;
+    private bool playPigSound, playTrunkSound;
+    public AudioClip pigSound, trunkAttachment;
     private class MovementObjective
     {
         public enum movType { Forwards, Backwards, LeftStrafe, RightStrafe}
@@ -138,7 +139,8 @@ public class PlayerController : MonoBehaviour {
         justDeletedMovement = false;
         soundTimer = 4.0f + UnityEngine.Random.Range(0, 2);
         whenToPlay = UnityEngine.Random.value;
-        playSound = false;
+        playPigSound = false;
+        playTrunkSound = false;
 	}
 	
 	// Update is called once per frame
@@ -146,7 +148,7 @@ public class PlayerController : MonoBehaviour {
         soundTimer -= Time.deltaTime;
         if (soundTimer <= 0)
         {
-            playSound = true;
+            playPigSound = true;
         }
         if (currentState != playerState.Dead)
         {
@@ -425,14 +427,27 @@ public class PlayerController : MonoBehaviour {
 
     private void treatSound(float arcCompleted)
     {
-        if (playSound && arcCompleted >= whenToPlay)
+        if (playTrunkSound || playPigSound && arcCompleted >= whenToPlay)
         {
             soundTimer = 4.0f + UnityEngine.Random.Range(0, 2);
             whenToPlay = UnityEngine.Random.value;
-            playSound = false;
-            gameObject.GetComponent<AudioSource>().Play();
+            playPigSound = false;
+            if (!playTrunkSound)
+            {
+                gameObject.GetComponent<AudioSource>().clip = pigSound;
+                gameObject.GetComponent<AudioSource>().volume = 0.1f;
+                gameObject.GetComponent<AudioSource>().Play();
+            }
         }
     }
+
+    private void playTrunkAttachment()
+    {
+        gameObject.GetComponent<AudioSource>().clip = trunkAttachment;
+        gameObject.GetComponent<AudioSource>().volume = 1;
+        gameObject.GetComponent <AudioSource>().Play();
+    }
+
     private void updatePosition()
     {
         if (movementList.Count > 0)
@@ -446,6 +461,7 @@ public class PlayerController : MonoBehaviour {
                 nextObjective.MovementDestination = futurePosition;
                 nextObjective.MovementDirection = (futurePosition - transform.position).normalized;
                 mustCheckTrunk = false;
+                playTrunkSound = true;
             }
             else if (mustCheckTrunk && nextObjective.TargetType == MovementObjective.targType.Water)
             {
@@ -468,13 +484,14 @@ public class PlayerController : MonoBehaviour {
                     if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                        playTrunkAttachment();
                     }                   
                     else if (willDrown)
                     {
                         currentState = playerState.Dead;
                         treatDrowningState();
                     }
-                    movementList.RemoveFirst();
+                    movementList.RemoveFirst();                    
                     justDeletedMovement = true;
                 }
                 else
@@ -497,6 +514,7 @@ public class PlayerController : MonoBehaviour {
                     if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                        playTrunkAttachment();
                     }
                     else if (willDrown)
                     {
@@ -526,6 +544,7 @@ public class PlayerController : MonoBehaviour {
                     if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                        playTrunkAttachment();
                     }
                     else if (willDrown)
                     {
@@ -555,6 +574,7 @@ public class PlayerController : MonoBehaviour {
                     if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                        playTrunkAttachment();
                     }
                     else if (willDrown)
                     {

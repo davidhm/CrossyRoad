@@ -864,6 +864,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerSpeed: 4
   levelManager: {fileID: 903993489}
+  pigSound: {fileID: 8300000, guid: 5491a4af5274fbf46b99a6782c6ccc74, type: 3}
+  trunkAttachment: {fileID: 8300000, guid: a4518708f1a61fe428d674b377d65b76, type: 3}
 --- !u!82 &1734373950
 AudioSource:
   m_ObjectHideFlags: 0
@@ -875,7 +877,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 5491a4af5274fbf46b99a6782c6ccc74, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.2
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 0
   Mute: 0
