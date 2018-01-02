@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour {
     //private static float godModeSpeed = 160.0f;
     private Vector3 initialPosition;
     private bool godMode, playerMoved, willDrown, mustCheckTrunk, justDeletedMovement;
+    private float soundTimer, whenToPlay;
+    private bool playPigSound, playTrunkSound;
+    public AudioClip pigSound, trunkAttachment;
     private class MovementObjective
     {
         public enum movType { Forwards, Backwards, LeftStrafe, RightStrafe}
@@ -134,14 +137,23 @@ public class PlayerController : MonoBehaviour {
         willDrown = false;
         mustCheckTrunk = false;
         justDeletedMovement = false;
+        soundTimer = 4.0f + UnityEngine.Random.Range(0, 2);
+        whenToPlay = UnityEngine.Random.value;
+        playPigSound = false;
+        playTrunkSound = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        soundTimer -= Time.deltaTime;
+        if (soundTimer <= 0)
+        {
+            playPigSound = true;
+        }
         if (currentState != playerState.Dead)
         {
             processInput();
-            updatePosition();
+            updatePosition();            
         }
 	}
 
@@ -413,7 +425,30 @@ public class PlayerController : MonoBehaviour {
             return new Vector3(discreteX, continousPosition.y, discreteZ);
     }
 
-private void updatePosition()
+    private void treatSound(float arcCompleted)
+    {
+        if (playTrunkSound || playPigSound && arcCompleted >= whenToPlay)
+        {
+            soundTimer = 4.0f + UnityEngine.Random.Range(0, 2);
+            whenToPlay = UnityEngine.Random.value;
+            playPigSound = false;
+            if (!playTrunkSound)
+            {
+                gameObject.GetComponent<AudioSource>().clip = pigSound;
+                gameObject.GetComponent<AudioSource>().volume = 0.1f;
+                gameObject.GetComponent<AudioSource>().Play();
+            }
+        }
+    }
+
+    private void playTrunkAttachment()
+    {
+        gameObject.GetComponent<AudioSource>().clip = trunkAttachment;
+        gameObject.GetComponent<AudioSource>().volume = 1;
+        gameObject.GetComponent <AudioSource>().Play();
+    }
+
+    private void updatePosition()
     {
         if (movementList.Count > 0)
         {
@@ -426,6 +461,7 @@ private void updatePosition()
                 nextObjective.MovementDestination = futurePosition;
                 nextObjective.MovementDirection = (futurePosition - transform.position).normalized;
                 mustCheckTrunk = false;
+                playTrunkSound = true;
             }
             else if (mustCheckTrunk && nextObjective.TargetType == MovementObjective.targType.Water)
             {
@@ -448,18 +484,21 @@ private void updatePosition()
                     if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                        playTrunkAttachment();
+                        playTrunkSound = false;
                     }                   
                     else if (willDrown)
                     {
                         currentState = playerState.Dead;
                         treatDrowningState();
                     }
-                    movementList.RemoveFirst();
+                    movementList.RemoveFirst();                    
                     justDeletedMovement = true;
                 }
                 else
                 {
                     float distance = (transform.position.z - movementList.First.Value.MovementOrigin.z)/LevelGenerator.UnitCube.z;
+                    treatSound(distance);
                     float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
                     transform.position = new Vector3(updatedPosition.x, 
                         levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
@@ -476,6 +515,8 @@ private void updatePosition()
                     if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                        playTrunkAttachment();
+                        playTrunkSound = false;
                     }
                     else if (willDrown)
                     {
@@ -488,6 +529,7 @@ private void updatePosition()
                 else
                 {
                     float distance = (movementList.First.Value.MovementOrigin.z - transform.position.z)/LevelGenerator.UnitCube.z;
+                    treatSound(distance);
                     float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
                     transform.position = new Vector3(updatedPosition.x,
                         levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
@@ -504,6 +546,8 @@ private void updatePosition()
                     if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                        playTrunkAttachment();
+                        playTrunkSound = false;
                     }
                     else if (willDrown)
                     {
@@ -516,6 +560,7 @@ private void updatePosition()
                 else
                 {
                     float distance = (transform.position.x - movementList.First.Value.MovementOrigin.x)/LevelGenerator.UnitCube.z;
+                    treatSound(distance);
                     float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
                     transform.position = new Vector3(updatedPosition.x,
                         levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);
@@ -532,6 +577,8 @@ private void updatePosition()
                     if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
+                        playTrunkAttachment();
+                        playTrunkSound = false;
                     }
                     else if (willDrown)
                     {
@@ -544,6 +591,7 @@ private void updatePosition()
                 else
                 {
                     float distance = (movementList.First.Value.MovementOrigin.x - transform.position.x)/LevelGenerator.UnitCube.z;
+                    treatSound(distance);
                     float heightOffset = LevelGenerator.UnitCube.y * Mathf.Sin(Mathf.PI * distance);
                     transform.position = new Vector3(updatedPosition.x,
                         levelManager.GetComponent<LevelManager>().InitialPlayerPosition.y + heightOffset, updatedPosition.z);

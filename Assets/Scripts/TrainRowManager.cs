@@ -3,6 +3,8 @@ public class TrainRowManager : MonoBehaviour
 {
     public GameObject railPrefab, trainPrefab, railSignalPrefab;
     public GameObject roadPrefab;
+    private GameObject locomotive;
+    public AudioClip trainPassingByLeft, trainPassingByRight;
     public Mesh trainWagon, trainLocomotive;
     public Mesh railSignalOn, railSignalOff;
     public float maxSecondsForTrain, minSecondsForTrain;
@@ -114,7 +116,30 @@ public class TrainRowManager : MonoBehaviour
     {       
         trainTimer -= Time.deltaTime;
         generateEvents();
-        catchEvents();                
+        catchEvents();
+        playTrainPassingBy();                
+    }
+
+    private void playTrainPassingBy()
+    {
+        if (locomotive != null && 
+            (incomingFromLeft && locomotive.transform.position.x >
+            (Row.rightmostBorder - Row.leftmostBorder)/2.0f ||
+            !incomingFromLeft && locomotive.transform.position.x <
+            (Row.rightmostBorder - Row.leftmostBorder) / 2.0f))
+        {
+            if (incomingFromLeft)
+            {
+                gameObject.GetComponent<AudioSource>().clip = trainPassingByLeft;
+                gameObject.GetComponent<AudioSource>().Play();
+            }
+            else
+            {
+                gameObject.GetComponent<AudioSource>().clip = trainPassingByRight;
+                gameObject.GetComponent<AudioSource>().Play();
+            }
+            locomotive = null;
+        }
     }
 
     private void generateEvents()
@@ -169,8 +194,7 @@ public class TrainRowManager : MonoBehaviour
 
     private void reproduceWarningSound()
     {
-        if (railSignal.GetComponent<Renderer>().isVisible)
-            railSignal.GetComponent<AudioSource>().Play();
+        railSignal.GetComponent<AudioSource>().Play();
     }
 
     private void designalTrain()
@@ -201,6 +225,7 @@ public class TrainRowManager : MonoBehaviour
             if (i == spawningPoint)
             {
                 wagonInstance.GetComponent<MeshFilter>().mesh = trainLocomotive;
+                locomotive = wagonInstance;
                 i = incomingFromLeft ? i - locomotiveWidth - wagonWidth :
                     i + locomotiveWidth + wagonWidth;                
             }

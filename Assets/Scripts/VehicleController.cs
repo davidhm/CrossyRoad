@@ -7,6 +7,10 @@ public class VehicleController : MonoBehaviour {
     private Vector3 speed;
     private bool justSpawned;
     private bool incomingFromLeft;
+    public AudioClip carHonk, carRumble;
+    public float soundProbability;
+    private float positionToEmit;
+    private bool soundEmitted;
 
     public Vector3 Speed
     {
@@ -47,11 +51,40 @@ public class VehicleController : MonoBehaviour {
         }
     }  
 
-    // Update is called once per frame
+    void Start()
+    {
+        float lowerLimit = (Row.rightmostBorder - Row.leftmostBorder) / 2.0f;
+        lowerLimit -= 1.5f * LevelGenerator.UnitCube.x + Random.Range(0, 1.5f * LevelGenerator.UnitCube.x);
+        float upperLimit = (Row.rightmostBorder - Row.leftmostBorder) / 2.0f;
+        upperLimit += 1.5f * LevelGenerator.UnitCube.x + Random.Range(0, 1.5f * LevelGenerator.UnitCube.x);
+        positionToEmit = Random.Range(lowerLimit, upperLimit);
+        soundEmitted = Random.value > soundProbability;
+    }
     void Update () {
         transform.Translate(speed * Time.deltaTime);
         checkRowOverflow();
+        produceSound();
 	}
+
+    private void produceSound()
+    {
+        if (!soundEmitted &&
+            (incomingFromLeft && transform.position.x > positionToEmit ||
+            !incomingFromLeft && transform.position.x < positionToEmit))
+        {
+            soundEmitted = true;
+            if (Random.value > 0.5)
+            {
+                gameObject.GetComponent<AudioSource>().clip = carHonk;
+                gameObject.GetComponent<AudioSource>().Play();
+            }
+            else
+            {
+                gameObject.GetComponent<AudioSource>().clip = carRumble;
+                gameObject.GetComponent<AudioSource>().Play();
+            }
+        }
+    }
 
     private void checkRowOverflow()
     {
