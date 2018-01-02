@@ -485,6 +485,7 @@ public class PlayerController : MonoBehaviour {
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
                         playTrunkAttachment();
+                        playTrunkSound = false;
                     }                   
                     else if (willDrown)
                     {
@@ -515,6 +516,7 @@ public class PlayerController : MonoBehaviour {
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
                         playTrunkAttachment();
+                        playTrunkSound = false;
                     }
                     else if (willDrown)
                     {
@@ -545,6 +547,7 @@ public class PlayerController : MonoBehaviour {
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
                         playTrunkAttachment();
+                        playTrunkSound = false;
                     }
                     else if (willDrown)
                     {
@@ -575,6 +578,7 @@ public class PlayerController : MonoBehaviour {
                     {
                         levelManager.GetComponent<LevelManager>().attachPlayerToTrunk(gameObject);
                         playTrunkAttachment();
+                        playTrunkSound = false;
                     }
                     else if (willDrown)
                     {
