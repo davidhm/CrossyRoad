@@ -48,16 +48,6 @@ public class TrainRowManager : MonoBehaviour
         trainTimer = UnityEngine.Random.Range(minSecondsForTrain, maxSecondsForTrain);
     }
 
-    public bool isRailRoadVisible()
-    {
-        for (int i = 0; i < transform.childCount; ++i)
-        {
-            if (transform.GetChild(i).GetComponent<Renderer>().isVisible)
-                return true;
-        }
-        return false;
-    }
-
     public void generateInitialElements()
     {
         generateRandomTimer();

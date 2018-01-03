@@ -96,7 +96,7 @@ class RowGroup
     {
         for (int k = 0; k < numberOfRows; ++k)
         {
-            bool isRailRoad = UnityEngine.Random.value > 0.9;
+            bool isRailRoad = UnityEngine.Random.value > 0.9f;
             GameObject nextRow = isRailRoad ? null : UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             if (!isRailRoad && numberOfRows > 1)
             {
@@ -276,19 +276,12 @@ class RowGroup
     public bool isGroupVisible()
     {
         for (int i = 0; i < rowGroup.transform.childCount; ++i)
-        {
-            if (rowGroup.transform.GetChild(i).name == "RailRoad")
+        {             
+            for (int j = 0; j < rowGroup.transform.GetChild(i).childCount; ++j)
             {
-                return rowGroup.transform.GetChild(i).GetComponent<TrainRowManager>().isRailRoadVisible();
-            }
-            else
-            { 
-                for (int j = 0; j < rowGroup.transform.GetChild(i).childCount; ++j)
-                {
-                    if (rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.GetComponent<Renderer>().isVisible)
-                        return true;
-                }
-            }
+                if (rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.GetComponent<Renderer>().isVisible)
+                    return true;
+            }            
         }
         return false;
     }
