@@ -3,7 +3,7 @@ public class TrainRowManager : MonoBehaviour
 {
     public GameObject railPrefab, trainPrefab, railSignalPrefab;
     public GameObject roadPrefab;
-    public GameObject assetHolder;
+    private GameObject assetHolder;
     private GameObject locomotive;
     public AudioClip trainPassingByLeft, trainPassingByRight;
     public Mesh railSignalOn, railSignalOff;
@@ -40,6 +40,19 @@ public class TrainRowManager : MonoBehaviour
         set
         {
             incomingFromLeft = value;
+        }
+    }
+
+    public GameObject AssetHolder
+    {
+        get
+        {
+            return assetHolder;
+        }
+
+        set
+        {
+            assetHolder = value;
         }
     }
 

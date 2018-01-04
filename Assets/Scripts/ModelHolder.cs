@@ -13,6 +13,8 @@ public class ModelHolder : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    public bool firstRows;
+
     //Cars
     public Mesh redCarNormal, redCarWinter;
     public Mesh blueCarNormal, blueCarWinter;
@@ -50,7 +52,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 float value = Random.value;
                 if (value < 0.33f)
@@ -89,7 +91,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 float value = Random.value;
                 if (value < 0.33f)
@@ -128,7 +130,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return plainRoadNormal;
             }
@@ -143,7 +145,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return forwardStripNormal;
             }
@@ -158,7 +160,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return backStripNormal;
             }
@@ -173,7 +175,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return bothStripNormal;
             }
@@ -188,7 +190,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return clearGrassNormal;
             }
@@ -203,7 +205,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return darkGrassNormal;
             }
@@ -218,7 +220,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return clearWaterNormal;
             }
@@ -233,7 +235,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return darkWaterNormal;
             }
@@ -248,7 +250,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return boulderNormal;
             }
@@ -263,7 +265,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return treeNormal;
             }
@@ -278,7 +280,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return trainLocomotiveNormal;
             }
@@ -293,7 +295,7 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 return trainWagonNormal;
             }
@@ -309,7 +311,7 @@ public class ModelHolder : MonoBehaviour
         get
         {
             TrunkReturn returned = new TrunkReturn();
-            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
                 float value = Random.value;
                 if (value < 0.33f)

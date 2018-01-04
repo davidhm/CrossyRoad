@@ -13,7 +13,7 @@ public class Row : MonoBehaviour
     public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab,boulderPrefab;
     public GameObject truckPrefab;
     public GameObject waterPrefab, trunkPrefab;
-    public GameObject assetHolder;  
+    private GameObject assetHolder;
     private Mesh stripedRoadMesh;
     public static float leftmostBorder;
     public static float rightmostBorder;
@@ -121,7 +121,20 @@ public class Row : MonoBehaviour
         {
             stripedRoadMesh = value;
         }
-    }    
+    }
+
+    public GameObject AssetHolder
+    {
+        get
+        {
+            return assetHolder;
+        }
+
+        set
+        {
+            assetHolder = value;
+        }
+    }
 
     public static void setUnitCube(Vector3 unitCube)
     {
@@ -272,6 +285,16 @@ public class Row : MonoBehaviour
             i += unitCube.x)
         {          
             GameObject grassSlab = (GameObject)Instantiate(grassPrefab, transform);
+            if (UnityEngine.Random.value > 0.5)
+            {
+                grassSlab.GetComponent<MeshFilter>().mesh =
+                    assetHolder.GetComponent<ModelHolder>().GrassClear;
+            }
+            else
+            {
+                grassSlab.GetComponent<MeshFilter>().mesh =
+                    assetHolder.GetComponent<ModelHolder>().GrassDark;
+            }
             float grassHeight = grassPrefab.GetComponent<Renderer>().bounds.extents.y;
             grassSlab.transform.position = new Vector3(i, grassHeight, transform.position.z);
             if (i < leftmostBorder || i > rightmostBorder)
@@ -314,6 +337,7 @@ public class Row : MonoBehaviour
             j <= rowMarginInUnitCubes*unitCube.x + rightmostBorder - halfCube; j += unitCube.x)
         {
             GameObject roadSlab = (GameObject) Instantiate(roadPrefab, transform);
+            roadSlab.GetComponent<MeshFilter>().mesh = assetHolder.GetComponent<ModelHolder>().RoadClear;
             if (Mathf.RoundToInt((j - (leftmostBorder - rowMarginInUnitCubes * unitCube.x + halfCube)) / unitCube.x) % 2 == 0)
                 roadSlab.GetComponent<MeshFilter>().mesh = stripedRoadMesh;
             roadSlab.transform.position = new Vector3(j,0.0f,

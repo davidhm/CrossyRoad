@@ -48,6 +48,7 @@ class RowGroup
         {
             GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
+            nextRow.GetComponent<Row>().AssetHolder = generator.ModelHolder;
             nextRow.transform.position = new Vector3(0, 0, nextRowZ);
             nextRowZ += LevelGenerator.UnitCube.z;
             setRandomGrassParameters(nextRow.GetComponent<Row>());
@@ -65,7 +66,8 @@ class RowGroup
             for (int k = 0; k < numberOfRows; ++k)
             {
                 GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
-                nextRow.GetComponent<Row>().CurrentType = rowType.Grass;                
+                nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
+                nextRow.GetComponent<Row>().AssetHolder = generator.ModelHolder;
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
                 nextRowZ += LevelGenerator.UnitCube.z;
                 setRandomGrassParameters(nextRow.GetComponent<Row>());
@@ -81,6 +83,7 @@ class RowGroup
             {
                 GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
                 nextRow.GetComponent<Row>().CurrentType = rowType.Water;
+                nextRow.GetComponent<Row>().AssetHolder = generator.ModelHolder;
                 nextRow.GetComponent<Row>().IncomingFromLeft = incomingFromLeft;
                 incomingFromLeft = !incomingFromLeft;
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
@@ -100,6 +103,7 @@ class RowGroup
             GameObject nextRow = isRailRoad ? null : UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             if (!isRailRoad && numberOfRows > 1)
             {
+                nextRow.GetComponent<Row>().AssetHolder = generator.ModelHolder;
                 if (k == 0)
                 {
                     nextRow.GetComponent<Row>().StripedRoadMesh = generator.ForwardStripeRoadMesh;
@@ -114,7 +118,10 @@ class RowGroup
                 }
             }
             else if (!isRailRoad)
+            {
+                nextRow.GetComponent<Row>().AssetHolder = generator.ModelHolder;
                 nextRow.GetComponent<Row>().StripedRoadMesh = generator.ClearRoadMesh;
+            }
             if (!isRailRoad)
             {
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
@@ -127,6 +134,7 @@ class RowGroup
             if (isRailRoad)
             {
                 GameObject trainRow = UnityEngine.Object.Instantiate(generator.trainRowPrefab, rowGroup.transform);
+                trainRow.GetComponent<TrainRowManager>().AssetHolder = generator.ModelHolder;
                 trainRow.name = "RailRoad";
                 trainRow.transform.position = new Vector3(0, 0, nextRowZ);
                 nextRowZ += LevelGenerator.UnitCube.z;

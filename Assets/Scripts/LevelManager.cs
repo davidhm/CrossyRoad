@@ -11,6 +11,7 @@ public sealed class LevelManager : MonoBehaviour
     public Vector3 unitCube;
     public GameObject scoreCanvas;
     public GameObject scoreHolder;
+    public GameObject assetHolder;
     public float vehicleMaxSpeed, vehicleMinSpeed;
     private GameObject generatorRuntime;
     private Vector3 initialPlayerPosition;
@@ -31,7 +32,11 @@ public sealed class LevelManager : MonoBehaviour
         generatorRuntime = (GameObject)Instantiate(generatorPrefab);
         generatorRuntime.GetComponent<LevelGenerator>().setLevelManager(this);
         LevelGenerator.UnitCube = unitCube;
+        assetHolder.GetComponent<ModelHolder>().firstRows = true;
+        generatorRuntime.GetComponent<LevelGenerator>().ModelHolder = assetHolder;
         generatorRuntime.GetComponent<LevelGenerator>().generateInitialArea();
+        assetHolder.GetComponent<ModelHolder>().firstRows = false;
+        PlayerController.NumberOfRowsPassed = 0;
         initialPlayerPosition = player.transform.position;
         firstPlayerMove = false;
     }

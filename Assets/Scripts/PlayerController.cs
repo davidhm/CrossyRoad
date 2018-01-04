@@ -136,6 +136,11 @@ public class PlayerController : MonoBehaviour {
         {
             return numberOfRowsPassed;
         }
+
+        set
+        {
+            numberOfRowsPassed = value;
+        }
     }
 
     public bool JustIncreasedRow

@@ -5,7 +5,7 @@ using System;
 class LevelGenerator : MonoBehaviour {
     public GameObject carPrefab, truckPrefab,treePrefab,grassPrefab,rowPrefab;
     public GameObject trainRowPrefab;
-    public GameObject modelHolder;
+    private GameObject modelHolder;
     public static uint numberOfRowsPassed;
     private LevelManager levelManager;
     private Vector3 leftBoundary, rightBoundary;
@@ -77,6 +77,19 @@ class LevelGenerator : MonoBehaviour {
         get
         {
             return modelHolder.GetComponent<ModelHolder>().RoadClear;
+        }
+    }
+
+    public GameObject ModelHolder
+    {
+        get
+        {
+            return modelHolder;
+        }
+
+        set
+        {
+            modelHolder = value;
         }
     }
 

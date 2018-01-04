@@ -284,6 +284,7 @@ MonoBehaviour:
   unitCube: {x: 40, y: 40, z: 40}
   scoreCanvas: {fileID: 2088017130}
   scoreHolder: {fileID: 1587340011}
+  assetHolder: {fileID: 1823922015}
   vehicleMaxSpeed: 240
   vehicleMinSpeed: 160
   firstMenu: {fileID: 1823548303}
@@ -1277,13 +1278,13 @@ MonoBehaviour:
   greenTruckNormal: {fileID: 4300000, guid: 3c4055f2cb862da4ab9c86a93cd02bf2, type: 3}
   greenTruckWinter: {fileID: 4300000, guid: e59fbf4ce8c4fe14fb94d5de6fb64481, type: 3}
   plainRoadNormal: {fileID: 4300000, guid: 6a7b5ef63f8ac99459ce299de422a2da, type: 3}
-  plainRoadWinter: {fileID: 0}
+  plainRoadWinter: {fileID: 4300000, guid: bb867a40b85a3e6409d7a5788d85ad30, type: 3}
   backStripNormal: {fileID: 4300000, guid: d6824261eb999c04d96452d8c1a051a2, type: 3}
-  backStripWinter: {fileID: 0}
+  backStripWinter: {fileID: 4300000, guid: f85d4442ecbb4a044a6014bc8b2252ed, type: 3}
   forwardStripNormal: {fileID: 4300000, guid: 77727f27e5f184044b9a7e145bb14541, type: 3}
-  forwardStripWinter: {fileID: 0}
+  forwardStripWinter: {fileID: 4300000, guid: aa71c2efd159c4243be7071d8e6f31f6, type: 3}
   bothStripNormal: {fileID: 4300000, guid: 57d8c97faf641454fa928aec31c02b1c, type: 3}
-  bothStripWinter: {fileID: 0}
+  bothStripWinter: {fileID: 4300000, guid: 8dbba4b8cd4c7b14a9bf2338580dea01, type: 3}
   clearGrassNormal: {fileID: 4300000, guid: fdf7a4ba89162a24e9ab8e6485de0817, type: 3}
   clearGrassWinter: {fileID: 4300000, guid: 67c68789ecc06b047a61769e9e3ba5e4, type: 3}
   darkGrassNormal: {fileID: 4300000, guid: 0a45c2f4d46a4cc44bf8ef63c95f197c, type: 3}
@@ -1306,8 +1307,9 @@ MonoBehaviour:
   trunkSmallWinter: {fileID: 4300000, guid: bdf70b50636e5344aab4066bc22317bc, type: 3}
   trunkMediumNormal: {fileID: 4300000, guid: c12a51ef1b7afb343a5712ac579ed53e, type: 3}
   trunkMediumWinter: {fileID: 4300000, guid: 1bf8ea4c838069645919fbef2b9299c1, type: 3}
-  trunkLargeNormal: {fileID: 4300000, guid: 980deb7946b2a5743b86ad5d0601332e, type: 3}
+  trunkLargeNormal: {fileID: 4300000, guid: c12a51ef1b7afb343a5712ac579ed53e, type: 3}
   trunkLargeWinter: {fileID: 4300000, guid: 980deb7946b2a5743b86ad5d0601332e, type: 3}
+  winterCutoff: 20
 --- !u!1 &2018780944
 GameObject:
   m_ObjectHideFlags: 0
