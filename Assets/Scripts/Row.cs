@@ -12,12 +12,8 @@ public class Row : MonoBehaviour
 {
     public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab,boulderPrefab;
     public GameObject truckPrefab;
-    public GameObject waterPrefab, trunkPrefab;  
-    public Mesh redCarMesh, blueCarMesh, greenCarMesh;
-    public Mesh redTruckMesh, blueTruckMesh, greenTruckMesh;
-    public Mesh darkGrassMesh, clearGrassMesh;
-    public Mesh smallTrunkMesh, mediumTrunkMesh, largeTrunkMesh;
-    public Mesh darkWaterMesh, clearWaterMesh;
+    public GameObject waterPrefab, trunkPrefab;
+    public GameObject assetHolder;  
     private Mesh stripedRoadMesh;
     public static float leftmostBorder;
     public static float rightmostBorder;
@@ -220,7 +216,13 @@ public class Row : MonoBehaviour
             GameObject waterInstance = (GameObject)Instantiate(waterPrefab, transform);
             if (i < leftmostBorder || i > rightmostBorder)
             {
-                waterInstance.GetComponent<MeshFilter>().mesh = darkWaterMesh;
+                waterInstance.GetComponent<MeshFilter>().mesh =
+                    assetHolder.GetComponent<ModelHolder>().WaterDark;
+            }
+            else
+            {
+                waterInstance.GetComponent<MeshFilter>().mesh =
+                    assetHolder.GetComponent<ModelHolder>().WaterClear;
             }
             float waterHeight = -waterPrefab.GetComponent<Renderer>().bounds.extents.y;
             waterInstance.transform.position = new Vector3(i, waterHeight, transform.position.z);
@@ -254,21 +256,12 @@ public class Row : MonoBehaviour
 
     private Mesh getRandomTrunkMeshAndSetTimer()
     {
-        float randValue = UnityEngine.Random.value;
         trunkTimer = 2.5f + UnityEngine.Random.Range(0.0f, 0.5f);
-        if (randValue < 0.1f)
-        {
-            return smallTrunkMesh;
-        }
-        else if (randValue >= 0.1f && randValue < 0.6f)
-        {
-            return mediumTrunkMesh;
-        }
-        else
-        {
+        ModelHolder.TrunkReturn returnedMesh = 
+            assetHolder.GetComponent<ModelHolder>().Trunk;
+        if (returnedMesh.isLarge)
             trunkTimer += 0.5f;
-            return largeTrunkMesh;
-        }
+        return returnedMesh.returnedMesh;
     }
 
     private void generateGrassRow()
@@ -284,6 +277,8 @@ public class Row : MonoBehaviour
             if (i < leftmostBorder || i > rightmostBorder)
             {
                 GameObject tree = (GameObject)Instantiate(treePrefab, transform);
+                tree.GetComponent<MeshFilter>().mesh =
+                    assetHolder.GetComponent<ModelHolder>().Tree;
                 float treeHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                 tree.transform.position = new Vector3(i, treeHeight, transform.position.z);
             }
@@ -292,12 +287,16 @@ public class Row : MonoBehaviour
                 if (UnityEngine.Random.value > 0.5)
                 {
                     GameObject tree = (GameObject)Instantiate(treePrefab, transform);
+                    tree.GetComponent<MeshFilter>().mesh =
+                        assetHolder.GetComponent<ModelHolder>().Tree;
                     float treeHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                     tree.transform.position = new Vector3(i, treeHeight, transform.position.z);                    
                 }
                 else
                 {
                     GameObject boulder = (GameObject)Instantiate(boulderPrefab, transform);
+                    boulder.GetComponent<MeshFilter>().mesh =
+                        assetHolder.GetComponent<ModelHolder>().Boulder;
                     float boulderHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                     boulder.transform.position = new Vector3(i, boulderHeight, transform.position.z);
                 }
@@ -382,36 +381,16 @@ public class Row : MonoBehaviour
 
     private void assigntruckModel(GameObject truckInstance)
     {
-        float randValue = UnityEngine.Random.value;
-        if (randValue < 0.33)
-        {
-            truckInstance.GetComponent<MeshFilter>().mesh = redTruckMesh;
-        }
-        else if (randValue >= 0.33 && randValue < 0.66)
-        {
-            truckInstance.GetComponent<MeshFilter>().mesh = redTruckMesh;
-        }
-        else
-        {
-            truckInstance.GetComponent<MeshFilter>().mesh = blueTruckMesh;
-        }
+        Mesh truckModel =
+            assetHolder.GetComponent<ModelHolder>().Truck;
+        truckInstance.GetComponent<MeshFilter>().mesh = truckModel;
     }
 
     private void assignCarModel(GameObject carInstance)
     {
-        float randValue = UnityEngine.Random.value;
-        if (randValue < 0.33)
-        {
-            carInstance.GetComponent<MeshFilter>().mesh = redCarMesh;
-        }
-        else if (randValue >= 0.33 && randValue < 0.66)
-        {
-            carInstance.GetComponent<MeshFilter>().mesh = greenCarMesh;
-        }
-        else
-        {
-            carInstance.GetComponent<MeshFilter>().mesh = blueCarMesh;
-        }
+        Mesh carModel =
+            assetHolder.GetComponent<ModelHolder>().Car;
+        carInstance.GetComponent<MeshFilter>().mesh = carModel;
     }
 
     public bool isTrunkInPosition(Vector3 position)

@@ -1,6 +1,13 @@
 ﻿using UnityEngine;
 public class ModelHolder : MonoBehaviour
 {
+
+    public class TrunkReturn
+    {
+        public Mesh returnedMesh;
+        public bool isLarge;
+    }
+
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -37,11 +44,44 @@ public class ModelHolder : MonoBehaviour
     public Mesh trunkMediumNormal, trunkMediumWinter;
     public Mesh trunkLargeNormal, trunkLargeWinter;
 
+    public uint winterCutoff;
+
     public Mesh Car
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                float value = Random.value;
+                if (value < 0.33f)
+                {
+                    return redCarNormal;
+                }
+                else if (value >= 0.33f && value < 0.66f)
+                {
+                    return blueCarNormal;
+                }
+                else
+                {
+                    return greenCarNormal;
+                }
+            }
+            else
+            {
+                float value = Random.value;
+                if (value < 0.33f)
+                {
+                    return redCarWinter;
+                }
+                else if (value >= 0.33f && value < 0.66f)
+                {
+                    return blueCarWinter;
+                }
+                else
+                {
+                    return greenCarWinter;
+                }
+            }            
         }
     }
 
@@ -49,7 +89,38 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                float value = Random.value;
+                if (value < 0.33f)
+                {
+                    return redTruckNormal;
+                }
+                else if (value >= 0.33f && value < 0.66f)
+                {
+                    return blueTruckNormal;
+                }
+                else
+                {
+                    return greenTruckNormal;
+                }
+            }
+            else
+            {
+                float value = Random.value;
+                if (value < 0.33f)
+                {
+                    return redTruckWinter;
+                }
+                else if (value >= 0.33f && value < 0.66f)
+                {
+                    return blueTruckWinter;
+                }
+                else
+                {
+                    return greenTruckWinter;
+                }
+            }
         }
     }
 
@@ -57,7 +128,14 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return plainRoadNormal;
+            }
+            else
+            {
+                return plainRoadWinter;
+            }
         }
     }
 
@@ -65,7 +143,14 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return forwardStripNormal;
+            }
+            else
+            {
+                return forwardStripWinter;
+            }
         }
     }
 
@@ -73,7 +158,14 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return backStripNormal;
+            }
+            else
+            {
+                return backStripWinter;
+            }
         }
     }
 
@@ -81,7 +173,14 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return bothStripNormal;
+            }
+            else
+            {
+                return bothStripWinter;
+            }
         }
     }
 
@@ -89,7 +188,14 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return clearGrassNormal;
+            }
+            else
+            {
+                return clearGrassWinter;
+            }
         }
     }
 
@@ -97,7 +203,14 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return darkGrassNormal;
+            }
+            else
+            {
+                return darkGrassWinter;
+            }
         }
     }
 
@@ -105,7 +218,14 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return clearWaterNormal;
+            }
+            else
+            {
+                return clearWaterWinter;
+            }
         }
     }
 
@@ -113,7 +233,14 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return darkWaterNormal;
+            }
+            else
+            {
+                return darkWaterWinter;
+            }
         }
     }
 
@@ -121,7 +248,14 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return boulderNormal;
+            }
+            else
+            {
+                return boulderWinter;
+            }
         }
     }
 
@@ -129,7 +263,14 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return treeNormal;
+            }
+            else
+            {
+                return treeWinter;
+            }
         }
     }
 
@@ -137,7 +278,14 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return trainLocomotiveNormal;
+            }
+            else
+            {
+                return trainLocomotiveWinter;
+            }
         }
     }
 
@@ -145,15 +293,66 @@ public class ModelHolder : MonoBehaviour
     {
         get
         {
-            return redCarNormal;
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                return trainWagonNormal;
+            }
+            else
+            {
+                return trainWagonWinter;
+            }
         }
     }
 
-    public Mesh Trunk
+    public TrunkReturn Trunk
     {
         get
         {
-            return redCarNormal;
+            TrunkReturn returned = new TrunkReturn();
+            if (PlayerController.NumberOfRowsPassed < winterCutoff)
+            {
+                float value = Random.value;
+                if (value < 0.33f)
+                {
+                    returned.returnedMesh = trunkSmallNormal;
+                    returned.isLarge = false;
+                    return returned;   
+                }
+                else if (value >= 0.33f && value < 0.66f)
+                {
+                    returned.returnedMesh = trunkMediumNormal;
+                    returned.isLarge = false;
+                    return returned;
+                }
+                else
+                {
+                    returned.returnedMesh = trunkLargeNormal;
+                    returned.isLarge = true;
+                    return returned;
+                }
+            }
+            else
+            {
+                float value = Random.value;
+                if (value < 0.33f)
+                {
+                    returned.returnedMesh = trunkSmallWinter;
+                    returned.isLarge = false;
+                    return returned;
+                }
+                else if (value >= 0.33f && value < 0.66f)
+                {
+                    returned.returnedMesh = trunkMediumWinter;
+                    returned.isLarge = false;
+                    return returned;
+                }
+                else
+                {
+                    returned.returnedMesh = trunkLargeWinter;
+                    returned.isLarge = false;
+                    return returned;
+                }
+            }
         }
     }
 }

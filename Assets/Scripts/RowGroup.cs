@@ -102,19 +102,19 @@ class RowGroup
             {
                 if (k == 0)
                 {
-                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.forwardStripeRoadMesh;
+                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.ForwardStripeRoadMesh;
                 }
                 else if (k == numberOfRows - 1)
                 {
-                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.backwardStripeRoadMesh;
+                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.BackwardStripeRoadMesh;
                 }
                 else
                 {
-                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.bothStripeRoadMesh;
+                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.BothStripeRoadMesh;
                 }
             }
             else if (!isRailRoad)
-                nextRow.GetComponent<Row>().StripedRoadMesh = generator.clearRoadMesh;
+                nextRow.GetComponent<Row>().StripedRoadMesh = generator.ClearRoadMesh;
             if (!isRailRoad)
             {
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);

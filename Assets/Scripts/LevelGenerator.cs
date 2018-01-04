@@ -5,9 +5,7 @@ using System;
 class LevelGenerator : MonoBehaviour {
     public GameObject carPrefab, truckPrefab,treePrefab,grassPrefab,rowPrefab;
     public GameObject trainRowPrefab;
-    public Mesh darkGrassMesh, clearRoadMesh;
-    public Mesh clearGrassMesh, forwardStripeRoadMesh, backwardStripeRoadMesh;
-    public Mesh bothStripeRoadMesh;
+    public GameObject modelHolder;
     public static uint numberOfRowsPassed;
     private LevelManager levelManager;
     private Vector3 leftBoundary, rightBoundary;
@@ -29,6 +27,56 @@ class LevelGenerator : MonoBehaviour {
         {
             unitCube = value;
             halfCube = value.z / 2.0f;
+        }
+    }
+
+    public Mesh BothStripeRoadMesh
+    {
+        get
+        {
+            return modelHolder.GetComponent<ModelHolder>().RoadBothStrip;
+        }
+    }
+
+    public Mesh ClearGrassMesh
+    {
+        get
+        {
+            return modelHolder.GetComponent<ModelHolder>().GrassClear;
+        }
+    }
+
+    public Mesh ForwardStripeRoadMesh
+    {
+        get
+        {
+            return modelHolder.GetComponent<ModelHolder>().RoadForwardStrip;
+        }
+
+    }
+
+    public Mesh BackwardStripeRoadMesh
+    {
+        get
+        {
+            return modelHolder.GetComponent<ModelHolder>().RoadBackwardStrip;
+        }
+
+    }
+
+    public Mesh DarkGrassMesh
+    {
+        get
+        {
+            return modelHolder.GetComponent<ModelHolder>().GrassDark;
+        }
+    }
+
+    public Mesh ClearRoadMesh
+    {
+        get
+        {
+            return modelHolder.GetComponent<ModelHolder>().RoadClear;
         }
     }
 

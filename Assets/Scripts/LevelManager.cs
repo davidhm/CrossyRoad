@@ -50,7 +50,7 @@ public sealed class LevelManager : MonoBehaviour
         if (player.GetComponent<PlayerController>().JustIncreasedRow)
         {
             scoreHolder.GetComponent<ScoreHolder>().CurrentPlayerScore = 
-                player.GetComponent<PlayerController>().NumberOfRowsPassed;
+                PlayerController.NumberOfRowsPassed;
             drawPlayerScore();
         }
     }
@@ -64,11 +64,11 @@ public sealed class LevelManager : MonoBehaviour
     private void generalLoss()
     {
         cameraObject.GetComponent<CameraController>().CurrentState = cameraStates.PlayerDead;
-        if (player.GetComponent<PlayerController>().NumberOfRowsPassed >
+        if (PlayerController.NumberOfRowsPassed >
             scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore)
         {
-            scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore = 
-                player.GetComponent<PlayerController>().NumberOfRowsPassed;
+            scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore =
+                PlayerController.NumberOfRowsPassed;
         }
         scoreCanvas.transform.Find("TopScore").GetComponent<Text>().text =
             "TOP " + scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore.ToString();

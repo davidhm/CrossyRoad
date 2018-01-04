@@ -3,9 +3,9 @@ public class TrainRowManager : MonoBehaviour
 {
     public GameObject railPrefab, trainPrefab, railSignalPrefab;
     public GameObject roadPrefab;
+    public GameObject assetHolder;
     private GameObject locomotive;
     public AudioClip trainPassingByLeft, trainPassingByRight;
-    public Mesh trainWagon, trainLocomotive;
     public Mesh railSignalOn, railSignalOff;
     public float maxSecondsForTrain, minSecondsForTrain;
     public float trainSpeed;
@@ -195,12 +195,14 @@ public class TrainRowManager : MonoBehaviour
     private void spawnTrain()
     {
         GameObject wagonInstance = Instantiate(trainPrefab, transform);
-        wagonInstance.GetComponent<MeshFilter>().mesh = trainLocomotive;
+        wagonInstance.GetComponent<MeshFilter>().mesh = 
+            assetHolder.GetComponent<ModelHolder>().TrainLocomotive;
         float locomotiveWidth = wagonInstance.GetComponent<Renderer>().bounds.extents.x;
         float spawningPoint = incomingFromLeft ?
             Row.leftmostBorder - Row.rowMarginInUnitCubes * LevelGenerator.UnitCube.x - locomotiveWidth :
             Row.rightmostBorder + Row.rowMarginInUnitCubes * LevelGenerator.UnitCube.x + locomotiveWidth;
-        wagonInstance.GetComponent<MeshFilter>().mesh = trainWagon;
+        wagonInstance.GetComponent<MeshFilter>().mesh =
+            assetHolder.GetComponent<ModelHolder>().TrainWagon;
         float wagonWidth = wagonInstance.GetComponent<Renderer>().bounds.extents.x;
         int numberOfWagons = 10;
         float i = spawningPoint;
@@ -214,7 +216,8 @@ public class TrainRowManager : MonoBehaviour
                 transform.position.z);
             if (i == spawningPoint)
             {
-                wagonInstance.GetComponent<MeshFilter>().mesh = trainLocomotive;
+                wagonInstance.GetComponent<MeshFilter>().mesh =
+                    assetHolder.GetComponent<ModelHolder>().TrainLocomotive;
                 locomotive = wagonInstance;
                 i = incomingFromLeft ? i - locomotiveWidth - wagonWidth :
                     i + locomotiveWidth + wagonWidth;                
@@ -222,6 +225,8 @@ public class TrainRowManager : MonoBehaviour
             else
             {
                 i = incomingFromLeft ? i - 2 * wagonWidth : i + 2 * wagonWidth;
+                wagonInstance.GetComponent<MeshFilter>().mesh =
+                    assetHolder.GetComponent<ModelHolder>().TrainWagon;
             }
             if (!incomingFromLeft)
             {
