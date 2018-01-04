@@ -12,13 +12,10 @@ public class Row : MonoBehaviour
 {
     public GameObject carPrefab, treePrefab, grassPrefab,roadPrefab,boulderPrefab;
     public GameObject truckPrefab;
-    public GameObject waterPrefab, trunkPrefab;  
-    public Mesh redCarMesh, blueCarMesh, greenCarMesh;
-    public Mesh redTruckMesh, blueTruckMesh, greenTruckMesh;
-    public Mesh darkGrassMesh, clearGrassMesh;
-    public Mesh smallTrunkMesh, mediumTrunkMesh, largeTrunkMesh;
-    public Mesh darkWaterMesh, clearWaterMesh;
+    public GameObject waterPrefab, trunkPrefab;
+    private GameObject assetHolder;
     private Mesh stripedRoadMesh;
+    private ModelHolder.SupportType supportType;
     public static float leftmostBorder;
     public static float rightmostBorder;
     public static uint rowMarginInUnitCubes;
@@ -114,18 +111,28 @@ public class Row : MonoBehaviour
         }
     }
 
-    public Mesh StripedRoadMesh
+    public ModelHolder.SupportReturn<Mesh> StripedRoadMesh
+    {
+        set
+        {
+            ModelHolder.SupportReturn<Mesh> aux = value;
+            stripedRoadMesh = aux.support;
+            supportType = aux.supportType;
+        }
+    }
+
+    public GameObject AssetHolder
     {
         get
         {
-            return stripedRoadMesh;
+            return assetHolder;
         }
 
         set
         {
-            stripedRoadMesh = value;
+            assetHolder = value;
         }
-    }    
+    }
 
     public static void setUnitCube(Vector3 unitCube)
     {
@@ -220,7 +227,19 @@ public class Row : MonoBehaviour
             GameObject waterInstance = (GameObject)Instantiate(waterPrefab, transform);
             if (i < leftmostBorder || i > rightmostBorder)
             {
-                waterInstance.GetComponent<MeshFilter>().mesh = darkWaterMesh;
+                ModelHolder.SupportReturn<Mesh> ret =
+                    assetHolder.GetComponent<ModelHolder>().WaterDark;
+                supportType = ret.supportType;
+                waterInstance.GetComponent<MeshFilter>().mesh =
+                    ret.support;
+            }
+            else
+            {
+                ModelHolder.SupportReturn<Mesh> ret =
+                    assetHolder.GetComponent<ModelHolder>().WaterClear;
+                supportType = ret.supportType;
+                waterInstance.GetComponent<MeshFilter>().mesh =
+                    ret.support;
             }
             float waterHeight = -waterPrefab.GetComponent<Renderer>().bounds.extents.y;
             waterInstance.transform.position = new Vector3(i, waterHeight, transform.position.z);
@@ -254,21 +273,12 @@ public class Row : MonoBehaviour
 
     private Mesh getRandomTrunkMeshAndSetTimer()
     {
-        float randValue = UnityEngine.Random.value;
         trunkTimer = 2.5f + UnityEngine.Random.Range(0.0f, 0.5f);
-        if (randValue < 0.1f)
-        {
-            return smallTrunkMesh;
-        }
-        else if (randValue >= 0.1f && randValue < 0.6f)
-        {
-            return mediumTrunkMesh;
-        }
-        else
-        {
+        ModelHolder.TrunkReturn returnedMesh = 
+            assetHolder.GetComponent<ModelHolder>().Trunk(supportType);
+        if (returnedMesh.isLarge)
             trunkTimer += 0.5f;
-            return largeTrunkMesh;
-        }
+        return returnedMesh.returnedMesh;
     }
 
     private void generateGrassRow()
@@ -279,11 +289,23 @@ public class Row : MonoBehaviour
             i += unitCube.x)
         {          
             GameObject grassSlab = (GameObject)Instantiate(grassPrefab, transform);
+            if (UnityEngine.Random.value > 0.5)
+            {
+                grassSlab.GetComponent<MeshFilter>().mesh =
+                    assetHolder.GetComponent<ModelHolder>().GrassClear;
+            }
+            else
+            {
+                grassSlab.GetComponent<MeshFilter>().mesh =
+                    assetHolder.GetComponent<ModelHolder>().GrassDark;
+            }
             float grassHeight = grassPrefab.GetComponent<Renderer>().bounds.extents.y;
             grassSlab.transform.position = new Vector3(i, grassHeight, transform.position.z);
             if (i < leftmostBorder || i > rightmostBorder)
             {
                 GameObject tree = (GameObject)Instantiate(treePrefab, transform);
+                tree.GetComponent<MeshFilter>().mesh =
+                    assetHolder.GetComponent<ModelHolder>().Tree;
                 float treeHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                 tree.transform.position = new Vector3(i, treeHeight, transform.position.z);
             }
@@ -292,12 +314,16 @@ public class Row : MonoBehaviour
                 if (UnityEngine.Random.value > 0.5)
                 {
                     GameObject tree = (GameObject)Instantiate(treePrefab, transform);
+                    tree.GetComponent<MeshFilter>().mesh =
+                        assetHolder.GetComponent<ModelHolder>().Tree;
                     float treeHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                     tree.transform.position = new Vector3(i, treeHeight, transform.position.z);                    
                 }
                 else
                 {
                     GameObject boulder = (GameObject)Instantiate(boulderPrefab, transform);
+                    boulder.GetComponent<MeshFilter>().mesh =
+                        assetHolder.GetComponent<ModelHolder>().Boulder;
                     float boulderHeight = 1.5f*grassPrefab.GetComponent<Renderer>().bounds.size.y;
                     boulder.transform.position = new Vector3(i, boulderHeight, transform.position.z);
                 }
@@ -315,6 +341,7 @@ public class Row : MonoBehaviour
             j <= rowMarginInUnitCubes*unitCube.x + rightmostBorder - halfCube; j += unitCube.x)
         {
             GameObject roadSlab = (GameObject) Instantiate(roadPrefab, transform);
+            roadSlab.GetComponent<MeshFilter>().mesh = assetHolder.GetComponent<ModelHolder>().RoadClear.support;
             if (Mathf.RoundToInt((j - (leftmostBorder - rowMarginInUnitCubes * unitCube.x + halfCube)) / unitCube.x) % 2 == 0)
                 roadSlab.GetComponent<MeshFilter>().mesh = stripedRoadMesh;
             roadSlab.transform.position = new Vector3(j,0.0f,
@@ -382,36 +409,16 @@ public class Row : MonoBehaviour
 
     private void assigntruckModel(GameObject truckInstance)
     {
-        float randValue = UnityEngine.Random.value;
-        if (randValue < 0.33)
-        {
-            truckInstance.GetComponent<MeshFilter>().mesh = redTruckMesh;
-        }
-        else if (randValue >= 0.33 && randValue < 0.66)
-        {
-            truckInstance.GetComponent<MeshFilter>().mesh = redTruckMesh;
-        }
-        else
-        {
-            truckInstance.GetComponent<MeshFilter>().mesh = blueTruckMesh;
-        }
+        Mesh truckModel =
+            assetHolder.GetComponent<ModelHolder>().Truck(supportType);
+        truckInstance.GetComponent<MeshFilter>().mesh = truckModel;
     }
 
     private void assignCarModel(GameObject carInstance)
     {
-        float randValue = UnityEngine.Random.value;
-        if (randValue < 0.33)
-        {
-            carInstance.GetComponent<MeshFilter>().mesh = redCarMesh;
-        }
-        else if (randValue >= 0.33 && randValue < 0.66)
-        {
-            carInstance.GetComponent<MeshFilter>().mesh = greenCarMesh;
-        }
-        else
-        {
-            carInstance.GetComponent<MeshFilter>().mesh = blueCarMesh;
-        }
+        Mesh carModel =
+            assetHolder.GetComponent<ModelHolder>().Car(supportType);
+        carInstance.GetComponent<MeshFilter>().mesh = carModel;
     }
 
     public bool isTrunkInPosition(Vector3 position)

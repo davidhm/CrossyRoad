@@ -11,10 +11,12 @@ public sealed class LevelManager : MonoBehaviour
     public Vector3 unitCube;
     public GameObject scoreCanvas;
     public GameObject scoreHolder;
+    public GameObject assetHolder;
     public float vehicleMaxSpeed, vehicleMinSpeed;
     private GameObject generatorRuntime;
     private Vector3 initialPlayerPosition;
     private bool firstPlayerMove;
+    public GameObject firstMenu;
 
     public Vector3 InitialPlayerPosition
     {
@@ -30,7 +32,11 @@ public sealed class LevelManager : MonoBehaviour
         generatorRuntime = (GameObject)Instantiate(generatorPrefab);
         generatorRuntime.GetComponent<LevelGenerator>().setLevelManager(this);
         LevelGenerator.UnitCube = unitCube;
+        assetHolder.GetComponent<ModelHolder>().firstRows = true;
+        generatorRuntime.GetComponent<LevelGenerator>().ModelHolder = assetHolder;
         generatorRuntime.GetComponent<LevelGenerator>().generateInitialArea();
+        assetHolder.GetComponent<ModelHolder>().firstRows = false;
+        PlayerController.NumberOfRowsPassed = 0;
         initialPlayerPosition = player.transform.position;
         firstPlayerMove = false;
     }
@@ -44,11 +50,12 @@ public sealed class LevelManager : MonoBehaviour
             firstPlayerMove = true;
             scoreCanvas.transform.Find("PlayerScore").GetComponent<Text>().text = "0";
             scoreCanvas.SetActive(true);
+            firstMenu.SetActive(false);
         }
         if (player.GetComponent<PlayerController>().JustIncreasedRow)
         {
             scoreHolder.GetComponent<ScoreHolder>().CurrentPlayerScore = 
-                player.GetComponent<PlayerController>().NumberOfRowsPassed;
+                PlayerController.NumberOfRowsPassed;
             drawPlayerScore();
         }
     }
@@ -62,11 +69,11 @@ public sealed class LevelManager : MonoBehaviour
     private void generalLoss()
     {
         cameraObject.GetComponent<CameraController>().CurrentState = cameraStates.PlayerDead;
-        if (player.GetComponent<PlayerController>().NumberOfRowsPassed >
+        if (PlayerController.NumberOfRowsPassed >
             scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore)
         {
-            scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore = 
-                player.GetComponent<PlayerController>().NumberOfRowsPassed;
+            scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore =
+                PlayerController.NumberOfRowsPassed;
         }
         scoreCanvas.transform.Find("TopScore").GetComponent<Text>().text =
             "TOP " + scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore.ToString();

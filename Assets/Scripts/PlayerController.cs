@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour {
     private bool justIncreasedRow;
     private float soundTimer, whenToPlay;
     private bool playPigSound, playTrunkSound;
-    private uint numberOfRowsPassed;
+    private static uint numberOfRowsPassed;
     public AudioClip pigSound, trunkAttachment;
     private float furthestZ;
     private class MovementObjective
@@ -130,11 +130,16 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    public uint NumberOfRowsPassed
+    public static uint NumberOfRowsPassed
     {
         get
         {
             return numberOfRowsPassed;
+        }
+
+        set
+        {
+            numberOfRowsPassed = value;
         }
     }
 
