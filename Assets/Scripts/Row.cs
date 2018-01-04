@@ -15,6 +15,7 @@ public class Row : MonoBehaviour
     public GameObject waterPrefab, trunkPrefab;
     private GameObject assetHolder;
     private Mesh stripedRoadMesh;
+    private ModelHolder.SupportType supportType;
     public static float leftmostBorder;
     public static float rightmostBorder;
     public static uint rowMarginInUnitCubes;
@@ -110,16 +111,13 @@ public class Row : MonoBehaviour
         }
     }
 
-    public Mesh StripedRoadMesh
+    public ModelHolder.SupportReturn<Mesh> StripedRoadMesh
     {
-        get
-        {
-            return stripedRoadMesh;
-        }
-
         set
         {
-            stripedRoadMesh = value;
+            ModelHolder.SupportReturn<Mesh> aux = value;
+            stripedRoadMesh = aux.support;
+            supportType = aux.supportType;
         }
     }
 
@@ -229,13 +227,19 @@ public class Row : MonoBehaviour
             GameObject waterInstance = (GameObject)Instantiate(waterPrefab, transform);
             if (i < leftmostBorder || i > rightmostBorder)
             {
-                waterInstance.GetComponent<MeshFilter>().mesh =
+                ModelHolder.SupportReturn<Mesh> ret =
                     assetHolder.GetComponent<ModelHolder>().WaterDark;
+                supportType = ret.supportType;
+                waterInstance.GetComponent<MeshFilter>().mesh =
+                    ret.support;
             }
             else
             {
-                waterInstance.GetComponent<MeshFilter>().mesh =
+                ModelHolder.SupportReturn<Mesh> ret =
                     assetHolder.GetComponent<ModelHolder>().WaterClear;
+                supportType = ret.supportType;
+                waterInstance.GetComponent<MeshFilter>().mesh =
+                    ret.support;
             }
             float waterHeight = -waterPrefab.GetComponent<Renderer>().bounds.extents.y;
             waterInstance.transform.position = new Vector3(i, waterHeight, transform.position.z);
@@ -271,7 +275,7 @@ public class Row : MonoBehaviour
     {
         trunkTimer = 2.5f + UnityEngine.Random.Range(0.0f, 0.5f);
         ModelHolder.TrunkReturn returnedMesh = 
-            assetHolder.GetComponent<ModelHolder>().Trunk;
+            assetHolder.GetComponent<ModelHolder>().Trunk(supportType);
         if (returnedMesh.isLarge)
             trunkTimer += 0.5f;
         return returnedMesh.returnedMesh;
@@ -337,7 +341,7 @@ public class Row : MonoBehaviour
             j <= rowMarginInUnitCubes*unitCube.x + rightmostBorder - halfCube; j += unitCube.x)
         {
             GameObject roadSlab = (GameObject) Instantiate(roadPrefab, transform);
-            roadSlab.GetComponent<MeshFilter>().mesh = assetHolder.GetComponent<ModelHolder>().RoadClear;
+            roadSlab.GetComponent<MeshFilter>().mesh = assetHolder.GetComponent<ModelHolder>().RoadClear.support;
             if (Mathf.RoundToInt((j - (leftmostBorder - rowMarginInUnitCubes * unitCube.x + halfCube)) / unitCube.x) % 2 == 0)
                 roadSlab.GetComponent<MeshFilter>().mesh = stripedRoadMesh;
             roadSlab.transform.position = new Vector3(j,0.0f,
@@ -406,14 +410,14 @@ public class Row : MonoBehaviour
     private void assigntruckModel(GameObject truckInstance)
     {
         Mesh truckModel =
-            assetHolder.GetComponent<ModelHolder>().Truck;
+            assetHolder.GetComponent<ModelHolder>().Truck(supportType);
         truckInstance.GetComponent<MeshFilter>().mesh = truckModel;
     }
 
     private void assignCarModel(GameObject carInstance)
     {
         Mesh carModel =
-            assetHolder.GetComponent<ModelHolder>().Car;
+            assetHolder.GetComponent<ModelHolder>().Car(supportType);
         carInstance.GetComponent<MeshFilter>().mesh = carModel;
     }
 

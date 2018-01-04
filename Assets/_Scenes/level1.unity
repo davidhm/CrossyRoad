@@ -1283,7 +1283,7 @@ MonoBehaviour:
   blueTruckDesert: {fileID: 4300000, guid: 7386bf2011529b447a93641673f868aa, type: 3}
   greenTruckNormal: {fileID: 4300000, guid: 3c4055f2cb862da4ab9c86a93cd02bf2, type: 3}
   greenTruckWinter: {fileID: 4300000, guid: e59fbf4ce8c4fe14fb94d5de6fb64481, type: 3}
-  greenTruckDesert: {fileID: 4300000, guid: e59fbf4ce8c4fe14fb94d5de6fb64481, type: 3}
+  greenTruckDesert: {fileID: 4300000, guid: 230a9240e41d4df4b930bf238e262d5d, type: 3}
   plainRoadNormal: {fileID: 4300000, guid: 6a7b5ef63f8ac99459ce299de422a2da, type: 3}
   plainRoadWinter: {fileID: 4300000, guid: bb867a40b85a3e6409d7a5788d85ad30, type: 3}
   plainRoadDesert: {fileID: 4300000, guid: b8a79b0ebd3afc24bb7a3bd5593c1bfd, type: 3}

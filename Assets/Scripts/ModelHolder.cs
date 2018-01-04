@@ -8,6 +8,14 @@ public class ModelHolder : MonoBehaviour
         public bool isLarge;
     }
 
+    public enum SupportType { normal, winter, desert}
+
+    public class SupportReturn<ReturnType>
+    {
+        public SupportType supportType;
+        public ReturnType support;
+    }
+
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -48,194 +56,224 @@ public class ModelHolder : MonoBehaviour
 
     public uint winterCutoff, desertCutoff;
 
-    public Mesh Car
-    {
-        get
+    public Mesh Car(SupportType support)
+    { 
+        if (support == SupportType.normal)
         {
-            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
+            float value = Random.value;
+            if (value < 0.33f)
             {
-                float value = Random.value;
-                if (value < 0.33f)
-                {
-                    return redCarNormal;
-                }
-                else if (value >= 0.33f && value < 0.66f)
-                {
-                    return blueCarNormal;
-                }
-                else
-                {
-                    return greenCarNormal;
-                }
+                return redCarNormal;
             }
-            else if (PlayerController.NumberOfRowsPassed >= winterCutoff &&
-                PlayerController.NumberOfRowsPassed < desertCutoff)
+            else if (value >= 0.33f && value < 0.66f)
             {
-                float value = Random.value;
-                if (value < 0.33f)
-                {
-                    return redCarWinter;
-                }
-                else if (value >= 0.33f && value < 0.66f)
-                {
-                    return blueCarWinter;
-                }
-                else
-                {
-                    return greenCarWinter;
-                }
+                return blueCarNormal;
             }
             else
             {
-                float value = Random.value;
-                if (value < 0.33f)
-                {
-                    return redCarDesert;
-                }
-                else if (value >= 0.33f && value < 0.66f)
-                {
-                    return blueCarDesert;
-                }
-                else
-                {
-                    return greenCarDesert;
-                }
-            }            
+                return greenCarNormal;
+            }
         }
+        else if (support == SupportType.winter)
+        {
+            float value = Random.value;
+            if (value < 0.33f)
+            {
+                return redCarWinter;
+            }
+            else if (value >= 0.33f && value < 0.66f)
+            {
+                return blueCarWinter;
+            }
+            else
+            {
+                return greenCarWinter;
+            }
+        }
+        else
+        {
+            float value = Random.value;
+            if (value < 0.33f)
+            {
+                return redCarDesert;
+            }
+            else if (value >= 0.33f && value < 0.66f)
+            {
+                return blueCarDesert;
+            }
+            else
+            {
+                return greenCarDesert;
+            }
+        }            
+        
     }
 
-    public Mesh Truck
+    public Mesh Truck(SupportType support)
+    {        
+        if (support == SupportType.normal)
+        {
+            float value = Random.value;
+            if (value < 0.33f)
+            {
+                return redTruckNormal;
+            }
+            else if (value >= 0.33f && value < 0.66f)
+            {
+                return blueTruckNormal;
+            }
+            else
+            {
+                return greenTruckNormal;
+            }
+        }
+        else if (support == SupportType.winter)
+        {
+            float value = Random.value;
+            if (value < 0.33f)
+            {
+                return redTruckWinter;
+            }
+            else if (value >= 0.33f && value < 0.66f)
+            {
+                return blueTruckWinter;
+            }
+            else
+            {
+                return greenTruckWinter;
+            }
+        }
+        else
+        {
+            float value = Random.value;
+            if (value < 0.33f)
+            {
+                return redTruckDesert;
+            }
+            else if (value >= 0.33f && value < 0.66f)
+            {
+                return blueTruckDesert;
+            }
+            else
+            {
+                return greenTruckDesert;
+            }
+        }
+        
+    }
+
+    public SupportReturn<Mesh> RoadClear
     {
         get
         {
             if (firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
-                float value = Random.value;
-                if (value < 0.33f)
-                {
-                    return redTruckNormal;
-                }
-                else if (value >= 0.33f && value < 0.66f)
-                {
-                    return blueTruckNormal;
-                }
-                else
-                {
-                    return greenTruckNormal;
-                }
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = plainRoadNormal;
+                support.supportType = SupportType.normal;
+                return support;
             }
             else if (PlayerController.NumberOfRowsPassed >= winterCutoff &&
                 PlayerController.NumberOfRowsPassed < desertCutoff)
             {
-                float value = Random.value;
-                if (value < 0.33f)
-                {
-                    return redTruckWinter;
-                }
-                else if (value >= 0.33f && value < 0.66f)
-                {
-                    return blueTruckWinter;
-                }
-                else
-                {
-                    return greenTruckWinter;
-                }
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = plainRoadWinter;
+                support.supportType = SupportType.winter;
+                return support;
             }
             else
             {
-                float value = Random.value;
-                if (value < 0.33f)
-                {
-                    return redTruckDesert;
-                }
-                else if (value >= 0.33f && value < 0.66f)
-                {
-                    return blueTruckDesert;
-                }
-                else
-                {
-                    return greenTruckDesert;
-                }
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = plainRoadDesert;
+                support.supportType = SupportType.desert;
+                return support;
             }
         }
     }
 
-    public Mesh RoadClear
-    {
-        get
-        {
-            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
-            {
-                return plainRoadNormal;
-            }
-            else if (PlayerController.NumberOfRowsPassed >= winterCutoff &&
-                PlayerController.NumberOfRowsPassed < desertCutoff)
-            {
-                return plainRoadWinter;
-            }
-            else
-            {
-                return plainRoadDesert;
-            }
-        }
-    }
-
-    public Mesh RoadForwardStrip
+    public SupportReturn<Mesh> RoadForwardStrip
     {
         get
         {
             if (firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
-                return forwardStripNormal;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = forwardStripNormal;
+                support.supportType = SupportType.normal;
+                return support;
             }
             else if (PlayerController.NumberOfRowsPassed >= winterCutoff &&
                 PlayerController.NumberOfRowsPassed < desertCutoff)
             {
-                return forwardStripWinter;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = forwardStripWinter;
+                support.supportType = SupportType.winter;
+                return support;
             }
             else
             {
-                return forwardStripDesert;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = forwardStripDesert;
+                support.supportType = SupportType.desert;
+                return support;
             }
         }
     }
 
-    public Mesh RoadBackwardStrip
+    public SupportReturn<Mesh> RoadBackwardStrip
     {
         get
         {
             if (firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
-                return backStripNormal;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = backStripNormal;
+                support.supportType = SupportType.normal;
+                return support;
             }
             else if (PlayerController.NumberOfRowsPassed >= winterCutoff &&
                 PlayerController.NumberOfRowsPassed < desertCutoff)
             {
-                return backStripWinter;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = backStripWinter;
+                support.supportType = SupportType.winter;
+                return support;
             }
             else
             {
-                return backStripDesert;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = backStripDesert;
+                support.supportType = SupportType.desert;
+                return support;
             }
         }
     }
 
-    public Mesh RoadBothStrip
+    public SupportReturn<Mesh> RoadBothStrip
     {
         get
         {
             if (firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
-                return bothStripNormal;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = bothStripNormal;
+                support.supportType = SupportType.normal;
+                return support;
             }
             else if (PlayerController.NumberOfRowsPassed >= winterCutoff &&
                 PlayerController.NumberOfRowsPassed < desertCutoff)
             {
-                return bothStripWinter;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = bothStripWinter;
+                support.supportType = SupportType.winter;
+                return support;
             }
             else
             {
-                return bothStripDesert;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = bothStripDesert;
+                support.supportType = SupportType.desert;
+                return support;
             }
         }
     }
@@ -280,42 +318,60 @@ public class ModelHolder : MonoBehaviour
         }
     }
 
-    public Mesh WaterClear
+    public SupportReturn<Mesh> WaterClear
     {
         get
         {
             if (firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
-                return clearWaterNormal;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = clearWaterNormal;
+                support.supportType = SupportType.normal;
+                return support;
             }
             else if (PlayerController.NumberOfRowsPassed >= winterCutoff &&
                 PlayerController.NumberOfRowsPassed < desertCutoff)
             {
-                return clearWaterWinter;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = clearWaterWinter;
+                support.supportType = SupportType.winter;
+                return support;
             }
             else
             {
-                return clearWaterDesert;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = clearWaterDesert;
+                support.supportType = SupportType.desert;
+                return support;
             }
         }
     }
 
-    public Mesh WaterDark
+    public SupportReturn<Mesh> WaterDark
     {
         get
         {
             if (firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
             {
-                return darkWaterNormal;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = darkWaterNormal;
+                support.supportType = SupportType.normal;
+                return support;
             }
             else if (PlayerController.NumberOfRowsPassed >= winterCutoff &&
                 PlayerController.NumberOfRowsPassed < desertCutoff)
             {
-                return darkWaterWinter;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = darkWaterWinter;
+                support.supportType = SupportType.winter;
+                return support;
             }
             else
             {
-                return darkWaterDesert;
+                SupportReturn<Mesh> support = new SupportReturn<Mesh>();
+                support.support = darkWaterDesert;
+                support.supportType = SupportType.desert;
+                return support;
             }
         }
     }
@@ -390,79 +446,76 @@ public class ModelHolder : MonoBehaviour
         }
     }
 
-    public TrunkReturn Trunk
-    {
-        get
+    public TrunkReturn Trunk(SupportType support)
+    {       
+        TrunkReturn returned = new TrunkReturn();
+        if (support == SupportType.normal)
         {
-            TrunkReturn returned = new TrunkReturn();
-            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
+            float value = Random.value;
+            if (value < 0.33f)
             {
-                float value = Random.value;
-                if (value < 0.33f)
-                {
-                    returned.returnedMesh = trunkSmallNormal;
-                    returned.isLarge = false;
-                    return returned;   
-                }
-                else if (value >= 0.33f && value < 0.66f)
-                {
-                    returned.returnedMesh = trunkMediumNormal;
-                    returned.isLarge = false;
-                    return returned;
-                }
-                else
-                {
-                    returned.returnedMesh = trunkLargeNormal;
-                    returned.isLarge = true;
-                    return returned;
-                }
+                returned.returnedMesh = trunkSmallNormal;
+                returned.isLarge = false;
+                return returned;   
             }
-            else if (PlayerController.NumberOfRowsPassed >= winterCutoff &&
-                PlayerController.NumberOfRowsPassed < desertCutoff)
+            else if (value >= 0.33f && value < 0.66f)
             {
-                float value = Random.value;
-                if (value < 0.33f)
-                {
-                    returned.returnedMesh = trunkSmallWinter;
-                    returned.isLarge = false;
-                    return returned;
-                }
-                else if (value >= 0.33f && value < 0.66f)
-                {
-                    returned.returnedMesh = trunkMediumWinter;
-                    returned.isLarge = false;
-                    return returned;
-                }
-                else
-                {
-                    returned.returnedMesh = trunkLargeWinter;
-                    returned.isLarge = false;
-                    return returned;
-                }
+                returned.returnedMesh = trunkMediumNormal;
+                returned.isLarge = false;
+                return returned;
             }
             else
             {
-                float value = Random.value;
-                if (value < 0.33f)
-                {
-                    returned.returnedMesh = trunkSmallDesert;
-                    returned.isLarge = false;
-                    return returned;
-                }
-                else if (value >= 0.33f && value < 0.66f)
-                {
-                    returned.returnedMesh = trunkMediumDesert;
-                    returned.isLarge = false;
-                    return returned;
-                }
-                else
-                {
-                    returned.returnedMesh = trunkLargeDesert;
-                    returned.isLarge = true;
-                    return returned;
-                }
+                returned.returnedMesh = trunkLargeNormal;
+                returned.isLarge = true;
+                return returned;
             }
         }
+        else if (support == SupportType.winter)
+        {
+            float value = Random.value;
+            if (value < 0.33f)
+            {
+                returned.returnedMesh = trunkSmallWinter;
+                returned.isLarge = false;
+                return returned;
+            }
+            else if (value >= 0.33f && value < 0.66f)
+            {
+                returned.returnedMesh = trunkMediumWinter;
+                returned.isLarge = false;
+                return returned;
+            }
+            else
+            {
+                returned.returnedMesh = trunkLargeWinter;
+                returned.isLarge = false;
+                return returned;
+            }
+        }
+        else
+        {
+            float value = Random.value;
+            if (value < 0.33f)
+            {
+                returned.returnedMesh = trunkSmallDesert;
+                returned.isLarge = false;
+                return returned;
+            }
+            else if (value >= 0.33f && value < 0.66f)
+            {
+                returned.returnedMesh = trunkMediumDesert;
+                returned.isLarge = false;
+                return returned;
+            }
+            else
+            {
+                returned.returnedMesh = trunkLargeDesert;
+                returned.isLarge = true;
+                return returned;
+            }
+        }
+        
     }
 }
 

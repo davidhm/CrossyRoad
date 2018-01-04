@@ -30,7 +30,7 @@ class LevelGenerator : MonoBehaviour {
         }
     }
 
-    public Mesh BothStripeRoadMesh
+    public ModelHolder.SupportReturn<Mesh> BothStripeRoadMesh
     {
         get
         {
@@ -46,7 +46,7 @@ class LevelGenerator : MonoBehaviour {
         }
     }
 
-    public Mesh ForwardStripeRoadMesh
+    public ModelHolder.SupportReturn<Mesh> ForwardStripeRoadMesh
     {
         get
         {
@@ -55,7 +55,7 @@ class LevelGenerator : MonoBehaviour {
 
     }
 
-    public Mesh BackwardStripeRoadMesh
+    public ModelHolder.SupportReturn<Mesh> BackwardStripeRoadMesh
     {
         get
         {
@@ -72,7 +72,7 @@ class LevelGenerator : MonoBehaviour {
         }
     }
 
-    public Mesh ClearRoadMesh
+    public ModelHolder.SupportReturn<Mesh> ClearRoadMesh
     {
         get
         {
