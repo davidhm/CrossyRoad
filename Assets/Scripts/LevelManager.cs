@@ -15,6 +15,7 @@ public sealed class LevelManager : MonoBehaviour
     private GameObject generatorRuntime;
     private Vector3 initialPlayerPosition;
     private bool firstPlayerMove;
+    public GameObject firstMenu;
 
     public Vector3 InitialPlayerPosition
     {
@@ -44,6 +45,7 @@ public sealed class LevelManager : MonoBehaviour
             firstPlayerMove = true;
             scoreCanvas.transform.Find("PlayerScore").GetComponent<Text>().text = "0";
             scoreCanvas.SetActive(true);
+            firstMenu.SetActive(false);
         }
         if (player.GetComponent<PlayerController>().JustIncreasedRow)
         {
