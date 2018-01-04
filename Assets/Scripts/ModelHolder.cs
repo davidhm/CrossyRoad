@@ -16,35 +16,35 @@ public class ModelHolder : MonoBehaviour
     public bool firstRows;
 
     //Cars
-    public Mesh redCarNormal, redCarWinter;
-    public Mesh blueCarNormal, blueCarWinter;
-    public Mesh greenCarNormal, greenCarWinter;
+    public Mesh redCarNormal, redCarWinter, redCarDesert;
+    public Mesh blueCarNormal, blueCarWinter, blueCarDesert;
+    public Mesh greenCarNormal, greenCarWinter, greenCarDesert;
     //Trucks
-    public Mesh redTruckNormal, redTruckWinter;
-    public Mesh blueTruckNormal, blueTruckWinter;
-    public Mesh greenTruckNormal, greenTruckWinter;
+    public Mesh redTruckNormal, redTruckWinter, redTruckDesert;
+    public Mesh blueTruckNormal, blueTruckWinter, blueTruckDesert;
+    public Mesh greenTruckNormal, greenTruckWinter, greenTruckDesert;
     //Road slabs
-    public Mesh plainRoadNormal, plainRoadWinter;
-    public Mesh backStripNormal, backStripWinter;
-    public Mesh forwardStripNormal, forwardStripWinter;
-    public Mesh bothStripNormal, bothStripWinter;
+    public Mesh plainRoadNormal, plainRoadWinter, plainRoadDesert;
+    public Mesh backStripNormal, backStripWinter, backStripDesert;
+    public Mesh forwardStripNormal, forwardStripWinter, forwardStripDesert;
+    public Mesh bothStripNormal, bothStripWinter, bothStripDesert;
     //Grass
-    public Mesh clearGrassNormal, clearGrassWinter;
-    public Mesh darkGrassNormal, darkGrassWinter;
+    public Mesh clearGrassNormal, clearGrassWinter, clearGrassDesert;
+    public Mesh darkGrassNormal, darkGrassWinter, darkGrassDesert;
     //Water
-    public Mesh clearWaterNormal, clearWaterWinter;
-    public Mesh darkWaterNormal, darkWaterWinter;
+    public Mesh clearWaterNormal, clearWaterWinter, clearWaterDesert;
+    public Mesh darkWaterNormal, darkWaterWinter, darkWaterDesert;
     //Boulder
-    public Mesh boulderNormal, boulderWinter;
+    public Mesh boulderNormal, boulderWinter, boulderDesert;
     //Tree
-    public Mesh treeNormal, treeWinter;
+    public Mesh treeNormal, treeWinter, treeDesert;
     //Train
     public Mesh trainLocomotiveNormal, trainLocomotiveWinter;
     public Mesh trainWagonNormal, trainWagonWinter;
     //Trunk
-    public Mesh trunkSmallNormal, trunkSmallWinter;
-    public Mesh trunkMediumNormal, trunkMediumWinter;
-    public Mesh trunkLargeNormal, trunkLargeWinter;
+    public Mesh trunkSmallNormal, trunkSmallWinter, trunkSmallDesert;
+    public Mesh trunkMediumNormal, trunkMediumWinter, trunkMediumDesert;
+    public Mesh trunkLargeNormal, trunkLargeWinter, trunkLargeDesert;
 
     public uint winterCutoff;
 
