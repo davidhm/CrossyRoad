@@ -32,18 +32,15 @@ public class ScoreHolder : MonoBehaviour
 
     void Awake()
     {
-        DontDestroyOnLoad(gameObject);
         processScoreFile();
     }
-
-    void OnApplicationQuit()
+    void OnDestroy()
     {
         using (StreamWriter fileWriter = new StreamWriter(@".\playerScore.txt"))
         {
             fileWriter.WriteLine(playerMaxScore.ToString());
         }
     }
-
     private void processScoreFile()
     {
         if (!File.Exists(@".\playerScore.txt"))

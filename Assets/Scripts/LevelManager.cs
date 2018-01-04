@@ -69,7 +69,7 @@ public sealed class LevelManager : MonoBehaviour
                 player.GetComponent<PlayerController>().NumberOfRowsPassed;
         }
         scoreCanvas.transform.Find("TopScore").GetComponent<Text>().text =
-            scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore.ToString();
+            "TOP " + scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore.ToString();
         scoreCanvas.transform.Find("TopScore").gameObject.SetActive(true);
         mainMenu.transform.GetChild(1).GetComponent<Text>().text = "You lose!";
         mainMenu.SetActive(true);
