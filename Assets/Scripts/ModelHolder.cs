@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 public class ModelHolder : MonoBehaviour
 {
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     //Cars
     public Mesh redCarNormal, redCarWinter;
     public Mesh blueCarNormal, blueCarWinter;
