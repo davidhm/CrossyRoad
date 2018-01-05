@@ -416,34 +416,22 @@ public class ModelHolder : MonoBehaviour
         }
     }
 
-    public Mesh TrainLocomotive
+    public Mesh TrainLocomotive(SupportType type)
     {
-        get
+        if (type == SupportType.normal || type == SupportType.desert)
         {
-            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
-            {
-                return trainLocomotiveNormal;
-            }
-            else
-            {
-                return trainLocomotiveWinter;
-            }
+            return trainLocomotiveNormal;
         }
+        return trainLocomotiveWinter;       
     }
 
-    public Mesh TrainWagon
+    public Mesh TrainWagon(SupportType type)
     {
-        get
+        if (type == SupportType.normal || type == SupportType.desert)
         {
-            if ( firstRows || PlayerController.NumberOfRowsPassed < winterCutoff)
-            {
-                return trainWagonNormal;
-            }
-            else
-            {
-                return trainWagonWinter;
-            }
+            return trainWagonNormal;
         }
+        return trainWagonWinter;
     }
 
     public TrunkReturn Trunk(SupportType support)

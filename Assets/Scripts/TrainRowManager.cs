@@ -17,6 +17,7 @@ public class TrainRowManager : MonoBehaviour
     private bool spawningTrain;
     private uint numberOfWagonsLeft;
     private bool justDespawned;
+    private ModelHolder.SupportType supportType;
     public float RoadHeight
     {
         get
@@ -72,12 +73,15 @@ public class TrainRowManager : MonoBehaviour
     private void generateRoadSlabs()
     {
         float halfCube = LevelGenerator.UnitCube.x / 2.0f;
+        ModelHolder.SupportReturn<Mesh> ret = assetHolder.GetComponent<ModelHolder>().RoadClear;
+        supportType = ret.supportType;
         for (float j = Row.leftmostBorder - Row.rowMarginInUnitCubes * LevelGenerator. UnitCube.x + halfCube;
             j <= Row.rowMarginInUnitCubes * LevelGenerator.UnitCube.x + Row.rightmostBorder - halfCube; j += LevelGenerator.UnitCube.x)
         {
             GameObject roadSlab = (GameObject)Instantiate(roadPrefab, transform);            
             roadSlab.transform.position = new Vector3(j, 0.0f,
-                transform.position.z);
+                transform.position.z);            
+            roadSlab.GetComponent<MeshFilter>().mesh = ret.support;
         }
     }
 
@@ -209,13 +213,13 @@ public class TrainRowManager : MonoBehaviour
     {
         GameObject wagonInstance = Instantiate(trainPrefab, transform);
         wagonInstance.GetComponent<MeshFilter>().mesh = 
-            assetHolder.GetComponent<ModelHolder>().TrainLocomotive;
+            assetHolder.GetComponent<ModelHolder>().TrainLocomotive(supportType);
         float locomotiveWidth = wagonInstance.GetComponent<Renderer>().bounds.extents.x;
         float spawningPoint = incomingFromLeft ?
             Row.leftmostBorder - Row.rowMarginInUnitCubes * LevelGenerator.UnitCube.x - locomotiveWidth :
             Row.rightmostBorder + Row.rowMarginInUnitCubes * LevelGenerator.UnitCube.x + locomotiveWidth;
         wagonInstance.GetComponent<MeshFilter>().mesh =
-            assetHolder.GetComponent<ModelHolder>().TrainWagon;
+            assetHolder.GetComponent<ModelHolder>().TrainWagon(supportType);
         float wagonWidth = wagonInstance.GetComponent<Renderer>().bounds.extents.x;
         int numberOfWagons = 10;
         float i = spawningPoint;
@@ -230,7 +234,7 @@ public class TrainRowManager : MonoBehaviour
             if (i == spawningPoint)
             {
                 wagonInstance.GetComponent<MeshFilter>().mesh =
-                    assetHolder.GetComponent<ModelHolder>().TrainLocomotive;
+                    assetHolder.GetComponent<ModelHolder>().TrainLocomotive(supportType);
                 locomotive = wagonInstance;
                 i = incomingFromLeft ? i - locomotiveWidth - wagonWidth :
                     i + locomotiveWidth + wagonWidth;                
@@ -239,7 +243,7 @@ public class TrainRowManager : MonoBehaviour
             {
                 i = incomingFromLeft ? i - 2 * wagonWidth : i + 2 * wagonWidth;
                 wagonInstance.GetComponent<MeshFilter>().mesh =
-                    assetHolder.GetComponent<ModelHolder>().TrainWagon;
+                    assetHolder.GetComponent<ModelHolder>().TrainWagon(supportType);
             }
             if (!incomingFromLeft)
             {
