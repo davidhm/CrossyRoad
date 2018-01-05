@@ -199,7 +199,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 890565645}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.999998, y: 10.040001, z: 0}
+  m_LocalPosition: {x: -409.22, y: 159.83, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2088017134}
@@ -207,8 +207,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 43, y: -39.96}
-  m_SizeDelta: {x: 62.48, y: 58.24}
+  m_AnchoredPosition: {x: 98.28, y: -40.17}
+  m_SizeDelta: {x: 173.04, y: 58.66}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &890565647
 MonoBehaviour:
@@ -242,7 +242,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 25
+  m_Text: 1200
 --- !u!222 &890565648
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1330,7 +1330,7 @@ MonoBehaviour:
   trunkLargeWinter: {fileID: 4300000, guid: 980deb7946b2a5743b86ad5d0601332e, type: 3}
   trunkLargeDesert: {fileID: 4300000, guid: c620b46368d712a489120c67d6a33ed6, type: 3}
   winterCutoff: 20
-  desertCutoff: 40
+  desertCutoff: 80
 --- !u!1 &2018780944
 GameObject:
   m_ObjectHideFlags: 0
@@ -1355,7 +1355,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2018780944}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 32.989998, y: -29.96, z: 0}
+  m_LocalPosition: {x: -390.75, y: 119.86, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2088017134}
@@ -1363,8 +1363,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 82.99, y: -79.96}
-  m_SizeDelta: {x: 143.98, y: 45.92}
+  m_AnchoredPosition: {x: 116.75, y: -80.14}
+  m_SizeDelta: {x: 211.5, y: 46.27}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2018780946
 MonoBehaviour:
@@ -1398,7 +1398,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: TOP 25
+  m_Text: TOP 2500
 --- !u!222 &2018780947
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1487,7 +1487,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2088017130}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 507.5, y: 200, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 890565646}
