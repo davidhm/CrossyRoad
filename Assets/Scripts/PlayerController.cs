@@ -10,9 +10,12 @@ public class PlayerController : MonoBehaviour {
     //private static float godModeSpeed = 160.0f;
     private Vector3 initialPosition;
     private bool godMode, playerMoved, willDrown, mustCheckTrunk, justDeletedMovement;
+    private bool justIncreasedRow;
     private float soundTimer, whenToPlay;
     private bool playPigSound, playTrunkSound;
+    private static uint numberOfRowsPassed;
     public AudioClip pigSound, trunkAttachment;
+    private float furthestZ;
     private class MovementObjective
     {
         public enum movType { Forwards, Backwards, LeftStrafe, RightStrafe}
@@ -127,6 +130,27 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public static uint NumberOfRowsPassed
+    {
+        get
+        {
+            return numberOfRowsPassed;
+        }
+
+        set
+        {
+            numberOfRowsPassed = value;
+        }
+    }
+
+    public bool JustIncreasedRow
+    {
+        get
+        {
+            return justIncreasedRow;
+        }
+    }
+
     // Use this for initialization
     void Start () {
         currentState = playerState.Idle;
@@ -141,6 +165,9 @@ public class PlayerController : MonoBehaviour {
         whenToPlay = UnityEngine.Random.value;
         playPigSound = false;
         playTrunkSound = false;
+        numberOfRowsPassed = 0;
+        justIncreasedRow = false;
+        furthestZ = 0;
 	}
 	
 	// Update is called once per frame
@@ -152,6 +179,7 @@ public class PlayerController : MonoBehaviour {
         }
         if (currentState != playerState.Dead)
         {
+            justIncreasedRow = false;
             processInput();
             updatePosition();            
         }
@@ -479,6 +507,12 @@ public class PlayerController : MonoBehaviour {
             {
                 if (updatedPosition.z >= movementList.First.Value.MovementDestination.z)
                 {
+                    if (movementList.First.Value.MovementDestination.z > furthestZ)
+                    {
+                        furthestZ = movementList.First.Value.MovementDestination.z;
+                        ++numberOfRowsPassed;
+                        justIncreasedRow = true;
+                    }
                     transform.position = movementList.First.Value.MovementDestination;
                     transform.rotation = movementList.First.Value.TargetOrientation; 
                     if (movementList.First.Value.TargetType == MovementObjective.targType.Water && !willDrown)
@@ -493,7 +527,7 @@ public class PlayerController : MonoBehaviour {
                         treatDrowningState();
                     }
                     movementList.RemoveFirst();                    
-                    justDeletedMovement = true;
+                    justDeletedMovement = true;                    
                 }
                 else
                 {

@@ -48,6 +48,7 @@ class RowGroup
         {
             GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
+            nextRow.GetComponent<Row>().AssetHolder = generator.ModelHolder;
             nextRow.transform.position = new Vector3(0, 0, nextRowZ);
             nextRowZ += LevelGenerator.UnitCube.z;
             setRandomGrassParameters(nextRow.GetComponent<Row>());
@@ -65,7 +66,8 @@ class RowGroup
             for (int k = 0; k < numberOfRows; ++k)
             {
                 GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
-                nextRow.GetComponent<Row>().CurrentType = rowType.Grass;                
+                nextRow.GetComponent<Row>().CurrentType = rowType.Grass;
+                nextRow.GetComponent<Row>().AssetHolder = generator.ModelHolder;
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
                 nextRowZ += LevelGenerator.UnitCube.z;
                 setRandomGrassParameters(nextRow.GetComponent<Row>());
@@ -81,6 +83,7 @@ class RowGroup
             {
                 GameObject nextRow = UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
                 nextRow.GetComponent<Row>().CurrentType = rowType.Water;
+                nextRow.GetComponent<Row>().AssetHolder = generator.ModelHolder;
                 nextRow.GetComponent<Row>().IncomingFromLeft = incomingFromLeft;
                 incomingFromLeft = !incomingFromLeft;
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
@@ -96,25 +99,29 @@ class RowGroup
     {
         for (int k = 0; k < numberOfRows; ++k)
         {
-            bool isRailRoad = UnityEngine.Random.value > 0.9;
+            bool isRailRoad = UnityEngine.Random.value > 0.9f;
             GameObject nextRow = isRailRoad ? null : UnityEngine.Object.Instantiate(generator.getRowPrefab(), rowGroup.transform);
             if (!isRailRoad && numberOfRows > 1)
             {
+                nextRow.GetComponent<Row>().AssetHolder = generator.ModelHolder;
                 if (k == 0)
                 {
-                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.forwardStripeRoadMesh;
+                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.ForwardStripeRoadMesh;
                 }
                 else if (k == numberOfRows - 1)
                 {
-                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.backwardStripeRoadMesh;
+                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.BackwardStripeRoadMesh;
                 }
                 else
                 {
-                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.bothStripeRoadMesh;
+                    nextRow.GetComponent<Row>().StripedRoadMesh = generator.BothStripeRoadMesh;
                 }
             }
             else if (!isRailRoad)
-                nextRow.GetComponent<Row>().StripedRoadMesh = generator.clearRoadMesh;
+            {
+                nextRow.GetComponent<Row>().AssetHolder = generator.ModelHolder;
+                nextRow.GetComponent<Row>().StripedRoadMesh = generator.ClearRoadMesh;
+            }
             if (!isRailRoad)
             {
                 nextRow.transform.position = new Vector3(0, 0, nextRowZ);
@@ -127,6 +134,7 @@ class RowGroup
             if (isRailRoad)
             {
                 GameObject trainRow = UnityEngine.Object.Instantiate(generator.trainRowPrefab, rowGroup.transform);
+                trainRow.GetComponent<TrainRowManager>().AssetHolder = generator.ModelHolder;
                 trainRow.name = "RailRoad";
                 trainRow.transform.position = new Vector3(0, 0, nextRowZ);
                 nextRowZ += LevelGenerator.UnitCube.z;
@@ -276,19 +284,12 @@ class RowGroup
     public bool isGroupVisible()
     {
         for (int i = 0; i < rowGroup.transform.childCount; ++i)
-        {
-            if (rowGroup.transform.GetChild(i).name == "RailRoad")
+        {             
+            for (int j = 0; j < rowGroup.transform.GetChild(i).childCount; ++j)
             {
-                return rowGroup.transform.GetChild(i).GetComponent<TrainRowManager>().isRailRoadVisible();
-            }
-            else
-            { 
-                for (int j = 0; j < rowGroup.transform.GetChild(i).childCount; ++j)
-                {
-                    if (rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.GetComponent<Renderer>().isVisible)
-                        return true;
-                }
-            }
+                if (rowGroup.transform.GetChild(i).transform.GetChild(j).gameObject.GetComponent<Renderer>().isVisible)
+                    return true;
+            }            
         }
         return false;
     }

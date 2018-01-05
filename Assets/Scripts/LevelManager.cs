@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,9 +9,14 @@ public sealed class LevelManager : MonoBehaviour
     public GameObject mainMenu, player, cameraObject;
     public GameObject generatorPrefab;
     public Vector3 unitCube;
+    public GameObject scoreCanvas;
+    public GameObject scoreHolder;
+    public GameObject assetHolder;
     public float vehicleMaxSpeed, vehicleMinSpeed;
     private GameObject generatorRuntime;
     private Vector3 initialPlayerPosition;
+    private bool firstPlayerMove;
+    public GameObject firstMenu;
 
     public Vector3 InitialPlayerPosition
     {
@@ -27,13 +32,52 @@ public sealed class LevelManager : MonoBehaviour
         generatorRuntime = (GameObject)Instantiate(generatorPrefab);
         generatorRuntime.GetComponent<LevelGenerator>().setLevelManager(this);
         LevelGenerator.UnitCube = unitCube;
+        assetHolder.GetComponent<ModelHolder>().firstRows = true;
+        generatorRuntime.GetComponent<LevelGenerator>().ModelHolder = assetHolder;
         generatorRuntime.GetComponent<LevelGenerator>().generateInitialArea();
+        assetHolder.GetComponent<ModelHolder>().firstRows = false;
+        PlayerController.NumberOfRowsPassed = 0;
         initialPlayerPosition = player.transform.position;
+        firstPlayerMove = false;
+    }
+
+
+
+    void LateUpdate()
+    {
+        if (!firstPlayerMove && player.GetComponent<PlayerController>().PlayerMoved)
+        {
+            firstPlayerMove = true;
+            scoreCanvas.transform.Find("PlayerScore").GetComponent<Text>().text = "0";
+            scoreCanvas.SetActive(true);
+            firstMenu.SetActive(false);
+        }
+        if (player.GetComponent<PlayerController>().JustIncreasedRow)
+        {
+            scoreHolder.GetComponent<ScoreHolder>().CurrentPlayerScore = 
+                PlayerController.NumberOfRowsPassed;
+            drawPlayerScore();
+        }
+    }
+
+    private void drawPlayerScore()
+    {
+        scoreCanvas.transform.Find("PlayerScore").GetComponent<Text>().text =
+            scoreHolder.GetComponent<ScoreHolder>().CurrentPlayerScore.ToString();   
     }
 
     private void generalLoss()
     {
         cameraObject.GetComponent<CameraController>().CurrentState = cameraStates.PlayerDead;
+        if (PlayerController.NumberOfRowsPassed >
+            scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore)
+        {
+            scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore =
+                PlayerController.NumberOfRowsPassed;
+        }
+        scoreCanvas.transform.Find("TopScore").GetComponent<Text>().text =
+            "TOP " + scoreHolder.GetComponent<ScoreHolder>().PlayerMaxScore.ToString();
+        scoreCanvas.transform.Find("TopScore").gameObject.SetActive(true);
         mainMenu.transform.GetChild(1).GetComponent<Text>().text = "You lose!";
         mainMenu.SetActive(true);
     }
