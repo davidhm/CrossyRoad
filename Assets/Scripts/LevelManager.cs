@@ -92,6 +92,11 @@ public sealed class LevelManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    public void onExitButtonClick()
+    {
+        Application.Quit();
+    }
+
     public Vector3 getPlayerPosition()
     {
         return player.transform.position;
