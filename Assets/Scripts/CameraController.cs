@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 public enum cameraStates { GameStarted, PlayerDead, InitialState, CameraPaused };
 
 public class CameraController : MonoBehaviour {
@@ -9,6 +10,7 @@ public class CameraController : MonoBehaviour {
     private bool gameStarted;
     private cameraStates currentState;
     private Vector3 cameraLookAt;
+    public GameObject volumeSlider;
 
     public cameraStates CurrentState
     {
@@ -73,5 +75,11 @@ public class CameraController : MonoBehaviour {
             increment.z = Time.deltaTime * currentForwardSpeed;
             transform.Translate(increment,Space.World);
         }
+    }
+
+    public void TreatVolumeChanged()
+    {
+        float value = volumeSlider.GetComponent<Slider>().value;
+        AudioListener.volume = value;
     }
 }
