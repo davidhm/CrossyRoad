@@ -8,13 +8,17 @@
 \usepackage{subcaption}
 \usepackage[a4paper,rmargin=1in,lmargin=1in]{geometry}
 \usepackage{amsmath}
+\usepackage[nottoc,numbib]{tocbibind}
 \title{Crossy Road \\
 		\large Videojocs 2017/18 Q1}
 \author{David Hernàndez Morales}
+\date{08/01/2018}
 
 \begin{document}
 \pagenumbering{gobble}
 \maketitle
+\newpage
+\tableofcontents
 \newpage
 \pagenumbering{arabic}
 \section{Crossy Road}
@@ -178,8 +182,35 @@ estratègies:
 	\item Tenir dos ``modes'' de spawneig. Lent i ràpid. Si una fila és
 	ràpida la següent fila o bé és també ràpida i té el mateix sentit
 	o bé és de sentit contrari. Si una fila és lenta no hi ha cap restricció.
-
+	\item La fila següent és sempre de sentit contrari a l'anterior.
 \end{enumerate}
+En la pràctica, es va veure que el mètode 1 requereix molt de refinament perquè
+si les velocitats són completament aleatòria (dintre d'un cert marge), es poden
+crear buits en els que no hi ha cap forma de creuar el riu. Això passa quan
+dos troncs tenen la mateixa velocita i van en el mateix sentit però amb offsets
+significatius. Per tant, es va acabar utilitzant la segona opció.
+
+\subsubsection{Tren}
+
+Un dels obstacles mòvils que també hi és present són els trens (veure figura 
+\ref{trenPassant}). Aquest s'assemblen als vehicles normals però són més 
+llargs, ocupant tota la pantalla i venen amb un canvi de model del senyal
+i un so d'alerta. Aquests obstacles no tenen molta dificultat de disseny.
+
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth]{TrainPassingBy.png}
+	\caption{Tren passant}
+	\label{trenPassant}
+\end{figure}
+
+\subsection{Menús}
+
+En el joc original es pot canviar de personatge quan es mor o fins i tot 
+descubrir personatges nous. Però, com que aquest joc està molt simplificat i només
+hi ha un personatge, no hi ha un menú principal com a tal. Simplement
+hi ha un botó per tonar a jugar quan mors i un slider pel volum del joc
+i un botó per sortir del joc al principi. Es pot veure
+a les imatges \ref{morintCarretera} i \ref{menuInicial}, respectivament.
 
 
 \section{Metodologia}
