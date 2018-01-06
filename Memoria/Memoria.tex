@@ -22,7 +22,7 @@
 \newpage
 \pagenumbering{arabic}
 \section{Crossy Road}
-\subsection{Dades del joc i fites}
+\subsection{Dades del joc}
 El joc que s'intenta emular és Crossy Road \textsuperscript{\texttrademark}
 publicat (i desenvolupat) el 20/11/2014 per \textit{Hipster Whale} \cite{webCrossy}
 \cite{wikipediaCrossy}. A la figura \ref{logo} es pot veure el logo de Crossy Road
@@ -40,8 +40,7 @@ Com es pot veure a la taula \ref{dadesSortida}, el primer llençament va ser en
 quasi un any més tard. També hi ha una versió per \textit{tvOS}.
 
 \begin{table}[h!]
-	\begin{center}
-		\label{dadesSortida}
+	\begin{center}		
 		\begin{tabular}{l|l}
 		\textbf{Plataforma} & \textbf{Data de sortida} \\
 		\hline
@@ -51,6 +50,7 @@ quasi un any més tard. També hi ha una versió per \textit{tvOS}.
 		tvOS & 30 Octubre, 2015
 		\end{tabular}
 		\caption{Dates de sortida de Crossy Road.}
+		\label{dadesSortida}
 	\end{center}
 \end{table}
 
@@ -61,7 +61,7 @@ carretera i utilitzant plataformes. A l'imatge \ref{inGame}
 es pot veure el tipus d'obstacles que s'han de superar.
 Té moltes similituds amb el joc de
 Frogger \textsuperscript{\texttrademark}, fins al punt que ha sigut
-descrit com un ''endless Frogger'' per la premsa \cite{endlessFrogger1}
+descrit com un ``endless Frogger'' per la premsa \cite{endlessFrogger1}
 \cite{endlessFrogger2}. La puntuació és el nombre de files superades i
 el joc recorda el màxim al que has arribat. També hi ha monedes distribuïdes
 per les diferents graelles. Quan el jugador triga molt en avançar, la càmera
@@ -82,13 +82,13 @@ Donald Duck\textsuperscript{\texttrademark} i amb altres personatges
 de franquícies de Disney com The lion king\textsuperscript{\texttrademark}
 o Toy story\textsuperscript{\texttrademark} \cite{disneyCrossy}. També,
 donat l'èxit de Star Wars\textsuperscript{\texttrademark}, es va treure
-una versió de la franquícia ja que era massa gran per incloure-la en
+una versió d'aquesta franquícia ja que era massa gran per incloure-la en
 la de Disney \cite{starWarsCrossy}. \newline
 
 \subsection{Desenvolupament}
 
 Inicialment estava planejat dedicar només 6 setmanes al Crossy Road, però vist el
-potencial del joc es va decidir deducar sis setmanes més \cite{delayedCrossy}. L'equip
+potencial del joc es va decidir dedicar sis setmanes més \cite{delayedCrossy}. L'equip
 de \textit{Hipster Whale} és un equip independent composat per Andy Sum i Mat Hall, els
 fundadors, l'artista Ben Weatherall i la presidenta Clara Reeves \cite{HipsterPressKit}.
 Algunes tecnologies utilitzades pel joc són \textit{Qubicle} \cite{qubicle} \cite{crossyPressKit} o \textit{Unity}.
@@ -157,7 +157,7 @@ D'aquesta forma la dificultat és més progressiva.
 
 Com en el joc original, el personatge també ha de creuar plataformes mòbils.
 Això es pot veure en la figura \ref{creuantAigua}. En aquest cas,
-si el jugador es mou cap a un punt on no hi hagi aigua, mor ofegat 
+si el jugador es mou cap a un punt on hi hagi aigua, mor ofegat 
 \ref{morintAigua}.
 
 \begin{figure}[h!]
@@ -175,7 +175,7 @@ si el jugador es mou cap a un punt on no hi hagi aigua, mor ofegat
 En quant al disseny de les plataformes mòbils, hi havia un problema
 afegit que els vehicles no tenien. I és que en el cas de les plataformes
 mòbils, si no hi ha una certa coherència en la creació d'aquestes
-es torna molt frustrant intentar creuar el riu. Es van adoptar dues
+es torna molt frustrant intentar creuar el riu. Es van pensar dues
 estratègies:
 
 \begin{enumerate}
@@ -185,10 +185,11 @@ estratègies:
 	\item La fila següent és sempre de sentit contrari a l'anterior.
 \end{enumerate}
 En la pràctica, es va veure que el mètode 1 requereix molt de refinament perquè
-si les velocitats són completament aleatòria (dintre d'un cert marge), es poden
+si les velocitats són completament aleatòries (dintre d'un cert marge), es poden
 crear buits en els que no hi ha cap forma de creuar el riu. Això passa quan
-dos troncs tenen la mateixa velocita i van en el mateix sentit però amb offsets
-significatius. Per tant, es va acabar utilitzant la segona opció.
+dos troncs tenen la mateixa velocitat i van en el mateix sentit però amb offsets
+significatius. Per tant, tot i que simplifica més el joc,
+es va acabar utilitzant la segona opció.
 
 \subsubsection{Tren}
 
